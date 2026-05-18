@@ -134,8 +134,10 @@ Rules:
 
 ## Mapping Heuristics
 
+- Decide the full slide sequence before editing individual slide content.
 - If the content is a new chapter, use Section Divider.
 - If the content is a workflow, use Screenshot Step Page.
 - If the content is a side-by-side decision, use Comparison Table or Choice/Recommendation.
 - If the content is an exception or support answer, use Problem/Solution.
 - If no strong pattern fits, use Text Explanation Page.
+- Remove surplus placeholders, screenshot boxes, arrows, and table rows entirely; do not just clear their text.

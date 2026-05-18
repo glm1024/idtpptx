@@ -1,0 +1,7 @@
+Copyright (c) 2026.
+
+This skill and bundled presentation template are provided for authorized IDT/Inspur-style internal presentation work.
+
+The bundled template may include company brand elements. Do not redistribute, relicense, or use those brand elements outside authorized contexts without permission.
+
+The skill depends on the separately installed `pptx` skill for PPTX operations. That dependency has its own license and is not redistributed here.

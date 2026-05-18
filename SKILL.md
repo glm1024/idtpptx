@@ -1,11 +1,23 @@
 ---
 name: idtpptx
 description: Use when creating or editing PowerPoint/PPTX files that should follow the company's IDT/Inspur pragmatic presentation style. This is an overlay skill that depends on the existing pptx skill for all PPTX file operations, and adds company-specific template selection, layout mapping, writing style, and visual QA rules.
+license: Proprietary. LICENSE.txt has complete terms.
 ---
 
 # IDT PPTX
 
 This skill creates and edits company-style PowerPoint decks using a simple, pragmatic Inspur/IDT visual language.
+
+## Quick Reference
+
+| Task | What to use |
+|------|-------------|
+| PPTX mechanics | Load the installed `pptx` skill |
+| First-choice template | `assets/templates/inspur-pragmatic-template-v1.pptx` |
+| Visual rules | `references/style-guide.md` |
+| Page selection | `references/layout-map.md` |
+| Chinese business wording | `references/writing-style.md` |
+| Final company QA | `references/qa-checklist.md` |
 
 ## Hard Dependency
 
@@ -21,6 +33,8 @@ Use the base `pptx` skill for reading, thumbnailing, unpacking, slide duplicatio
 
 If the `pptx` skill is not installed or cannot be found, stop and ask the user to install it before continuing. Do not silently fall back to ad hoc PPTX manipulation.
 
+When this skill is installed on another machine, do not assume any local absolute path for `pptx`. Resolve the installed `pptx` skill by skill name or by the host agent's skill loading mechanism.
+
 ## Default Approach
 
 Prefer template-based editing over drawing new slides from scratch.
@@ -30,6 +44,8 @@ Prefer template-based editing over drawing new slides from scratch.
 3. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
 4. Keep the deck visually quiet, operational, and content-first.
 5. Run both base `pptx` QA and the company QA checklist in `references/qa-checklist.md`.
+
+For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
 ## What To Load
 
@@ -58,6 +74,12 @@ Do not preserve source-deck business content:
 - Replace all placeholders with the user's current material.
 - If a screenshot slot is not needed, remove the entire placeholder group instead of leaving empty boxes.
 
+Before declaring a deck complete, extract text and check for leftover template placeholders. Treat any hit as a bug:
+
+```bash
+python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum"
+```
+
 ## Style Summary
 
 The style is practical corporate training/reporting, not a marketing deck:
@@ -77,3 +99,5 @@ When the user provides a better company-style PPT later:
 3. Add only reusable style principles, layout patterns, or QA rules.
 4. Do not dump source-deck content into the skill.
 5. If a new reference conflicts with old rules, update the rule and note the applicable scenario.
+
+When updating the skill from a new reference deck, keep `SKILL.md` concise. Put detailed page-type or style discoveries in `references/`, and use assets only for reusable templates or brand resources.
