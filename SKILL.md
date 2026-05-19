@@ -16,6 +16,7 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | First-choice template | `assets/templates/inspur-pragmatic-template-v1.pptx` |
 | Visual rules | `references/style-guide.md` |
 | Page selection | `references/layout-map.md` |
+| Typography and spacing | `references/typography.md` |
 | Chinese business wording | `references/writing-style.md` |
 | Final quality gate | `references/qa-checklist.md` |
 | QA playbook | `references/qa-playbook.md` |
@@ -69,6 +70,7 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 
 - For visual rules, read `references/style-guide.md`.
 - For choosing pages, read `references/layout-map.md`.
+- For font family, font size, line spacing, and density decisions, read `references/typography.md`.
 - For wording and tone, read `references/writing-style.md`.
 - Before final delivery, read `references/qa-checklist.md` and run its required checks.
 - For non-trivial or generated decks, read `references/qa-playbook.md`.
@@ -118,6 +120,8 @@ The style is practical corporate training/reporting, not a marketing deck:
 
 - White canvas, restrained blue accents, minimal decoration.
 - Clear top title area, mostly left-aligned text.
+- Use `微软雅黑` / `Microsoft YaHei` as the default editable font. Do not rely on PowerPoint's theme defaults.
+- Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` when a sparse slide would otherwise leave small cramped text in a large blank area.
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
 - Main content must not enter the bottom-right logo safe zone. If a table, screenshot, callout, or text block reaches the logo area, resize it, split the slide, or move the content upward/left.

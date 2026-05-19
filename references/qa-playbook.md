@@ -38,6 +38,7 @@ High-risk slides:
 - Cover slides, especially when metadata/objective text was added after template replacement.
 - Dense tables, especially near the bottom-right logo.
 - Pages with long Chinese and English mixed labels; English tokens often widen text unexpectedly.
+- Sparse pages where only a few short body lines sit in a large blank area.
 - Titles that may wrap to two lines while a top divider line or marker was positioned for one line.
 - Screenshot pages with arrows, red boxes, or multiple screenshots.
 - Slides copied from templates where empty placeholders may still exist as blank boxes.
@@ -50,6 +51,8 @@ Look for:
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
+- Main body text that is still single-spaced on a sparse slide, or line spacing that is too loose for dense tables/process cards.
+- Mixed editable fonts such as YaHei plus Songti/Calibri/Arial/Aptos in the same normal body area.
 - Footer/source text colliding with the main content.
 - Uneven alignment among repeated cards, columns, table rows, or step boxes.
 - Large empty placeholder regions left after deleting source content.
@@ -59,6 +62,8 @@ Look for:
 
 - Read extracted text in slide order. Confirm the narrative still works without relying on visuals.
 - Check slide titles are specific and name the page's job.
+- Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
+- Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.

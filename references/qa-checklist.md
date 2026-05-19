@@ -47,6 +47,7 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - Normal content slides keep the top rule, top-right blue marker, and bottom-right logo unless intentionally using cover/closing style.
 - New slides match the simple white-and-blue corporate style.
 - Titles are compact and aligned consistently.
+- Editable text uses `微软雅黑` / `Microsoft YaHei` by default. Any non-YaHei font in normal text is intentional, not a leftover theme/default font.
 - Main content fits the center content area without crowding the logo.
 - The bottom-right logo safe zone is clear: no body text, table border, table fill, screenshot, annotation, chart, or shape extends into the rightmost `2.7 in` and bottom `1.1 in` on 16:9 content slides.
 - If a table or screenshot needs that space, the slide was split, cropped, moved upward/left, or redesigned rather than covering the logo.
@@ -68,6 +69,9 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 ## Practical Readability
 
 - Dense tables remain legible after rendering.
+- Sparse slides do not leave small single-spaced text floating in a large blank canvas; body text is enlarged, given `1.5-1.7x` line spacing, or the slide is redesigned.
+- Normal explanation/body slides use about `1.3-1.45x` line spacing; process cards, tables, captions, and footnotes use tighter spacing only when density requires it.
+- Body text stays at or above `12 pt` outside tables, captions, labels, and footnotes; table body text stays at or above `9.5 pt`.
 - Red arrows/boxes point to the intended UI detail and do not cover important text.
 - Multi-step screenshot pages read left to right.
 - Body copy uses direct internal-document Chinese.

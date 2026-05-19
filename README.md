@@ -56,6 +56,7 @@ npx skills update -g -y
 - 清理过业务内容的公司风格 PPTX 模板，位于 `assets/templates/`
 - 简单务实的白底蓝色企业风格规则
 - 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
+- 默认微软雅黑字体、不同内容密度下的字号和行距规则
 - 更适合中文内部汇报和培训材料的写法指导
 - 针对占位符清理、封面冗余白色面板、logo 安全区 / 版心一致性、截图可读性、OpenXML 结构校验和 PowerPoint 兼容性等公司级 QA 检查规则
 - 可复用的 PPT QA playbook 和机械检查脚本 `scripts/pptx_quality_gate.py`

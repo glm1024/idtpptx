@@ -28,10 +28,13 @@ This guide captures reusable company presentation style. It intentionally exclud
 
 ## Typography
 
-- Prefer system-safe corporate fonts.
-- Chinese body text should stay simple and readable; observed source uses Songti/SimSun-like Chinese text and Arial/Calibri-like Latin text.
-- Titles are not oversized. Keep them compact, usually a single line at the top-left.
-- Body text can be dense, but must remain readable after rendering.
+- Default editable font is `微软雅黑` / `Microsoft YaHei` for Chinese, English, numbers, and punctuation.
+- Use bold `微软雅黑` for titles, section labels, card headings, and table headers.
+- Avoid `宋体`, `仿宋`, `楷体`, `黑体`, Calibri, Arial, Aptos, or theme-default fonts in normal editable text unless the user explicitly asks to match a source deck.
+- Normal slide titles are compact and top-left, usually `24-30 pt`.
+- Main body text is usually `13-18 pt`; use larger body text on sparse slides and split the slide before shrinking below readable size.
+- Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` on sparse explanation pages with obvious empty space.
+- Tables, dense process cards, captions, and footnotes may use tighter spacing; follow `references/typography.md` for the scenario-specific size and line-spacing rules.
 
 ## Layout Principles
 

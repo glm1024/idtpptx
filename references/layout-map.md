@@ -70,6 +70,8 @@ Rules:
 
 - Keep the top title compact.
 - Use short paragraphs or grouped bullet-like lines.
+- If the slide has only a few lines and obvious blank space, use larger body text with `1.5-1.7x` line spacing instead of leaving small single-spaced text.
+- For normal explanation pages, use `1.3-1.45x` body line spacing.
 - If content becomes long, split into two slides instead of shrinking text too far.
 
 ### 4. Comparison Table Page
@@ -87,6 +89,7 @@ Rules:
 
 - Keep table borders light.
 - Prefer fewer columns and readable row height.
+- Use compact table typography: `9.5-11.5 pt` body text with `1.0-1.15x` line spacing.
 - If table is too dense, split by category.
 - Never let the table frame, last column, row fill, or cell text extend into the bottom-right logo safe zone. Shorten columns, reduce rows, or split the table before it reaches the logo.
 
@@ -105,6 +108,7 @@ Rules:
 - Use one to three screenshots.
 - Use red arrows between screenshots for sequence.
 - Add concise text above the screenshots.
+- Keep screenshot captions and step labels compact, usually `10-12 pt` with `1.0-1.2x` line spacing.
 - Remove unused screenshot placeholders entirely.
 - Keep screenshots, arrows, and annotation boxes outside the bottom-right logo safe zone. If the screenshot must be large, crop the meaningful area instead of covering the logo.
 
@@ -122,6 +126,7 @@ Rules:
 
 - Keep the explanation direct.
 - Number options with Chinese full-width parentheses when writing Chinese documents.
+- Use `1.3-1.45x` line spacing for option explanations, or `1.5x` when there are only two or three short options.
 - End with a short next-step sentence.
 
 ### 7. Problem/Solution Page
@@ -139,6 +144,7 @@ Rules:
 - Use a stable structure: 问题 / 原因 / 解决.
 - Use screenshots only when they materially help diagnosis.
 - Avoid long narrative paragraphs.
+- Use `1.3-1.45x` line spacing for diagnosis text; split the slide if the structure becomes visually cramped.
 
 ## Mapping Heuristics
 
