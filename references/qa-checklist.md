@@ -52,6 +52,8 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - The bottom-right logo safe zone is clear: no body text, table border, table fill, screenshot, annotation, chart, or shape extends into the rightmost `2.7 in` and bottom `1.1 in` on 16:9 content slides.
 - If a table or screenshot needs that space, the slide was split, cropped, moved upward/left, or redesigned rather than covering the logo.
 - No decorative gradients, stock-photo hero compositions, or marketing-style cards were introduced.
+- No base-`pptx` colorful infographic style was introduced: multicolor numbered circles, rainbow card grids, alternating colored vertical bars, decorative icon grids, and heavy card shadows are blocking brand issues unless the user explicitly requested that style.
+- Any green, amber, red, or other non-blue accent color carries a clear business meaning, such as status, severity, risk, or screenshot annotation. Color used only for decoration should be revised to the blue/gray brand palette.
 
 ## Content Hygiene
 
@@ -98,6 +100,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 - Render slides to images using the base `pptx` skill workflow.
 - Inspect affected slides visually.
 - Treat any content in the bottom-right logo safe zone as a blocking layout bug, even if the logo is still partially readable.
+- Treat generic multicolor process decoration as a blocking brand bug when it comes from the base `pptx` visual style rather than from user-specified company material.
 - Run zip and OpenXML validation after the last edit, not before.
 - If a fix changes layout or package structure, re-render and re-validate.
 - Do not treat the first render as proof. If any issue is found, fix it and re-run the affected QA layer before delivery.

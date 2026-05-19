@@ -34,6 +34,8 @@ Before any real `.pptx` file operation, load/read the installed `pptx` skill and
 
 Use the base `pptx` skill for reading, thumbnailing, unpacking, slide duplication, XML editing, cleaning, packing, rendering, and QA. Use this `idtpptx` skill only for company style decisions, template selection, layout mapping, business wording, and company-specific QA.
 
+Style precedence is strict: if the base `pptx` skill's general design ideas conflict with this company's style, follow `idtpptx`. Do not inherit the base `pptx` skill's colorful infographic defaults, such as multicolor step circles, rainbow process cards, decorative icon grids, or heavy card shadows, unless the user explicitly asks for a livelier non-IDT style.
+
 If the `pptx` skill is not installed or cannot be found, stop and ask the user to install it before continuing. Do not silently fall back to ad hoc PPTX manipulation.
 
 When this skill is installed on another machine, do not assume any local absolute path for `pptx`. Resolve the installed `pptx` skill by skill name or by the host agent's skill loading mechanism.
@@ -45,7 +47,7 @@ Prefer template-based editing over drawing new slides from scratch.
 1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the first-choice template.
 2. Analyze the target content and map each section to one of the reusable page types in `references/layout-map.md`.
 3. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
-4. Keep the deck visually quiet, operational, and content-first.
+4. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
 5. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
@@ -127,6 +129,8 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Tables should default to vertical-middle cell alignment. Center short categorical values, but left-align descriptive text; normal 3-5 column tables should usually use `12-13 pt` body text.
 - Main content must not enter the bottom-right logo safe zone. If a table, screenshot, callout, or text block reaches the logo area, resize it, split the slide, or move the content upward/left.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
+- Avoid base-`pptx` colorful infographic styling: multicolor numbered circles, multicolor card grids, alternating colored vertical bars, rainbow process flows, decorative icon grids, and shadows used only to make cards look designed.
+- Use non-blue colors only when they encode a stable business meaning, such as red annotation/risk or consistent status colors.
 - Avoid decorative gradients, large hero illustrations, icon-heavy marketing layouts, and overly stylized “AI generated” slides.
 
 ## Evolution Workflow

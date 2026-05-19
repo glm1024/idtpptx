@@ -151,11 +151,30 @@ Rules:
 - Avoid long narrative paragraphs.
 - Use `1.3-1.45x` line spacing for diagnosis text; split the slide if the structure becomes visually cramped.
 
+### 8. Process / Workflow Summary Page
+
+Use for process logic, algorithm phases, review paths, or non-UI workflows.
+
+Best for:
+
+- Algorithm steps.
+- Operational review process.
+- Data flow or attribution flow.
+- Multi-stage plan without screenshots.
+
+Rules:
+
+- Prefer a restrained blue-gray sequence, a compact table, or a light line flow.
+- Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
+- Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
+- Keep the final step, callout, or summary away from the bottom-right logo safe zone.
+
 ## Mapping Heuristics
 
 - Decide the full slide sequence before editing individual slide content.
 - If the content is a new chapter, use Section Divider.
-- If the content is a workflow, use Screenshot Step Page.
+- If the content is a UI operation workflow, use Screenshot Step Page.
+- If the content is a process or algorithm workflow without screenshots, use Process / Workflow Summary Page.
 - If the content is a side-by-side decision, use Comparison Table or Choice/Recommendation.
 - If the content is an exception or support answer, use Problem/Solution.
 - If no strong pattern fits, use Text Explanation Page.
