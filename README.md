@@ -38,11 +38,15 @@ npx skills add https://github.com/glm1024/idtpptx -g -y
 - 简单务实的白底蓝色企业风格规则
 - 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
 - 更适合中文内部汇报和培训材料的写法指导
-- 针对占位符清理、logo / 版心一致性、截图可读性等公司级 QA 检查规则
+- 针对占位符清理、logo / 版心一致性、截图可读性、OpenXML 结构校验和 PowerPoint 兼容性等公司级 QA 检查规则
+- 可复用的 PPT QA playbook 和机械检查脚本 `scripts/pptx_quality_gate.py`
 
 ## 注意事项
 
 - `idtpptx` 不替代基础 `pptx` skill。
 - 基础 `pptx` skill 负责 PPTX 文件读取、拆包、复制页面、XML 编辑、打包、渲染和通用 QA。
 - `idtpptx` 只负责公司风格和模板约束。
+- 交付前必须完成内容、视觉、压缩包、OpenXML 结构和 PowerPoint 兼容性检查；不能只以 LibreOffice 成功渲染作为最终依据。
+- 复杂或代码生成的 PPT 建议运行 `python scripts/pptx_quality_gate.py output.pptx --outdir /tmp/idtpptx-qa`，再人工检查渲染图。
+- 如果依赖安装在另一个 Python 环境里，可追加 `--python python` 或设置 `IDTPPTX_PYTHON=python`。
 - 模板中可能包含公司品牌元素，只应在授权场景下使用和分享。

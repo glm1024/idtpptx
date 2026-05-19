@@ -17,7 +17,9 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Visual rules | `references/style-guide.md` |
 | Page selection | `references/layout-map.md` |
 | Chinese business wording | `references/writing-style.md` |
-| Final company QA | `references/qa-checklist.md` |
+| Final quality gate | `references/qa-checklist.md` |
+| QA playbook | `references/qa-playbook.md` |
+| Mechanical QA helper | `scripts/pptx_quality_gate.py` |
 
 ## Hard Dependency
 
@@ -43,7 +45,7 @@ Prefer template-based editing over drawing new slides from scratch.
 2. Analyze the target content and map each section to one of the reusable page types in `references/layout-map.md`.
 3. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
 4. Keep the deck visually quiet, operational, and content-first.
-5. Run both base `pptx` QA and the company QA checklist in `references/qa-checklist.md`.
+5. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
@@ -52,7 +54,8 @@ For template-based work, finish structural edits first: choose page types, dupli
 - For visual rules, read `references/style-guide.md`.
 - For choosing pages, read `references/layout-map.md`.
 - For wording and tone, read `references/writing-style.md`.
-- Before final delivery, read `references/qa-checklist.md`.
+- Before final delivery, read `references/qa-checklist.md` and run its required checks.
+- For non-trivial or generated decks, read `references/qa-playbook.md`.
 
 ## Template Policy
 
@@ -74,10 +77,22 @@ Do not preserve source-deck business content:
 - Replace all placeholders with the user's current material.
 - If a screenshot slot is not needed, remove the entire placeholder group instead of leaving empty boxes.
 
-Before declaring a deck complete, extract text and check for leftover template placeholders. Treat any hit as a bug:
+Before declaring a deck complete, run the full QA checklist in `references/qa-checklist.md`. At minimum, extract text and check for leftover template placeholders. Treat any hit as a bug:
 
 ```bash
 python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum"
+```
+
+When possible, run the bundled helper:
+
+```bash
+python scripts/pptx_quality_gate.py output.pptx --outdir /tmp/idtpptx-qa
+```
+
+If helper dependencies are installed under a different interpreter, pass it explicitly:
+
+```bash
+python scripts/pptx_quality_gate.py output.pptx --outdir /tmp/idtpptx-qa --python python
 ```
 
 ## Style Summary

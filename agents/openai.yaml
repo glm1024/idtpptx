@@ -1,3 +1,3 @@
 display_name: IDT PPTX
-short_description: Create practical Inspur/IDT-style PowerPoint decks using the mature pptx skill as the editing engine.
-default_prompt: Create or edit a PowerPoint deck in the IDT/Inspur pragmatic company style.
+short_description: Create, edit, and QA practical Inspur/IDT-style PowerPoint decks using the mature pptx skill as the editing engine.
+default_prompt: Create or edit a PowerPoint deck in the IDT/Inspur pragmatic company style, then run the final PPT QA gate before delivery.
