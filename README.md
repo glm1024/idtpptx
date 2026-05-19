@@ -1,45 +1,48 @@
 # idtpptx
 
-`idtpptx` is an overlay skill for creating and editing practical IDT/Inspur-style PowerPoint decks.
+`idtpptx` 是一个用于生成和编辑 IDT / 浪潮风格 PowerPoint 的 Codex skill。
 
-It depends on the mature `pptx` skill for PPTX file operations. This skill adds company-specific style, template selection, layout mapping, writing guidance, and QA rules.
+它不是独立的 PPTX 处理引擎，而是一个覆盖层 skill：底层 PPTX 读写、拆包、复制页面、打包和渲染 QA 依赖成熟的 `pptx` skill；`idtpptx` 负责补充公司风格、模板选择、版式映射、中文内部文档口径和公司级检查规则。
 
-## Install
+## 安装
 
-Install the base `pptx` skill first:
+先安装基础 `pptx` skill：
 
 ```bash
 npx skills add anthropics/skills@pptx -g -y
 ```
 
-Then install `idtpptx`:
+再安装 `idtpptx`：
 
 ```bash
 npx skills add https://github.com/glm1024/idtpptx -g -y
 ```
 
-## Use
-
-Example prompts:
+## 使用示例
 
 ```text
-Use idtpptx style to create a project report PPT from this outline.
+用 idtpptx 风格帮我做一份项目汇报 PPT。
 ```
 
 ```text
 用 idtpptx 风格帮我做一份内部培训 PPT。
 ```
 
-## What This Skill Provides
+```text
+把这份大纲整理成 IDT / 浪潮风格的 PowerPoint。
+```
 
-- A cleaned company-style PPTX template in `assets/templates/`
-- Practical white-and-blue corporate visual rules
-- Reusable page-type mapping for covers, section dividers, tables, screenshot walkthroughs, recommendations, and FAQ pages
-- Chinese internal-document writing guidance
-- Company-specific QA checks for placeholder cleanup, logo/layout consistency, and screenshot readability
+## 这个 skill 提供什么
 
-## Notes
+- 清理过业务内容的公司风格 PPTX 模板，位于 `assets/templates/`
+- 简单务实的白底蓝色企业风格规则
+- 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
+- 更适合中文内部汇报和培训材料的写法指导
+- 针对占位符清理、logo / 版心一致性、截图可读性等公司级 QA 检查规则
 
-- `idtpptx` does not replace the base `pptx` skill.
-- The base `pptx` skill handles reading, unpacking, slide duplication, XML editing, packing, rendering, and general PPTX QA.
-- The bundled template may include company brand elements. Use it only in authorized contexts.
+## 注意事项
+
+- `idtpptx` 不替代基础 `pptx` skill。
+- 基础 `pptx` skill 负责 PPTX 文件读取、拆包、复制页面、XML 编辑、打包、渲染和通用 QA。
+- `idtpptx` 只负责公司风格和模板约束。
+- 模板中可能包含公司品牌元素，只应在授权场景下使用和分享。
