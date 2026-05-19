@@ -18,20 +18,6 @@ npx skills add anthropics/skills@pptx -g -y
 npx skills add https://github.com/glm1024/idtpptx -g -y
 ```
 
-## 使用示例
-
-```text
-用 idtpptx 风格帮我做一份项目汇报 PPT。
-```
-
-```text
-用 idtpptx 风格帮我做一份内部培训 PPT。
-```
-
-```text
-把这份大纲整理成 IDT / 浪潮风格的 PowerPoint。
-```
-
 ## 更新
 
 如果是按上面的全局方式安装，后续更新 `idtpptx`：
@@ -80,6 +66,5 @@ npx skills update -g -y
 - 基础 `pptx` skill 负责 PPTX 文件读取、拆包、复制页面、XML 编辑、打包、渲染和通用 QA。
 - `idtpptx` 只负责公司风格和模板约束。
 - 交付前必须完成内容、视觉、压缩包、OpenXML 结构和 PowerPoint 兼容性检查；不能只以 LibreOffice 成功渲染作为最终依据。
-- 复杂或代码生成的 PPT 建议运行 `python scripts/pptx_quality_gate.py output.pptx --outdir /tmp/idtpptx-qa`，再人工检查渲染图。
 - 如果依赖安装在另一个 Python 环境里，可追加 `--python python` 或设置 `IDTPPTX_PYTHON=python`。
 - 模板中可能包含公司品牌元素，只应在授权场景下使用和分享。
