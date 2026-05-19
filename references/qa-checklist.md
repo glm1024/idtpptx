@@ -48,12 +48,13 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - New slides match the simple white-and-blue corporate style.
 - Titles are compact and aligned consistently.
 - Editable text uses `微软雅黑` / `Microsoft YaHei` by default. Any non-YaHei font in normal text is intentional, not a leftover theme/default font.
+- Normal editable text uses black or near-black, not muted gray, blue-gray, or pale low-contrast colors.
 - Main content fits the center content area without covering the logo.
 - The bottom-right logo itself is clear: no body text, table border, table fill, screenshot, annotation, chart, or shape overlaps the logo mark or its small breathing margin.
 - Tables, screenshots, and callouts may use the logo's upper-left surrounding space when they do not cover the logo.
 - No decorative gradients, stock-photo hero compositions, or marketing-style cards were introduced.
 - No base-`pptx` colorful infographic style was introduced: multicolor numbered circles, rainbow card grids, alternating colored vertical bars, decorative icon grids, and heavy card shadows are blocking brand issues unless the user explicitly requested that style.
-- Any green, amber, red, or other non-blue accent color carries a clear business meaning, such as status, severity, risk, or screenshot annotation. Color used only for decoration should be revised to the blue/gray brand palette.
+- Red text/boxes/arrows are reserved for warnings, risks, key callouts, and screenshot annotations. Green means completed/healthy/accepted; amber means pending/caution/needs confirmation. Color used only for decoration should be revised to the blue/black/white brand palette.
 
 ## Content Hygiene
 
@@ -77,6 +78,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 - Sparse slides do not leave small single-spaced text floating in a large blank canvas; body text is enlarged, given `1.5-1.7x` line spacing, or the slide is redesigned.
 - Normal explanation/body slides use about `1.3-1.45x` line spacing; process cards, tables, captions, and footnotes use tighter spacing only when density requires it.
 - Body text stays at or above `12 pt` outside tables, captions, labels, and footnotes; table body text stays at or above `9.5 pt`.
+- Captions, notes, and sources are smaller but still black or near-black; do not make them light gray just to de-emphasize them.
 - Red arrows/boxes point to the intended UI detail and do not cover important text.
 - Multi-step screenshot pages read left to right.
 - Body copy uses direct internal-document Chinese.

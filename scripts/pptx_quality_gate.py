@@ -38,6 +38,8 @@ DEFAULT_LOGO_PADDING_IN = 0.06
 LOGO_METADATA_RE = re.compile(r"logo|inspur|浪潮|标志", re.IGNORECASE)
 WHITE_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA"}
 WHITE_SCHEME_VALUES = {"bg1", "lt1"}
+MUTED_TEXT_LUMA_THRESHOLD = 80
+MUTED_TEXT_CHANNEL_SPREAD = 50
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -296,6 +298,16 @@ def object_text(element: ET.Element) -> str:
     return "".join(text.text or "" for text in element.findall(".//a:t", OOXML_NS)).strip()
 
 
+def solid_fill_value(solid: ET.Element) -> str:
+    srgb = solid.find("a:srgbClr", OOXML_NS)
+    if srgb is not None:
+        return srgb.attrib.get("val", "").upper()
+    scheme = solid.find("a:schemeClr", OOXML_NS)
+    if scheme is not None:
+        return f"scheme:{scheme.attrib.get('val', '')}"
+    return "solid"
+
+
 def object_fill(element: ET.Element) -> str:
     sp_pr = element.find("p:spPr", OOXML_NS)
     if sp_pr is None:
@@ -305,13 +317,17 @@ def object_fill(element: ET.Element) -> str:
     solid = sp_pr.find("a:solidFill", OOXML_NS)
     if solid is None:
         return ""
-    srgb = solid.find("a:srgbClr", OOXML_NS)
-    if srgb is not None:
-        return srgb.attrib.get("val", "").upper()
-    scheme = solid.find("a:schemeClr", OOXML_NS)
-    if scheme is not None:
-        return f"scheme:{scheme.attrib.get('val', '')}"
-    return "solid"
+    return solid_fill_value(solid)
+
+
+def object_text_colors(element: ET.Element) -> list[str]:
+    colors: list[str] = []
+    for path in (".//a:rPr/a:solidFill", ".//a:endParaRPr/a:solidFill", ".//a:defRPr/a:solidFill"):
+        for solid in element.findall(path, OOXML_NS):
+            color = solid_fill_value(solid)
+            if color:
+                colors.append(color)
+    return colors
 
 
 def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> bool:
@@ -371,6 +387,7 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
             "description": object_description(child),
             "text": object_text(child),
             "fill": object_fill(child),
+            "text_colors": object_text_colors(child),
             "rect": transform(xfrm_rect(xfrm)),
         }
 
@@ -571,6 +588,57 @@ def find_cover_white_panel_issues(pptx_path: Path) -> list[str]:
     return issues
 
 
+def parse_hex_rgb(color: str) -> tuple[int, int, int] | None:
+    if len(color) != 6 or not re.fullmatch(r"[0-9A-Fa-f]{6}", color):
+        return None
+    return int(color[0:2], 16), int(color[2:4], 16), int(color[4:6], 16)
+
+
+def is_muted_gray_text_color(color: str) -> bool:
+    if not color or color.startswith("scheme:"):
+        return False
+    if color.upper() in WHITE_FILL_VALUES:
+        return False
+    rgb = parse_hex_rgb(color)
+    if rgb is None:
+        return False
+    r, g, b = rgb
+    channel_spread = max(rgb) - min(rgb)
+    luma = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    return channel_spread <= MUTED_TEXT_CHANNEL_SPREAD and luma >= MUTED_TEXT_LUMA_THRESHOLD
+
+
+def find_muted_text_color_issues(pptx_path: Path) -> list[str]:
+    issues: list[str] = []
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    text = str(obj["text"])
+                    if not text:
+                        continue
+                    if PLACEHOLDER_RE.search(text):
+                        continue
+                    colors = sorted({str(color) for color in obj.get("text_colors", [])})
+                    muted = [color for color in colors if is_muted_gray_text_color(color)]
+                    if not muted:
+                        continue
+                    name = str(obj["name"]) or "(unnamed)"
+                    excerpt = f" text={text[:30]!r}" if text else ""
+                    issues.append(f"{slide_path}: {obj['kind']} {name!r} muted_text={','.join(muted)}{excerpt}")
+    except Exception as exc:
+        issues.append(f"could not inspect muted gray text colors: {exc}")
+    return issues
+
+
 def find_notes_parts(pptx_path: Path) -> list[str]:
     try:
         with zipfile.ZipFile(pptx_path) as zf:
@@ -706,6 +774,12 @@ def main() -> int:
         "cover white panels",
         not cover_white_panel_issues,
         "ok" if not cover_white_panel_issues else "; ".join(cover_white_panel_issues[:20]),
+    )
+    muted_text_color_issues = find_muted_text_color_issues(pptx_path)
+    check(
+        "muted gray text colors",
+        not muted_text_color_issues,
+        "ok" if not muted_text_color_issues else "; ".join(muted_text_color_issues[:20]),
     )
     notes_parts = find_notes_parts(pptx_path)
     check(

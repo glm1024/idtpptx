@@ -70,6 +70,7 @@ Rules:
 
 - Keep the top title compact.
 - Use short paragraphs or grouped bullet-like lines.
+- Use black or near-black body text; avoid gray explanatory text.
 - If the slide has only a few lines and obvious blank space, use larger body text with `1.5-1.7x` line spacing instead of leaving small single-spaced text.
 - For normal explanation pages, use `1.3-1.45x` body line spacing.
 - If content becomes long, split into two slides instead of shrinking text too far.
@@ -89,6 +90,7 @@ Rules:
 
 - Keep table borders light.
 - Prefer fewer columns and readable row height.
+- Use black or near-black table text by default; do not use gray text for body cells.
 - Vertically align table text to the middle by default. Use top alignment only for paragraph-like cells, bullet lists, code, or cells with `3+` wrapped lines.
 - Header row should usually be centered horizontally and vertically.
 - Horizontally center short categorical columns such as module, status, owner, date, count, percentage, and short capability labels.
@@ -164,7 +166,7 @@ Best for:
 
 Rules:
 
-- Prefer a restrained blue-gray sequence, a compact table, or a light line flow.
+- Prefer a restrained blue/black sequence, a compact table, or a light line flow.
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
 - Keep the final step, callout, or summary from overlapping the bottom-right logo.

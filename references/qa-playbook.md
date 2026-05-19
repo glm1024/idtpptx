@@ -56,16 +56,18 @@ Look for:
 - Descriptive table columns centered in a way that makes sentence-like content harder to scan.
 - Main body text that is still single-spaced on a sparse slide, or line spacing that is too loose for dense tables/process cards.
 - Mixed editable fonts such as YaHei plus Songti/Calibri/Arial/Aptos in the same normal body area.
+- Normal text rendered in gray, blue-gray, or other low-contrast muted colors instead of black/near-black.
 - Footer/source text colliding with the main content.
 - Uneven alignment among repeated cards, columns, table rows, or step boxes.
 - Large empty placeholder regions left after deleting source content.
-- Low contrast text in light blue, gray, or pale yellow zones.
+- Low contrast text in light blue, gray, blue-gray, or pale yellow zones.
 
 ## Content Inspection Heuristics
 
 - Read extracted text in slide order. Confirm the narrative still works without relying on visuals.
 - Check slide titles are specific and name the page's job.
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
+- Check body, table, caption, and note text uses black or near-black; only warnings, risks, key callouts, and screenshot annotations use red.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.

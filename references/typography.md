@@ -30,10 +30,19 @@ For 16:9 slides, use these ranges before shrinking content. If content does not 
 | Process-card body | 12.5 pt | 11-14 pt | Compact, because cards usually appear in rows. |
 | Table header | 13 pt | 12-14.5 pt | Bold; center short headers unless the header is a long phrase. |
 | Table body | 12 pt | 10.5-13.5 pt | Use `12-13 pt` for normal 3-5 column tables; reserve smaller sizes for dense tables. |
-| Captions, notes, sources | 9 pt | 8-10.5 pt | Use muted gray; keep short. |
+| Captions, notes, sources | 9 pt | 8-10.5 pt | Use black or near-black; keep short. |
 | Big numeric callout | 36 pt | 30-48 pt | Pair with a 10-12 pt label. |
 
 Do not use body text below `12 pt` outside tables, labels, footnotes, or dense process cards. Do not use table body below `10.5 pt` unless the table is genuinely dense and cannot be split; never go below `9.5 pt` for deliverables intended to be read on screen.
+
+## Text Color Defaults
+
+- Use `000000`, `111111`, or `1F2933` for normal editable text, including table cells, card bodies, captions, notes, and sources.
+- Do not use muted gray, blue-gray, or pale colors for normal text. If text is important enough to read, keep it black or near-black.
+- Use brand blue (`0062AC`, `00518E`, `213261`) for slide titles, section labels, table headers, and small brand accents, not for long paragraph bodies.
+- Use red (`D93025`, `C00000`, or annotation red `FF4B4B`) for warnings, risks, key conclusions, and screenshot boxes/arrows.
+- Use green only for completed/healthy/accepted status and amber only for pending/caution/needs-confirmation status. Keep the same meaning throughout a deck.
+- White text is allowed only on sufficiently dark blue/red/green fills.
 
 ## Line Spacing Defaults
 

@@ -12,18 +12,21 @@ This guide captures reusable company presentation style. It intentionally exclud
   - Primary blue: `0062AC`
   - Deep blue: `00518E`
   - Dark navy: `213261`
-  - Neutral gray: `A4A3A4`
+  - Neutral gray for fills/rules only: `A4A3A4`
   - Light cyan accent: `BBE0E3`
-- Use black or dark gray for body text.
-- Use red primarily for arrows, callouts, risks, or marking a specific UI location in screenshots.
+- Use black or near-black for body text, table text, card text, captions, notes, and sources. Good defaults are `000000`, `111111`, or `1F2933`.
+- Do not use medium gray or blue-gray for normal editable text; it looks faint in projection and screenshots.
+- Use red primarily for warnings, risks, key callouts, arrows, boxes, or marking a specific UI location in screenshots. Good defaults are `D93025`, `C00000`, or existing annotation red `FF4B4B`.
 
 ## Color Discipline
 
-- Treat color as brand and meaning, not decoration. Default to blue, white, gray, and occasional light cyan.
+- Treat color as brand and meaning, not decoration. Default to white canvas, black/near-black text, and blue brand accents.
+- Gray is allowed for background bands, table header fills, grid lines, separators, and disabled placeholders; it is not the default text color.
 - Do not assign different colors to each step, card, badge, or vertical bar just to make the slide look more designed.
 - Avoid the base `pptx` skill's generic colorful infographic look: multicolor numbered circles, rainbow process cards, alternating blue/green/yellow/red accent bars, decorative icon grids, and heavy card shadows.
 - Green, amber, and red may be used only when they encode clear status, severity, or risk meaning. Use them consistently on the slide and avoid mixing semantic and decorative colors.
-- If a slide needs a secondary color, use at most one secondary semantic color beyond the blue/gray brand palette unless the content itself is a status matrix.
+- If a slide needs a secondary color, use at most one secondary semantic color beyond the blue/black/white brand palette unless the content itself is a status matrix.
+- Use green for completed/healthy/accepted states, amber for pending/caution/needs confirmation, and red for risk/error/important attention. Do not use red for ordinary category labels.
 
 ## Brand Elements
 
@@ -51,7 +54,7 @@ This guide captures reusable company presentation style. It intentionally exclud
 - Favor screenshots, tables, and annotated process evidence over abstract illustrations.
 - Keep content aligned to a consistent left edge.
 - Keep dense content from covering the bottom-right logo; the area above and left of the logo remains usable when it does not overlap the mark.
-- For process or workflow slides, prefer simple blue-gray step labels, quiet tables, screenshot sequences, or light line flows over colorful step badges and card grids.
+- For process or workflow slides, prefer simple blue/black step labels, quiet tables, screenshot sequences, or light line flows over colorful step badges and card grids.
 - Do not create decorative cards, gradient hero sections, large stock imagery, or colorful infographic-heavy slides unless the user explicitly asks for a different style.
 
 ## Cover Slides
