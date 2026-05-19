@@ -29,8 +29,17 @@ PLACEHOLDER_RE = re.compile(
 )
 
 P_NS = {"p": "http://schemas.openxmlformats.org/presentationml/2006/main"}
+A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
+OOXML_NS = {"p": P_NS["p"], "a": A_NS}
 CT_NS = "http://schemas.openxmlformats.org/package/2006/content-types"
 REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
+EMUS_PER_INCH = 914400
+DEFAULT_LOGO_SAFE_WIDTH_IN = 2.7
+DEFAULT_LOGO_SAFE_HEIGHT_IN = 1.1
+BRAND_SAFE_ZONE_TEXT_RE = re.compile(
+    r"^\s*(?:\d{1,3}|inspur|浪潮|inspur\s*浪潮|浪潮\s*inspur)\s*$",
+    re.IGNORECASE,
+)
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -121,6 +130,19 @@ def count_slides(pptx_path: Path) -> int | None:
         return None
 
 
+def slide_size(pptx_path: Path) -> tuple[int, int]:
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            data = zf.read("ppt/presentation.xml")
+        root = ET.fromstring(data)
+        size = root.find("p:sldSz", P_NS)
+        if size is not None:
+            return int(size.attrib["cx"]), int(size.attrib["cy"])
+    except Exception:
+        pass
+    return 12192000, 6858000
+
+
 def has_notes_master_order_issue(pptx_path: Path) -> bool:
     try:
         with zipfile.ZipFile(pptx_path) as zf:
@@ -197,6 +219,172 @@ def find_negative_extents(pptx_path: Path) -> list[str]:
     return issues
 
 
+def local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def parse_emu(value: str | None) -> int:
+    if value is None:
+        return 0
+    try:
+        return int(value)
+    except ValueError:
+        return 0
+
+
+def xfrm_rect(xfrm: ET.Element) -> tuple[int, int, int, int]:
+    off = xfrm.find("a:off", OOXML_NS)
+    ext = xfrm.find("a:ext", OOXML_NS)
+    return (
+        parse_emu(off.attrib.get("x") if off is not None else None),
+        parse_emu(off.attrib.get("y") if off is not None else None),
+        parse_emu(ext.attrib.get("cx") if ext is not None else None),
+        parse_emu(ext.attrib.get("cy") if ext is not None else None),
+    )
+
+
+def find_object_xfrm(element: ET.Element) -> ET.Element | None:
+    for path in ("p:xfrm", "p:spPr/a:xfrm", "p:picPr/a:xfrm", "p:grpSpPr/a:xfrm"):
+        xfrm = element.find(path, OOXML_NS)
+        if xfrm is not None:
+            return xfrm
+    return None
+
+
+def object_name(element: ET.Element) -> str:
+    c_nv_pr = element.find(".//p:cNvPr", OOXML_NS)
+    return c_nv_pr.attrib.get("name", "") if c_nv_pr is not None else ""
+
+
+def object_text(element: ET.Element) -> str:
+    return "".join(text.text or "" for text in element.findall(".//a:t", OOXML_NS)).strip()
+
+
+def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> bool:
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
+
+
+def contains(container: tuple[float, float, float, float], item: tuple[float, float, float, float]) -> bool:
+    cx, cy, cw, ch = container
+    ix, iy, iw, ih = item
+    return ix >= cx and iy >= cy and ix + iw <= cx + cw and iy + ih <= cy + ch
+
+
+def make_group_transform(
+    group_xfrm: ET.Element,
+    parent_transform,
+):
+    group_rect = parent_transform(xfrm_rect(group_xfrm))
+    group_x, group_y, group_w, group_h = group_rect
+    ch_off = group_xfrm.find("a:chOff", OOXML_NS)
+    ch_ext = group_xfrm.find("a:chExt", OOXML_NS)
+    ch_x = parse_emu(ch_off.attrib.get("x") if ch_off is not None else None)
+    ch_y = parse_emu(ch_off.attrib.get("y") if ch_off is not None else None)
+    ch_w = parse_emu(ch_ext.attrib.get("cx") if ch_ext is not None else None)
+    ch_h = parse_emu(ch_ext.attrib.get("cy") if ch_ext is not None else None)
+    scale_x = group_w / ch_w if ch_w else 1
+    scale_y = group_h / ch_h if ch_h else 1
+
+    def transform(rect: tuple[int, int, int, int]) -> tuple[float, float, float, float]:
+        x, y, w, h = rect
+        return (
+            group_x + (x - ch_x) * scale_x,
+            group_y + (y - ch_y) * scale_y,
+            w * scale_x,
+            h * scale_y,
+        )
+
+    return transform
+
+
+def iter_slide_objects(sp_tree: ET.Element, transform=None):
+    if transform is None:
+        transform = lambda rect: rect
+
+    for child in list(sp_tree):
+        tag = local_name(child.tag)
+        if tag in {"nvGrpSpPr", "grpSpPr"}:
+            continue
+        if tag == "grpSp":
+            xfrm = find_object_xfrm(child)
+            child_transform = make_group_transform(xfrm, transform) if xfrm is not None else transform
+            yield from iter_slide_objects(child, child_transform)
+            continue
+        if tag not in {"sp", "graphicFrame", "pic", "cxnSp"}:
+            continue
+        xfrm = find_object_xfrm(child)
+        if xfrm is None:
+            continue
+        yield {
+            "kind": tag,
+            "name": object_name(child),
+            "text": object_text(child),
+            "rect": transform(xfrm_rect(xfrm)),
+        }
+
+
+def slide_number_from_path(name: str) -> int:
+    match = re.search(r"slide(\d+)\.xml$", name)
+    return int(match.group(1)) if match else 0
+
+
+def is_allowed_safe_zone_object(obj: dict[str, object], safe_zone: tuple[float, float, float, float]) -> bool:
+    rect = obj["rect"]
+    text = str(obj["text"])
+    name = str(obj["name"]).lower()
+    if not contains(safe_zone, rect):
+        return False
+    if BRAND_SAFE_ZONE_TEXT_RE.match(text):
+        return True
+    if text == "" and any(token in name for token in ("logo", "inspur", "浪潮", "slide number", "page number", "页码")):
+        return True
+    if obj["kind"] == "pic" and text == "":
+        _, _, width, height = rect
+        return width <= 2.6 * EMUS_PER_INCH and height <= 0.5 * EMUS_PER_INCH
+    return False
+
+
+def find_logo_safe_zone_issues(
+    pptx_path: Path,
+    width_in: float = DEFAULT_LOGO_SAFE_WIDTH_IN,
+    height_in: float = DEFAULT_LOGO_SAFE_HEIGHT_IN,
+) -> list[str]:
+    issues: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    safe_zone = (
+        slide_w - width_in * EMUS_PER_INCH,
+        slide_h - height_in * EMUS_PER_INCH,
+        width_in * EMUS_PER_INCH,
+        height_in * EMUS_PER_INCH,
+    )
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    rect = obj["rect"]
+                    if not overlaps(rect, safe_zone):
+                        continue
+                    if is_allowed_safe_zone_object(obj, safe_zone):
+                        continue
+                    name = str(obj["name"]) or "(unnamed)"
+                    text = str(obj["text"])
+                    excerpt = f" text={text[:30]!r}" if text else ""
+                    issues.append(f"{slide_path}: {obj['kind']} {name!r}{excerpt}")
+    except Exception as exc:
+        issues.append(f"could not inspect bottom-right logo safe zone: {exc}")
+    return issues
+
+
 def find_notes_parts(pptx_path: Path) -> list[str]:
     try:
         with zipfile.ZipFile(pptx_path) as zf:
@@ -249,6 +437,8 @@ def main() -> int:
     parser.add_argument("--outdir", type=Path, help="Directory for render artifacts")
     parser.add_argument("--skip-render", action="store_true", help="Skip PDF/image rendering")
     parser.add_argument("--allow-notes", action="store_true", help="Allow speaker notes parts in the PPTX package")
+    parser.add_argument("--logo-safe-width-in", type=float, default=DEFAULT_LOGO_SAFE_WIDTH_IN, help="Reserved bottom-right logo safe-zone width in inches")
+    parser.add_argument("--logo-safe-height-in", type=float, default=DEFAULT_LOGO_SAFE_HEIGHT_IN, help="Reserved bottom-right logo safe-zone height in inches")
     parser.add_argument("--json", action="store_true", help="Emit JSON report")
     args = parser.parse_args()
 
@@ -314,6 +504,16 @@ def main() -> int:
         "non-negative shape extents",
         not negative_extents,
         "ok" if not negative_extents else "; ".join(negative_extents[:20]),
+    )
+    logo_safe_zone_issues = find_logo_safe_zone_issues(
+        pptx_path,
+        width_in=args.logo_safe_width_in,
+        height_in=args.logo_safe_height_in,
+    )
+    check(
+        "bottom-right logo safe zone",
+        not logo_safe_zone_issues,
+        "ok" if not logo_safe_zone_issues else "; ".join(logo_safe_zone_issues[:20]),
     )
     notes_parts = find_notes_parts(pptx_path)
     check(

@@ -82,6 +82,7 @@ Rules:
 - Keep table borders light.
 - Prefer fewer columns and readable row height.
 - If table is too dense, split by category.
+- Never let the table frame, last column, row fill, or cell text extend into the bottom-right logo safe zone. Shorten columns, reduce rows, or split the table before it reaches the logo.
 
 ### 5. Screenshot Step Page
 
@@ -99,6 +100,7 @@ Rules:
 - Use red arrows between screenshots for sequence.
 - Add concise text above the screenshots.
 - Remove unused screenshot placeholders entirely.
+- Keep screenshots, arrows, and annotation boxes outside the bottom-right logo safe zone. If the screenshot must be large, crop the meaningful area instead of covering the logo.
 
 ### 6. Choice/Recommendation Page
 
@@ -141,3 +143,4 @@ Rules:
 - If the content is an exception or support answer, use Problem/Solution.
 - If no strong pattern fits, use Text Explanation Page.
 - Remove surplus placeholders, screenshot boxes, arrows, and table rows entirely; do not just clear their text.
+- Before finalizing a slide, reserve the bottom-right logo safe zone first, then fit content into the remaining canvas.

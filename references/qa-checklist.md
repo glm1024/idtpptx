@@ -9,7 +9,7 @@ A deck is not complete just because it renders in LibreOffice or exports to PDF.
 Run all four layers:
 
 1. **Content QA**: extract text, check slide order, missing sections, typos, and placeholder residue.
-2. **Visual QA**: render slides to images and inspect for overlap, overflow, unreadable tables, logo collisions, and bad spacing.
+2. **Visual QA**: render slides to images and inspect for overlap, overflow, unreadable tables, logo safe-zone collisions, and bad spacing.
 3. **Package QA**: verify the PPTX zip package and run the base `pptx` OpenXML validator.
 4. **PowerPoint compatibility QA**: treat any validator error as blocking, even if LibreOffice renders successfully.
 
@@ -46,6 +46,8 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - New slides match the simple white-and-blue corporate style.
 - Titles are compact and aligned consistently.
 - Main content fits the center content area without crowding the logo.
+- The bottom-right logo safe zone is clear: no body text, table border, table fill, screenshot, annotation, chart, or shape extends into the rightmost `2.7 in` and bottom `1.1 in` on 16:9 content slides.
+- If a table or screenshot needs that space, the slide was split, cropped, moved upward/left, or redesigned rather than covering the logo.
 - No decorative gradients, stock-photo hero compositions, or marketing-style cards were introduced.
 
 ## Content Hygiene
@@ -67,7 +69,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 - Red arrows/boxes point to the intended UI detail and do not cover important text.
 - Multi-step screenshot pages read left to right.
 - Body copy uses direct internal-document Chinese.
-- No text overlaps the logo, page edge, screenshot, or table.
+- No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, or table.
 
 ## PowerPoint Compatibility
 
@@ -85,6 +87,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 
 - Render slides to images using the base `pptx` skill workflow.
 - Inspect affected slides visually.
+- Treat any content in the bottom-right logo safe zone as a blocking layout bug, even if the logo is still partially readable.
 - Run zip and OpenXML validation after the last edit, not before.
 - If a fix changes layout or package structure, re-render and re-validate.
 - Do not treat the first render as proof. If any issue is found, fix it and re-run the affected QA layer before delivery.

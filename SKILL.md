@@ -80,6 +80,7 @@ The V1 template was distilled from a practical internal training deck. The origi
 Keep reusable elements:
 
 - Inspur logo placement
+- Bottom-right logo safe zone
 - White background and blue brand accents
 - Thin top divider line
 - Small right-top blue corner marker
@@ -119,6 +120,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Clear top title area, mostly left-aligned text.
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
+- Main content must not enter the bottom-right logo safe zone. If a table, screenshot, callout, or text block reaches the logo area, resize it, split the slide, or move the content upward/left.
 - Avoid decorative gradients, large hero illustrations, icon-heavy marketing layouts, and overly stylized “AI generated” slides.
 
 ## Evolution Workflow
