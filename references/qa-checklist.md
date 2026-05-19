@@ -42,6 +42,8 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 
 ## Brand And Layout
 
+- Cover slides do not contain redundant white cards, white filled metadata boxes, white diagonal strips, or empty white overlay shapes.
+- Cover metadata and objective copy sit directly on the canvas; if they need a panel to be readable, simplify the cover or move the detail to slide 2.
 - Normal content slides keep the top rule, top-right blue marker, and bottom-right logo unless intentionally using cover/closing style.
 - New slides match the simple white-and-blue corporate style.
 - Titles are compact and aligned consistently.
@@ -70,6 +72,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 - Multi-step screenshot pages read left to right.
 - Body copy uses direct internal-document Chinese.
 - No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, or table.
+- No cover text is wrapped inside a redundant white filled shape or card.
 
 ## PowerPoint Compatibility
 

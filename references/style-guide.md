@@ -42,6 +42,12 @@ This guide captures reusable company presentation style. It intentionally exclud
 - Keep dense content away from the lower-right corner; do not use a full-width table or screenshot that extends into the logo safe zone.
 - Do not create decorative cards, gradient hero sections, large stock imagery, or colorful infographic-heavy slides unless the user explicitly asks for a different style.
 
+## Cover Slides
+
+- Keep cover slides clean: blue top band, gray title band, title/subtitle, plain metadata text, and logo are enough.
+- Do not add white cards, white text panels, white filled boxes, or decorative white strips on the cover. Metadata and objectives should sit directly on the white or gray canvas without a filled rectangle behind them.
+- If a copied template cover contains a white cutout, diagonal strip, or empty white overlay shape, delete it unless it is the actual slide background.
+
 ## Common Page Chrome
 
 Normal content pages usually include:
@@ -75,6 +81,7 @@ Section divider pages usually include:
 
 - Text-only slides without structure.
 - Marketing-style hero pages.
+- Cover pages with redundant white panels, empty white shapes, or white decorative cutouts.
 - Decorative gradient orbs, large abstract backgrounds, or unrelated illustrations.
 - Excessive icon grids.
 - Center-aligned body paragraphs.

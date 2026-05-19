@@ -121,6 +121,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
 - Main content must not enter the bottom-right logo safe zone. If a table, screenshot, callout, or text block reaches the logo area, resize it, split the slide, or move the content upward/left.
+- Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
 - Avoid decorative gradients, large hero illustrations, icon-heavy marketing layouts, and overly stylized “AI generated” slides.
 
 ## Evolution Workflow

@@ -40,6 +40,8 @@ BRAND_SAFE_ZONE_TEXT_RE = re.compile(
     r"^\s*(?:\d{1,3}|inspur|浪潮|inspur\s*浪潮|浪潮\s*inspur)\s*$",
     re.IGNORECASE,
 )
+WHITE_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA"}
+WHITE_SCHEME_VALUES = {"bg1", "lt1"}
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -128,6 +130,39 @@ def count_slides(pptx_path: Path) -> int | None:
         return 0 if sld_id_lst is None else len(list(sld_id_lst))
     except Exception:
         return None
+
+
+def presentation_rels(pptx_path: Path) -> dict[str, str]:
+    rels: dict[str, str] = {}
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            root = ET.fromstring(zf.read("ppt/_rels/presentation.xml.rels"))
+            for rel in root.findall(f"{{{REL_NS}}}Relationship"):
+                rel_id = rel.attrib.get("Id", "")
+                target = rel.attrib.get("Target", "")
+                if rel_id and target:
+                    rels[rel_id] = normpath(f"ppt/{target}").lstrip("/")
+    except Exception:
+        return {}
+    return rels
+
+
+def slide_paths_in_order(pptx_path: Path) -> list[str]:
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            root = ET.fromstring(zf.read("ppt/presentation.xml"))
+        rels = presentation_rels(pptx_path)
+        sld_id_lst = root.find("p:sldIdLst", P_NS)
+        if sld_id_lst is None:
+            return []
+        ordered: list[str] = []
+        for slide_id in list(sld_id_lst):
+            rel_id = slide_id.attrib.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id")
+            if rel_id and rel_id in rels:
+                ordered.append(rels[rel_id])
+        return ordered
+    except Exception:
+        return []
 
 
 def slide_size(pptx_path: Path) -> tuple[int, int]:
@@ -260,6 +295,24 @@ def object_text(element: ET.Element) -> str:
     return "".join(text.text or "" for text in element.findall(".//a:t", OOXML_NS)).strip()
 
 
+def object_fill(element: ET.Element) -> str:
+    sp_pr = element.find("p:spPr", OOXML_NS)
+    if sp_pr is None:
+        return ""
+    if sp_pr.find("a:noFill", OOXML_NS) is not None:
+        return ""
+    solid = sp_pr.find("a:solidFill", OOXML_NS)
+    if solid is None:
+        return ""
+    srgb = solid.find("a:srgbClr", OOXML_NS)
+    if srgb is not None:
+        return srgb.attrib.get("val", "").upper()
+    scheme = solid.find("a:schemeClr", OOXML_NS)
+    if scheme is not None:
+        return f"scheme:{scheme.attrib.get('val', '')}"
+    return "solid"
+
+
 def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> bool:
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
@@ -321,6 +374,7 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
             "kind": tag,
             "name": object_name(child),
             "text": object_text(child),
+            "fill": object_fill(child),
             "rect": transform(xfrm_rect(xfrm)),
         }
 
@@ -382,6 +436,62 @@ def find_logo_safe_zone_issues(
                     issues.append(f"{slide_path}: {obj['kind']} {name!r}{excerpt}")
     except Exception as exc:
         issues.append(f"could not inspect bottom-right logo safe zone: {exc}")
+    return issues
+
+
+def is_white_fill(fill: str) -> bool:
+    if not fill:
+        return False
+    if fill.startswith("scheme:"):
+        return fill.split(":", 1)[1] in WHITE_SCHEME_VALUES
+    return fill.upper() in WHITE_FILL_VALUES
+
+
+def related_layout_path(zf: zipfile.ZipFile, slide_path: str) -> str | None:
+    rel_path = f"{dirname(slide_path)}/_rels/{Path(slide_path).name}.rels"
+    try:
+        root = ET.fromstring(zf.read(rel_path))
+    except Exception:
+        return None
+    for rel in root.findall(f"{{{REL_NS}}}Relationship"):
+        rel_type = rel.attrib.get("Type", "")
+        target = rel.attrib.get("Target", "")
+        if rel_type.endswith("/slideLayout") and target:
+            return normpath(f"{dirname(slide_path)}/{target}").lstrip("/")
+    return None
+
+
+def find_cover_white_panel_issues(pptx_path: Path) -> list[str]:
+    issues: list[str] = []
+    slide_paths = slide_paths_in_order(pptx_path)
+    first_slide = slide_paths[0] if slide_paths else "ppt/slides/slide1.xml"
+
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            paths = [first_slide]
+            layout_path = related_layout_path(zf, first_slide)
+            if layout_path:
+                paths.append(layout_path)
+            for path in paths:
+                if path not in zf.namelist():
+                    continue
+                root = ET.fromstring(zf.read(path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    fill = str(obj.get("fill", ""))
+                    if not is_white_fill(fill):
+                        continue
+                    x, y, width, height = obj["rect"]
+                    if width < 0.6 * EMUS_PER_INCH or height < 0.25 * EMUS_PER_INCH:
+                        continue
+                    name = str(obj["name"]) or "(unnamed)"
+                    text = str(obj["text"])
+                    excerpt = f" text={text[:30]!r}" if text else ""
+                    issues.append(f"{path}: {obj['kind']} {name!r} fill={fill}{excerpt}")
+    except Exception as exc:
+        issues.append(f"could not inspect cover white panels: {exc}")
     return issues
 
 
@@ -514,6 +624,12 @@ def main() -> int:
         "bottom-right logo safe zone",
         not logo_safe_zone_issues,
         "ok" if not logo_safe_zone_issues else "; ".join(logo_safe_zone_issues[:20]),
+    )
+    cover_white_panel_issues = find_cover_white_panel_issues(pptx_path)
+    check(
+        "cover white panels",
+        not cover_white_panel_issues,
+        "ok" if not cover_white_panel_issues else "; ".join(cover_white_panel_issues[:20]),
     )
     notes_parts = find_notes_parts(pptx_path)
     check(

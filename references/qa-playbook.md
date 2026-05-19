@@ -35,6 +35,7 @@ Open the individual slide image for any high-risk slide. Contact sheets are usef
 
 High-risk slides:
 
+- Cover slides, especially when metadata/objective text was added after template replacement.
 - Dense tables, especially near the bottom-right logo.
 - Pages with long Chinese and English mixed labels; English tokens often widen text unexpectedly.
 - Titles that may wrap to two lines while a top divider line or marker was positioned for one line.
@@ -44,6 +45,7 @@ High-risk slides:
 
 Look for:
 
+- Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
 - Text, table borders, cell fills, screenshots, callouts, charts, or background shapes entering the bottom-right logo safe zone.
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
 - Text clipped at the edge of a text box, table cell, or slide.
@@ -61,6 +63,7 @@ Look for:
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
 - Check any full-width table or screenshot stops before the rightmost `2.7 in` and bottom `1.1 in` logo safe zone, or has been split/redesigned.
+- Check cover metadata remains plain text and does not introduce a white panel.
 
 ## Package And PowerPoint Compatibility
 

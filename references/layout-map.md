@@ -33,6 +33,12 @@ Replace:
 - Title text.
 - Optional subtitle/date/department if the layout supports it.
 
+Rules:
+
+- Put date, version, department, and objective copy as plain text on the cover canvas.
+- Do not create a white metadata card, white filled text box, white diagonal decoration, or empty white rectangle on top of the cover background.
+- If the cover needs more explanation than a short objective line, move that explanation to the next slide instead of adding a white panel to the cover.
+
 ### 2. Section Divider
 
 Use between major chapters.
