@@ -28,12 +28,12 @@ For 16:9 slides, use these ranges before shrinking content. If content does not 
 | Main body text | 15 pt | 13-18 pt | Use 16-18 pt on sparse pages, 13-15 pt on normal pages. |
 | Numbered bullets | 14.5 pt | 13-16 pt | Prefer short lines; avoid paragraph-length bullets. |
 | Process-card body | 12.5 pt | 11-14 pt | Compact, because cards usually appear in rows. |
-| Table header | 11.5 pt | 10.5-13 pt | Bold; keep row height readable. |
-| Table body | 10.5 pt | 9.5-11.5 pt | Split the table if this is still too tight. |
+| Table header | 13 pt | 12-14.5 pt | Bold; center short headers unless the header is a long phrase. |
+| Table body | 12 pt | 10.5-13.5 pt | Use `12-13 pt` for normal 3-5 column tables; reserve smaller sizes for dense tables. |
 | Captions, notes, sources | 9 pt | 8-10.5 pt | Use muted gray; keep short. |
 | Big numeric callout | 36 pt | 30-48 pt | Pair with a 10-12 pt label. |
 
-Do not use body text below `12 pt` outside tables, labels, footnotes, or dense process cards. Do not use table body below `9.5 pt` for deliverables intended to be read on screen.
+Do not use body text below `12 pt` outside tables, labels, footnotes, or dense process cards. Do not use table body below `10.5 pt` unless the table is genuinely dense and cannot be split; never go below `9.5 pt` for deliverables intended to be read on screen.
 
 ## Line Spacing Defaults
 
@@ -45,7 +45,7 @@ Single spacing is not the default for main body text. Choose spacing by content 
 | Normal body / numbered bullets | 1.3-1.45x | Most explanation pages, review conclusions, constraints, and grouped bullets. |
 | Dense but readable body | 1.18-1.28x | Content is moderately dense but still text-led. Prefer splitting before going tighter. |
 | Process cards / small labels | 1.1-1.2x | Short two-line card descriptions, stage labels, compact annotations. |
-| Tables | 1.0-1.15x | Table cells and matrix pages where row height is the limiting factor. |
+| Tables | 1.05-1.18x | Table cells and matrix pages where row height is the limiting factor. |
 | Captions / footnotes | 1.0-1.15x | Short source lines and notes. |
 | Standalone quote / slogan | 1.8-2.0x | Only for very sparse title-like text. Do not use 2.0x for bullets or dense paragraphs. |
 
@@ -59,10 +59,30 @@ If a mostly empty slide still has small single-spaced body text, treat it as a l
 - For card grids, keep card body compact and put more spacing between cards than inside each card.
 - Do not compensate for an empty slide by adding blank filler shapes. Improve typography, enlarge evidence screenshots, or split/rebalance the layout.
 
+## Table Typography And Alignment
+
+Default table alignment:
+
+- Vertically align table text to the middle by default. This is required for matrix, comparison, scope, responsibility, and capability tables where most cells are one or two lines.
+- Use top vertical alignment only when a cell contains a paragraph, a multi-item list, code, or `3+` wrapped lines. Do not top-align ordinary short table rows.
+- Header row: vertical middle; horizontal center for short labels such as `模块`, `能力`, `当前口径`, `建议`. Left-align only if the header itself is long or wraps.
+- Short categorical body cells should usually be horizontally centered: module names, status, priority, owner, yes/no, date, count, percentage, score, or short capability labels.
+- Descriptive body cells should be left-aligned: explanations, review comments, current paths, risk descriptions, actions, evidence, and any sentence-like text.
+- Numeric columns should be right-aligned only when comparing magnitudes across rows; otherwise center short numbers.
+- Keep left/right cell padding around `0.08-0.12 in` and top/bottom padding around `0.04-0.08 in`. Do not make rows tall while leaving small text visually floating in the middle.
+
+Default table sizing:
+
+- Normal 3-5 column tables with `3-7` rows should use `12-13 pt` body text and `13-14 pt` headers. A wide table with only a few rows should never look like a small-font spreadsheet pasted into a large empty frame.
+- Dense tables with `8+` rows, `6+` columns, or many wrapped cells may use `10.5-11.5 pt` body text. If readability still depends on going smaller, split the table.
+- Very dense appendix-style tables may use `9.5-10.5 pt` only when the slide is explicitly an appendix or source-data page.
+- If a table occupies most of the slide width but the body text feels small, increase the font before increasing row height. If the table still feels empty, reduce the table height or add a concise takeaway/caption outside the table.
+- Do not stretch a table vertically just to fill the slide. Row height should be driven by readable text and balanced padding, not by the need to occupy blank canvas.
+
 ## Density Decisions
 
 - Sparse slide: title plus `2-5` short lines. Use `16-18 pt` body and `1.5-1.7x` line spacing.
 - Normal explanation slide: `6-10` lines. Use `14-16 pt` body and `1.3-1.45x` line spacing.
 - Dense evidence slide: screenshots, tables, or `10+` lines. Use structured zones, `11-14 pt` text, and `1.1-1.28x` line spacing. Split the slide if readability depends on going smaller.
 - Process overview slide: card headings `16-18 pt`, card body `12-13 pt`, card line spacing `1.1-1.2x`. Avoid long card paragraphs.
-- Table slide: table body `9.5-11.5 pt`, line spacing `1.0-1.15x`, enough row height for Chinese characters. If the table crowds the logo safe zone or needs smaller text, split it.
+- Table slide: table body `12-13 pt` for normal 3-5 column tables, `10.5-11.5 pt` for dense tables, line spacing `1.05-1.18x`, vertical-middle alignment by default, and enough row height for Chinese characters. If the table crowds the logo safe zone or needs smaller text, split it.

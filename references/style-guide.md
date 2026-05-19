@@ -79,6 +79,9 @@ Section divider pages usually include:
 - Use tables for comparisons, lists, exports, and matrix-style decisions.
 - Keep table styling quiet: thin grid lines, plain header row, minimal fills.
 - Do not over-style tables with heavy colors.
+- Table cells should default to vertical-middle alignment. Top alignment is reserved for long paragraphs, lists, code, or cells with `3+` wrapped lines.
+- Center short headers and short categorical values; left-align descriptive text and sentence-like cells.
+- Normal 3-5 column tables should use `12-13 pt` body text. Do not leave a large table area filled with small spreadsheet-like text and oversized row whitespace.
 
 ## Avoid
 

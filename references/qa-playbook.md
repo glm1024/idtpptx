@@ -51,6 +51,9 @@ Look for:
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
+- Tables that use small body text while rows are tall and mostly empty.
+- Table text vertically stuck to the top or bottom when cells are otherwise short.
+- Descriptive table columns centered in a way that makes sentence-like content harder to scan.
 - Main body text that is still single-spaced on a sparse slide, or line spacing that is too loose for dense tables/process cards.
 - Mixed editable fonts such as YaHei plus Songti/Calibri/Arial/Aptos in the same normal body area.
 - Footer/source text colliding with the main content.
@@ -64,6 +67,7 @@ Look for:
 - Check slide titles are specific and name the page's job.
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
+- Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.

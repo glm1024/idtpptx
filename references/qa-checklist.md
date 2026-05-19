@@ -69,6 +69,9 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 ## Practical Readability
 
 - Dense tables remain legible after rendering.
+- Normal 3-5 column tables with a few rows use `12-13 pt` body text; they do not waste space with small spreadsheet-like text inside oversized rows.
+- Table cells are vertically middle-aligned by default; only paragraph/list/code-heavy cells use top alignment.
+- Table horizontal alignment follows the content: short headers and categorical values are centered, while explanations, review comments, risks, evidence, and action text are left-aligned.
 - Sparse slides do not leave small single-spaced text floating in a large blank canvas; body text is enlarged, given `1.5-1.7x` line spacing, or the slide is redesigned.
 - Normal explanation/body slides use about `1.3-1.45x` line spacing; process cards, tables, captions, and footnotes use tighter spacing only when density requires it.
 - Body text stays at or above `12 pt` outside tables, captions, labels, and footnotes; table body text stays at or above `9.5 pt`.

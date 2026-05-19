@@ -89,7 +89,12 @@ Rules:
 
 - Keep table borders light.
 - Prefer fewer columns and readable row height.
-- Use compact table typography: `9.5-11.5 pt` body text with `1.0-1.15x` line spacing.
+- Vertically align table text to the middle by default. Use top alignment only for paragraph-like cells, bullet lists, code, or cells with `3+` wrapped lines.
+- Header row should usually be centered horizontally and vertically.
+- Horizontally center short categorical columns such as module, status, owner, date, count, percentage, and short capability labels.
+- Left-align descriptive columns such as current path, review comment, risk, evidence, action, and sentence-like explanations.
+- Use `12-13 pt` body text for normal 3-5 column tables with 3-7 rows. Use `10.5-11.5 pt` only for genuinely dense tables.
+- Use `1.05-1.18x` table line spacing and balanced cell padding; do not stretch rows while keeping the text small.
 - If table is too dense, split by category.
 - Never let the table frame, last column, row fill, or cell text extend into the bottom-right logo safe zone. Shorten columns, reduce rows, or split the table before it reaches the logo.
 

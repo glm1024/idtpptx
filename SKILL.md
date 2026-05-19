@@ -124,6 +124,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` when a sparse slide would otherwise leave small cramped text in a large blank area.
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
+- Tables should default to vertical-middle cell alignment. Center short categorical values, but left-align descriptive text; normal 3-5 column tables should usually use `12-13 pt` body text.
 - Main content must not enter the bottom-right logo safe zone. If a table, screenshot, callout, or text block reaches the logo area, resize it, split the slide, or move the content upward/left.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
 - Avoid decorative gradients, large hero illustrations, icon-heavy marketing layouts, and overly stylized “AI generated” slides.
