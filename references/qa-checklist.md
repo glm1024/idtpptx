@@ -9,7 +9,7 @@ A deck is not complete just because it renders in LibreOffice or exports to PDF.
 Run all four layers:
 
 1. **Content QA**: extract text, check slide order, missing sections, typos, and placeholder residue.
-2. **Visual QA**: render slides to images and inspect for overlap, overflow, unreadable tables, logo safe-zone collisions, and bad spacing.
+2. **Visual QA**: render slides to images and inspect for overlap, overflow, unreadable tables, logo coverage, and bad spacing.
 3. **Package QA**: verify the PPTX zip package and run the base `pptx` OpenXML validator.
 4. **PowerPoint compatibility QA**: treat any validator error as blocking, even if LibreOffice renders successfully.
 
@@ -48,9 +48,9 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - New slides match the simple white-and-blue corporate style.
 - Titles are compact and aligned consistently.
 - Editable text uses `微软雅黑` / `Microsoft YaHei` by default. Any non-YaHei font in normal text is intentional, not a leftover theme/default font.
-- Main content fits the center content area without crowding the logo.
-- The bottom-right logo safe zone is clear: no body text, table border, table fill, screenshot, annotation, chart, or shape extends into the rightmost `2.7 in` and bottom `1.1 in` on 16:9 content slides.
-- If a table or screenshot needs that space, the slide was split, cropped, moved upward/left, or redesigned rather than covering the logo.
+- Main content fits the center content area without covering the logo.
+- The bottom-right logo itself is clear: no body text, table border, table fill, screenshot, annotation, chart, or shape overlaps the logo mark or its small breathing margin.
+- Tables, screenshots, and callouts may use the logo's upper-left surrounding space when they do not cover the logo.
 - No decorative gradients, stock-photo hero compositions, or marketing-style cards were introduced.
 - No base-`pptx` colorful infographic style was introduced: multicolor numbered circles, rainbow card grids, alternating colored vertical bars, decorative icon grids, and heavy card shadows are blocking brand issues unless the user explicitly requested that style.
 - Any green, amber, red, or other non-blue accent color carries a clear business meaning, such as status, severity, risk, or screenshot annotation. Color used only for decoration should be revised to the blue/gray brand palette.
@@ -99,7 +99,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 
 - Render slides to images using the base `pptx` skill workflow.
 - Inspect affected slides visually.
-- Treat any content in the bottom-right logo safe zone as a blocking layout bug, even if the logo is still partially readable.
+- Treat any content that overlaps the bottom-right logo mark as a blocking layout bug.
 - Treat generic multicolor process decoration as a blocking brand bug when it comes from the base `pptx` visual style rather than from user-specified company material.
 - Run zip and OpenXML validation after the last edit, not before.
 - If a fix changes layout or package structure, re-render and re-validate.

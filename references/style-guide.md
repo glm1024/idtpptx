@@ -28,8 +28,8 @@ This guide captures reusable company presentation style. It intentionally exclud
 ## Brand Elements
 
 - Keep the Inspur logo in the bottom-right on normal content slides.
-- Treat the bottom-right logo area as protected space. Reserve at least the rightmost `2.7 in` and bottom `1.1 in` on 16:9 content slides for the logo, page number, and breathing room.
-- No body text, table grid, screenshot, callout, chart, or decorative block may cover or visually crowd the bottom-right logo safe zone. If content would enter this zone, split the slide or move/resize the content.
+- Protect the logo mark itself, not a large lower-right empty zone. Content may use the space above and left of the logo.
+- No body text, table grid, screenshot, callout, chart, or decorative block may overlap the logo mark. Keep only a small breathing margin around the logo.
 - Keep the small blue corner marker at the top-right.
 - Keep the thin blue/gray header rule at the top.
 - Cover and closing slides may use a larger logo.
@@ -50,7 +50,7 @@ This guide captures reusable company presentation style. It intentionally exclud
 - Use clear rectangular zones and generous white background.
 - Favor screenshots, tables, and annotated process evidence over abstract illustrations.
 - Keep content aligned to a consistent left edge.
-- Keep dense content away from the lower-right corner; do not use a full-width table or screenshot that extends into the logo safe zone.
+- Keep dense content from covering the bottom-right logo; the area above and left of the logo remains usable when it does not overlap the mark.
 - For process or workflow slides, prefer simple blue-gray step labels, quiet tables, screenshot sequences, or light line flows over colorful step badges and card grids.
 - Do not create decorative cards, gradient hero sections, large stock imagery, or colorful infographic-heavy slides unless the user explicitly asks for a different style.
 

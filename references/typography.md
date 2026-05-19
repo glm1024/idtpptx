@@ -85,4 +85,4 @@ Default table sizing:
 - Normal explanation slide: `6-10` lines. Use `14-16 pt` body and `1.3-1.45x` line spacing.
 - Dense evidence slide: screenshots, tables, or `10+` lines. Use structured zones, `11-14 pt` text, and `1.1-1.28x` line spacing. Split the slide if readability depends on going smaller.
 - Process overview slide: card headings `16-18 pt`, card body `12-13 pt`, card line spacing `1.1-1.2x`. Avoid long card paragraphs.
-- Table slide: table body `12-13 pt` for normal 3-5 column tables, `10.5-11.5 pt` for dense tables, line spacing `1.05-1.18x`, vertical-middle alignment by default, and enough row height for Chinese characters. If the table crowds the logo safe zone or needs smaller text, split it.
+- Table slide: table body `12-13 pt` for normal 3-5 column tables, `10.5-11.5 pt` for dense tables, line spacing `1.05-1.18x`, vertical-middle alignment by default, and enough row height for Chinese characters. If the table overlaps the logo or needs smaller text, split it.

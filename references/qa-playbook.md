@@ -47,7 +47,7 @@ High-risk slides:
 Look for:
 
 - Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
-- Text, table borders, cell fills, screenshots, callouts, charts, or background shapes entering the bottom-right logo safe zone.
+- Text, table borders, cell fills, screenshots, callouts, charts, or background shapes overlapping the bottom-right logo.
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
@@ -71,7 +71,7 @@ Look for:
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
-- Check any full-width table or screenshot stops before the rightmost `2.7 in` and bottom `1.1 in` logo safe zone, or has been split/redesigned.
+- Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
 
 ## Package And PowerPoint Compatibility

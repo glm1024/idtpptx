@@ -34,12 +34,8 @@ OOXML_NS = {"p": P_NS["p"], "a": A_NS}
 CT_NS = "http://schemas.openxmlformats.org/package/2006/content-types"
 REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
 EMUS_PER_INCH = 914400
-DEFAULT_LOGO_SAFE_WIDTH_IN = 2.7
-DEFAULT_LOGO_SAFE_HEIGHT_IN = 1.1
-BRAND_SAFE_ZONE_TEXT_RE = re.compile(
-    r"^\s*(?:\d{1,3}|inspur|浪潮|inspur\s*浪潮|浪潮\s*inspur)\s*$",
-    re.IGNORECASE,
-)
+DEFAULT_LOGO_PADDING_IN = 0.06
+LOGO_METADATA_RE = re.compile(r"logo|inspur|浪潮|标志", re.IGNORECASE)
 WHITE_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA"}
 WHITE_SCHEME_VALUES = {"bg1", "lt1"}
 
@@ -291,6 +287,11 @@ def object_name(element: ET.Element) -> str:
     return c_nv_pr.attrib.get("name", "") if c_nv_pr is not None else ""
 
 
+def object_description(element: ET.Element) -> str:
+    c_nv_pr = element.find(".//p:cNvPr", OOXML_NS)
+    return c_nv_pr.attrib.get("descr", "") if c_nv_pr is not None else ""
+
+
 def object_text(element: ET.Element) -> str:
     return "".join(text.text or "" for text in element.findall(".//a:t", OOXML_NS)).strip()
 
@@ -317,12 +318,6 @@ def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float,
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
     return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
-
-
-def contains(container: tuple[float, float, float, float], item: tuple[float, float, float, float]) -> bool:
-    cx, cy, cw, ch = container
-    ix, iy, iw, ih = item
-    return ix >= cx and iy >= cy and ix + iw <= cx + cw and iy + ih <= cy + ch
 
 
 def make_group_transform(
@@ -373,6 +368,7 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
         yield {
             "kind": tag,
             "name": object_name(child),
+            "description": object_description(child),
             "text": object_text(child),
             "fill": object_fill(child),
             "rect": transform(xfrm_rect(xfrm)),
@@ -384,35 +380,120 @@ def slide_number_from_path(name: str) -> int:
     return int(match.group(1)) if match else 0
 
 
-def is_allowed_safe_zone_object(obj: dict[str, object], safe_zone: tuple[float, float, float, float]) -> bool:
-    rect = obj["rect"]
+def is_bottom_right_logo_like_picture(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
+    if obj["kind"] != "pic" or str(obj["text"]):
+        return False
+    x, y, width, height = obj["rect"]
+    if width <= 0 or height <= 0:
+        return False
+    aspect_ratio = width / height
+    return (
+        0.5 * EMUS_PER_INCH <= width <= 3.2 * EMUS_PER_INCH
+        and 0.12 * EMUS_PER_INCH <= height <= 0.8 * EMUS_PER_INCH
+        and aspect_ratio >= 3
+        and x >= slide_w * 0.55
+        and y >= slide_h * 0.8
+        and x + width >= slide_w - 0.45 * EMUS_PER_INCH
+        and y + height >= slide_h - 0.25 * EMUS_PER_INCH
+    )
+
+
+def is_logo_object(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
     text = str(obj["text"])
     name = str(obj["name"]).lower()
-    if not contains(safe_zone, rect):
-        return False
-    if BRAND_SAFE_ZONE_TEXT_RE.match(text):
+    description = str(obj.get("description", "")).lower()
+    if obj["kind"] == "pic" and text == "" and LOGO_METADATA_RE.search(f"{name} {description}"):
         return True
-    if text == "" and any(token in name for token in ("logo", "inspur", "浪潮", "slide number", "page number", "页码")):
+    if is_bottom_right_logo_like_picture(obj, slide_w, slide_h):
         return True
-    if obj["kind"] == "pic" and text == "":
-        _, _, width, height = rect
-        return width <= 2.6 * EMUS_PER_INCH and height <= 0.5 * EMUS_PER_INCH
     return False
 
 
-def find_logo_safe_zone_issues(
+def padded_rect(
+    rect: tuple[float, float, float, float],
+    padding_in: float,
+    slide_w: int,
+    slide_h: int,
+) -> tuple[float, float, float, float]:
+    x, y, width, height = rect
+    padding = padding_in * EMUS_PER_INCH
+    x1 = max(0, x - padding)
+    y1 = max(0, y - padding)
+    x2 = min(slide_w, x + width + padding)
+    y2 = min(slide_h, y + height + padding)
+    return x1, y1, max(0, x2 - x1), max(0, y2 - y1)
+
+
+def related_part_path(zf: zipfile.ZipFile, source_path: str, relationship_suffix: str) -> str | None:
+    rel_path = f"{dirname(source_path)}/_rels/{Path(source_path).name}.rels"
+    try:
+        root = ET.fromstring(zf.read(rel_path))
+    except Exception:
+        return None
+    for rel in root.findall(f"{{{REL_NS}}}Relationship"):
+        rel_type = rel.attrib.get("Type", "")
+        target = rel.attrib.get("Target", "")
+        if rel_type.endswith(relationship_suffix) and target:
+            return normpath(f"{dirname(source_path)}/{target}").lstrip("/")
+    return None
+
+
+def related_layout_path(zf: zipfile.ZipFile, slide_path: str) -> str | None:
+    return related_part_path(zf, slide_path, "/slideLayout")
+
+
+def related_master_path(zf: zipfile.ZipFile, layout_path: str) -> str | None:
+    return related_part_path(zf, layout_path, "/slideMaster")
+
+
+def layout_shows_master_shapes(zf: zipfile.ZipFile, layout_path: str) -> bool:
+    try:
+        root = ET.fromstring(zf.read(layout_path))
+    except Exception:
+        return True
+    return root.attrib.get("showMasterSp") != "0"
+
+
+def logo_source_paths(zf: zipfile.ZipFile, slide_path: str) -> list[str]:
+    paths = [slide_path]
+    layout_path = related_layout_path(zf, slide_path)
+    if layout_path:
+        paths.append(layout_path)
+        if layout_shows_master_shapes(zf, layout_path):
+            master_path = related_master_path(zf, layout_path)
+            if master_path:
+                paths.append(master_path)
+    return paths
+
+
+def logo_protection_rects(
+    zf: zipfile.ZipFile,
+    slide_path: str,
+    slide_w: int,
+    slide_h: int,
+    padding_in: float,
+) -> list[tuple[float, float, float, float]]:
+    rects: list[tuple[float, float, float, float]] = []
+    for path in logo_source_paths(zf, slide_path):
+        if path not in zf.namelist():
+            continue
+        root = ET.fromstring(zf.read(path))
+        sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+        if sp_tree is None:
+            continue
+        for obj in iter_slide_objects(sp_tree):
+            if is_logo_object(obj, slide_w, slide_h):
+                rects.append(padded_rect(obj["rect"], padding_in, slide_w, slide_h))
+
+    return rects
+
+
+def find_logo_overlap_issues(
     pptx_path: Path,
-    width_in: float = DEFAULT_LOGO_SAFE_WIDTH_IN,
-    height_in: float = DEFAULT_LOGO_SAFE_HEIGHT_IN,
+    padding_in: float = DEFAULT_LOGO_PADDING_IN,
 ) -> list[str]:
     issues: list[str] = []
     slide_w, slide_h = slide_size(pptx_path)
-    safe_zone = (
-        slide_w - width_in * EMUS_PER_INCH,
-        slide_h - height_in * EMUS_PER_INCH,
-        width_in * EMUS_PER_INCH,
-        height_in * EMUS_PER_INCH,
-    )
     try:
         with zipfile.ZipFile(pptx_path) as zf:
             slide_paths = sorted(
@@ -420,22 +501,31 @@ def find_logo_safe_zone_issues(
                 key=slide_number_from_path,
             )
             for slide_path in slide_paths:
+                logo_rects = logo_protection_rects(
+                    zf,
+                    slide_path,
+                    slide_w,
+                    slide_h,
+                    padding_in,
+                )
+                if not logo_rects:
+                    continue
                 root = ET.fromstring(zf.read(slide_path))
                 sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
                 if sp_tree is None:
                     continue
                 for obj in iter_slide_objects(sp_tree):
-                    rect = obj["rect"]
-                    if not overlaps(rect, safe_zone):
+                    if is_logo_object(obj, slide_w, slide_h):
                         continue
-                    if is_allowed_safe_zone_object(obj, safe_zone):
+                    rect = obj["rect"]
+                    if not any(overlaps(rect, logo_rect) for logo_rect in logo_rects):
                         continue
                     name = str(obj["name"]) or "(unnamed)"
                     text = str(obj["text"])
                     excerpt = f" text={text[:30]!r}" if text else ""
-                    issues.append(f"{slide_path}: {obj['kind']} {name!r}{excerpt}")
+                    issues.append(f"{slide_path}: {obj['kind']} {name!r}{excerpt} overlaps logo")
     except Exception as exc:
-        issues.append(f"could not inspect bottom-right logo safe zone: {exc}")
+        issues.append(f"could not inspect bottom-right logo overlap: {exc}")
     return issues
 
 
@@ -445,20 +535,6 @@ def is_white_fill(fill: str) -> bool:
     if fill.startswith("scheme:"):
         return fill.split(":", 1)[1] in WHITE_SCHEME_VALUES
     return fill.upper() in WHITE_FILL_VALUES
-
-
-def related_layout_path(zf: zipfile.ZipFile, slide_path: str) -> str | None:
-    rel_path = f"{dirname(slide_path)}/_rels/{Path(slide_path).name}.rels"
-    try:
-        root = ET.fromstring(zf.read(rel_path))
-    except Exception:
-        return None
-    for rel in root.findall(f"{{{REL_NS}}}Relationship"):
-        rel_type = rel.attrib.get("Type", "")
-        target = rel.attrib.get("Target", "")
-        if rel_type.endswith("/slideLayout") and target:
-            return normpath(f"{dirname(slide_path)}/{target}").lstrip("/")
-    return None
 
 
 def find_cover_white_panel_issues(pptx_path: Path) -> list[str]:
@@ -547,8 +623,9 @@ def main() -> int:
     parser.add_argument("--outdir", type=Path, help="Directory for render artifacts")
     parser.add_argument("--skip-render", action="store_true", help="Skip PDF/image rendering")
     parser.add_argument("--allow-notes", action="store_true", help="Allow speaker notes parts in the PPTX package")
-    parser.add_argument("--logo-safe-width-in", type=float, default=DEFAULT_LOGO_SAFE_WIDTH_IN, help="Reserved bottom-right logo safe-zone width in inches")
-    parser.add_argument("--logo-safe-height-in", type=float, default=DEFAULT_LOGO_SAFE_HEIGHT_IN, help="Reserved bottom-right logo safe-zone height in inches")
+    parser.add_argument("--logo-padding-in", type=float, default=DEFAULT_LOGO_PADDING_IN, help="Padding around the detected bottom-right logo in inches")
+    parser.add_argument("--logo-safe-width-in", type=float, help=argparse.SUPPRESS)
+    parser.add_argument("--logo-safe-height-in", type=float, help=argparse.SUPPRESS)
     parser.add_argument("--json", action="store_true", help="Emit JSON report")
     args = parser.parse_args()
 
@@ -615,15 +692,14 @@ def main() -> int:
         not negative_extents,
         "ok" if not negative_extents else "; ".join(negative_extents[:20]),
     )
-    logo_safe_zone_issues = find_logo_safe_zone_issues(
+    logo_overlap_issues = find_logo_overlap_issues(
         pptx_path,
-        width_in=args.logo_safe_width_in,
-        height_in=args.logo_safe_height_in,
+        padding_in=args.logo_padding_in,
     )
     check(
-        "bottom-right logo safe zone",
-        not logo_safe_zone_issues,
-        "ok" if not logo_safe_zone_issues else "; ".join(logo_safe_zone_issues[:20]),
+        "bottom-right logo overlap",
+        not logo_overlap_issues,
+        "ok" if not logo_overlap_issues else "; ".join(logo_overlap_issues[:20]),
     )
     cover_white_panel_issues = find_cover_white_panel_issues(pptx_path)
     check(

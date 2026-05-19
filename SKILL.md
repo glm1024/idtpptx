@@ -84,7 +84,7 @@ The V1 template was distilled from a practical internal training deck. The origi
 Keep reusable elements:
 
 - Inspur logo placement
-- Bottom-right logo safe zone
+- Bottom-right logo protection
 - White background and blue brand accents
 - Thin top divider line
 - Small right-top blue corner marker
@@ -127,7 +127,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
 - Tables should default to vertical-middle cell alignment. Center short categorical values, but left-align descriptive text; normal 3-5 column tables should usually use `12-13 pt` body text.
-- Main content must not enter the bottom-right logo safe zone. If a table, screenshot, callout, or text block reaches the logo area, resize it, split the slide, or move the content upward/left.
+- Main content may use the space above and left of the bottom-right logo, but must not cover the logo itself. Keep a small breathing margin around the logo mark.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
 - Avoid base-`pptx` colorful infographic styling: multicolor numbered circles, multicolor card grids, alternating colored vertical bars, rainbow process flows, decorative icon grids, and shadows used only to make cards look designed.
 - Use non-blue colors only when they encode a stable business meaning, such as red annotation/risk or consistent status colors.

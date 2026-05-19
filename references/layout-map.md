@@ -96,7 +96,7 @@ Rules:
 - Use `12-13 pt` body text for normal 3-5 column tables with 3-7 rows. Use `10.5-11.5 pt` only for genuinely dense tables.
 - Use `1.05-1.18x` table line spacing and balanced cell padding; do not stretch rows while keeping the text small.
 - If table is too dense, split by category.
-- Never let the table frame, last column, row fill, or cell text extend into the bottom-right logo safe zone. Shorten columns, reduce rows, or split the table before it reaches the logo.
+- Never let the table frame, last column, row fill, or cell text overlap the bottom-right logo. The space above and left of the logo remains usable.
 
 ### 5. Screenshot Step Page
 
@@ -115,7 +115,7 @@ Rules:
 - Add concise text above the screenshots.
 - Keep screenshot captions and step labels compact, usually `10-12 pt` with `1.0-1.2x` line spacing.
 - Remove unused screenshot placeholders entirely.
-- Keep screenshots, arrows, and annotation boxes outside the bottom-right logo safe zone. If the screenshot must be large, crop the meaningful area instead of covering the logo.
+- Keep screenshots, arrows, and annotation boxes off the bottom-right logo itself. If the screenshot must be large, crop the meaningful area instead of covering the logo.
 
 ### 6. Choice/Recommendation Page
 
@@ -167,7 +167,7 @@ Rules:
 - Prefer a restrained blue-gray sequence, a compact table, or a light line flow.
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
-- Keep the final step, callout, or summary away from the bottom-right logo safe zone.
+- Keep the final step, callout, or summary from overlapping the bottom-right logo.
 
 ## Mapping Heuristics
 
@@ -179,4 +179,4 @@ Rules:
 - If the content is an exception or support answer, use Problem/Solution.
 - If no strong pattern fits, use Text Explanation Page.
 - Remove surplus placeholders, screenshot boxes, arrows, and table rows entirely; do not just clear their text.
-- Before finalizing a slide, reserve the bottom-right logo safe zone first, then fit content into the remaining canvas.
+- Before finalizing a slide, make sure the bottom-right logo remains uncovered; do not reserve a large empty area above or left of it.
