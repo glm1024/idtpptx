@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from posixpath import dirname, normpath
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -28,6 +29,8 @@ PLACEHOLDER_RE = re.compile(
 )
 
 P_NS = {"p": "http://schemas.openxmlformats.org/presentationml/2006/main"}
+CT_NS = "http://schemas.openxmlformats.org/package/2006/content-types"
+REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -129,6 +132,83 @@ def has_notes_master_order_issue(pptx_path: Path) -> bool:
     return notes >= 0 and slides >= 0 and notes > slides
 
 
+def relationship_source_dir(rel_path: str) -> str:
+    if rel_path == "_rels/.rels":
+        return ""
+    owner_part = rel_path.replace("/_rels/", "/")
+    if owner_part.endswith(".rels"):
+        owner_part = owner_part[:-5]
+    return dirname(owner_part)
+
+
+def find_package_reference_issues(pptx_path: Path) -> tuple[list[str], list[str]]:
+    missing_overrides: list[str] = []
+    missing_relationships: list[str] = []
+
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            names = set(zf.namelist())
+
+            content_types = ET.fromstring(zf.read("[Content_Types].xml"))
+            for override in content_types.findall(f"{{{CT_NS}}}Override"):
+                part_name = override.attrib.get("PartName", "")
+                part = part_name.lstrip("/")
+                if part and part not in names:
+                    missing_overrides.append(part_name)
+
+            rel_paths = sorted(name for name in names if name.endswith(".rels"))
+            for rel_path in rel_paths:
+                rel_root = ET.fromstring(zf.read(rel_path))
+                source_dir = relationship_source_dir(rel_path)
+                for rel in rel_root.findall(f"{{{REL_NS}}}Relationship"):
+                    target = rel.attrib.get("Target", "")
+                    mode = rel.attrib.get("TargetMode")
+                    if not target or mode == "External" or target.startswith(("http:", "https:", "mailto:")):
+                        continue
+                    target_without_fragment = target.split("#", 1)[0]
+                    if target_without_fragment.startswith("/"):
+                        resolved = target_without_fragment.lstrip("/")
+                    else:
+                        resolved = normpath(f"{source_dir}/{target_without_fragment}").lstrip("/")
+                    if resolved not in names:
+                        rel_id = rel.attrib.get("Id", "(no id)")
+                        missing_relationships.append(f"{rel_path} {rel_id} -> {target} ({resolved})")
+    except Exception as exc:
+        return [f"could not inspect package references: {exc}"], []
+
+    return missing_overrides, missing_relationships
+
+
+def find_negative_extents(pptx_path: Path) -> list[str]:
+    issues: list[str] = []
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            for name in zf.namelist():
+                if not name.startswith("ppt/slides/slide") or not name.endswith(".xml"):
+                    continue
+                root = ET.fromstring(zf.read(name))
+                for ext in root.findall(".//{http://schemas.openxmlformats.org/drawingml/2006/main}ext"):
+                    cx = ext.attrib.get("cx", "0")
+                    cy = ext.attrib.get("cy", "0")
+                    if cx.startswith("-") or cy.startswith("-"):
+                        issues.append(f"{name}: cx={cx}, cy={cy}")
+    except Exception as exc:
+        issues.append(f"could not inspect shape extents: {exc}")
+    return issues
+
+
+def find_notes_parts(pptx_path: Path) -> list[str]:
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            return sorted(
+                name
+                for name in zf.namelist()
+                if name.startswith("ppt/notesSlides/") or name.startswith("ppt/notesMasters/")
+            )
+    except Exception as exc:
+        return [f"could not inspect notes parts: {exc}"]
+
+
 def make_contact_sheet(images: list[Path], output: Path, python_cmd: str) -> tuple[bool, str]:
     code = r"""
 from pathlib import Path
@@ -168,6 +248,7 @@ def main() -> int:
     parser.add_argument("--python", help="Python command used for helper modules such as markitdown/defusedxml")
     parser.add_argument("--outdir", type=Path, help="Directory for render artifacts")
     parser.add_argument("--skip-render", action="store_true", help="Skip PDF/image rendering")
+    parser.add_argument("--allow-notes", action="store_true", help="Allow speaker notes parts in the PPTX package")
     parser.add_argument("--json", action="store_true", help="Emit JSON report")
     args = parser.parse_args()
 
@@ -215,6 +296,30 @@ def main() -> int:
         "PowerPoint presentation.xml order",
         not has_notes_master_order_issue(pptx_path),
         "p:notesMasterIdLst appears after p:sldIdLst" if has_notes_master_order_issue(pptx_path) else "ok",
+    )
+
+    missing_overrides, missing_relationships = find_package_reference_issues(pptx_path)
+    check(
+        "Content_Types part references",
+        not missing_overrides,
+        "ok" if not missing_overrides else "; ".join(missing_overrides[:20]),
+    )
+    check(
+        "relationship targets",
+        not missing_relationships,
+        "ok" if not missing_relationships else "; ".join(missing_relationships[:20]),
+    )
+    negative_extents = find_negative_extents(pptx_path)
+    check(
+        "non-negative shape extents",
+        not negative_extents,
+        "ok" if not negative_extents else "; ".join(negative_extents[:20]),
+    )
+    notes_parts = find_notes_parts(pptx_path)
+    check(
+        "notes parts",
+        args.allow_notes or not notes_parts,
+        "ok" if not notes_parts else f"{len(notes_parts)} note-related part(s); pass --allow-notes only when speaker notes are intentional",
     )
 
     markitdown_python, python_detail = resolve_python(args.python, ["markitdown"])

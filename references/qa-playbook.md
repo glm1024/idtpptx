@@ -67,7 +67,10 @@ Use `unzip -t` for package integrity and the base `pptx` `validate.py` for OpenX
 Known failure patterns:
 
 - `p:notesMasterIdLst` after `p:sldIdLst` in `ppt/presentation.xml`: LibreOffice may render it, but PowerPoint can prompt to repair. Valid order puts `p:notesMasterIdLst` before `p:sldIdLst`.
+- `[Content_Types].xml` `Override` entries that point to package parts that no longer exist, such as stale `ppt/slideMasters/slideMasterN.xml` entries after generator cleanup.
 - Broken or stale relationship ids after duplicating, deleting, or reordering slides.
+- Negative `a:xfrm/a:ext` dimensions on generated line shapes. If a line is drawn from right to left or bottom to top, normalize the bounding box to positive width/height and use `flipH`/`flipV` to preserve direction.
+- Unintentional `ppt/notesSlides/` and `ppt/notesMasters/` parts from generated decks. If the deck has no speaker notes, remove notes parts, the notes relationships, notes content types, and `p:notesMasterIdLst`.
 - Orphaned notes, media, charts, or layouts left after template cleanup.
 - Invalid shape options from generated decks, especially unusual shadow, gradient, or rounded-rectangle combinations.
 - Content type entries missing for new media, slide, notes, chart, or embedding files.

@@ -49,6 +49,22 @@ Prefer template-based editing over drawing new slides from scratch.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
+## Generation Policy
+
+Do not treat `idtpptx` as permission to bypass the base `pptx` skill. The safest path is still:
+
+1. Start from the `idtpptx` template.
+2. Use the base `pptx` editing workflow to duplicate, delete, reorder, and edit slides.
+3. Use PptxGenJS from scratch only when template-based editing is truly not practical.
+
+If PptxGenJS or another generator is used from scratch, run an explicit PowerPoint-compatibility cleanup before delivery:
+
+- Remove unintentional `ppt/notesSlides/` and `ppt/notesMasters/` parts unless speaker notes are explicitly required.
+- Remove notes relationships, notes content type overrides, and `p:notesMasterIdLst` when notes are not required.
+- Normalize generated line shapes so `a:xfrm/a:ext` `cx` and `cy` are never negative. Use `flipH` or `flipV` to preserve direction.
+- Remove `[Content_Types].xml` overrides for parts that do not exist in the package.
+- Run `scripts/pptx_quality_gate.py`; do not deliver if it reports `BLOCK`.
+
 ## What To Load
 
 - For visual rules, read `references/style-guide.md`.
