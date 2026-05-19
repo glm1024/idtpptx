@@ -32,6 +32,39 @@ npx skills add https://github.com/glm1024/idtpptx -g -y
 把这份大纲整理成 IDT / 浪潮风格的 PowerPoint。
 ```
 
+## 更新
+
+如果是按上面的全局方式安装，后续更新 `idtpptx`：
+
+```bash
+npx skills update idtpptx -g -y
+```
+
+建议同时更新基础 `pptx` skill：
+
+```bash
+npx skills update pptx -g -y
+```
+
+也可以一次更新全部全局 skills：
+
+```bash
+npx skills update -g -y
+```
+
+如果是项目级安装，把 `-g` 改成 `-p`，或在对应项目目录下运行更新命令。
+
+维护这个仓库时，流程是：
+
+1. 修改 `SKILL.md`、`references/`、`assets/templates/` 或 `scripts/`。
+2. 本地检查 skill 是否能被识别：
+
+   ```bash
+   npx skills add /path/to/idtpptx -l
+   ```
+
+3. 提交并推送到 GitHub。别人再运行 `npx skills update idtpptx -g -y` 就能拿到更新。
+
 ## 这个 skill 提供什么
 
 - 清理过业务内容的公司风格 PPTX 模板，位于 `assets/templates/`
