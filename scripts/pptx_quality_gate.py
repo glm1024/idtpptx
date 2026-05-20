@@ -25,7 +25,9 @@ from xml.etree import ElementTree as ET
 
 PLACEHOLDER_RE = re.compile(
     r"项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|"
-    r"说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum",
+    r"说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|"
+    r"单击此处添加|点击此处添加|click\s+to\s+add|"
+    r"用短句说明|待补充|xxxx|lorem|ipsum",
     re.IGNORECASE,
 )
 PROCESS_LEAK_RE = re.compile(
@@ -169,6 +171,14 @@ TABLE_HORIZONTAL_ALIGNMENT_MAP = {
     "thaiDist": "distributed",
 }
 TABLE_TOP_ALLOWED_CHARS = 80
+TITLE_SYSTEM_REF = "references/title-system.md"
+PLACEHOLDER_SKIP_TYPES = {"sldNum", "dt", "ftr"}
+CONTENT_TITLE_MIN_PT = 24
+CONTENT_TITLE_MAX_PT = 32
+CONTENT_TITLE_MAX_BOX_HEIGHT_IN = 1.05
+CONTENT_TITLE_MAX_BOTTOM_IN = 1.25
+COVER_TITLE_MIN_PT = 30
+COVER_TITLE_MAX_PT = 46
 IMAGE_REL_TYPE_SUFFIX = "/image"
 IMAGE_CONTENT_TYPE_PREFIX = "image/"
 IMAGE_SIGNATURE_CHECKS = {
@@ -637,6 +647,30 @@ def object_font_faces(element: ET.Element) -> list[str]:
     return sorted(set(fonts))
 
 
+def object_font_sizes(element: ET.Element) -> list[float]:
+    sizes: list[float] = []
+    for text_properties in element.findall(".//a:rPr", OOXML_NS):
+        value = text_properties.attrib.get("sz")
+        if value:
+            sizes.append(int(value) / 100)
+    for text_properties in element.findall(".//a:endParaRPr", OOXML_NS):
+        value = text_properties.attrib.get("sz")
+        if value:
+            sizes.append(int(value) / 100)
+    for text_properties in element.findall(".//a:defRPr", OOXML_NS):
+        value = text_properties.attrib.get("sz")
+        if value:
+            sizes.append(int(value) / 100)
+    return sorted(set(sizes))
+
+
+def object_placeholder_info(element: ET.Element) -> tuple[str, str] | None:
+    placeholder = element.find(".//p:ph", OOXML_NS)
+    if placeholder is None:
+        return None
+    return placeholder.attrib.get("type", ""), placeholder.attrib.get("idx", "")
+
+
 def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> bool:
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
@@ -731,6 +765,7 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
         xfrm = find_object_xfrm(child)
         if xfrm is None:
             continue
+        placeholder = object_placeholder_info(child)
         yield {
             "kind": tag,
             "name": object_name(child),
@@ -739,6 +774,10 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
             "fill": object_fill(child),
             "text_colors": object_text_colors(child),
             "fonts": object_font_faces(child),
+            "font_sizes": object_font_sizes(child),
+            "placeholder_present": placeholder is not None,
+            "placeholder_type": placeholder[0] if placeholder else "",
+            "placeholder_idx": placeholder[1] if placeholder else "",
             "rect": transform(xfrm_rect(xfrm)),
         }
 
@@ -1321,6 +1360,145 @@ def find_edge_warnings(pptx_path: Path) -> list[str]:
     return warnings
 
 
+def find_unfilled_placeholder_issues(pptx_path: Path) -> list[str]:
+    issues: list[str] = []
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for shape in sp_tree.findall(".//p:sp", OOXML_NS):
+                    placeholder = object_placeholder_info(shape)
+                    if placeholder is None:
+                        continue
+                    placeholder_type, _placeholder_idx = placeholder
+                    if placeholder_type in PLACEHOLDER_SKIP_TYPES:
+                        continue
+                    text = object_text(shape).strip()
+                    if text and not PLACEHOLDER_RE.search(text):
+                        continue
+                    name = object_name(shape) or "(unnamed)"
+                    excerpt = f" text={text[:30]!r}" if text else " empty"
+                    issues.append(
+                        f"{slide_path}: placeholder {name!r}{excerpt} type={placeholder_type or 'unknown'} "
+                        f"was not replaced or deleted; clean template placeholder residue per {TITLE_SYSTEM_REF}"
+                    )
+    except Exception as exc:
+        issues.append(f"could not inspect slide placeholders: {exc}")
+    return issues
+
+
+def is_top_title_object(obj: dict[str, object], slide_w: int) -> bool:
+    text = str(obj.get("text", "")).strip()
+    if not text:
+        return False
+    if PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+        return False
+    x, y, width, height = obj["rect"]
+    if y > inches(1.05) or width < slide_w * 0.18:
+        return False
+    placeholder_type = str(obj.get("placeholder_type", ""))
+    name = str(obj.get("name", ""))
+    return placeholder_type in {"title", "ctrTitle", "subTitle"} or "标题" in name or "title" in name.lower()
+
+
+def find_title_system_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, _slide_h = slide_size(pptx_path)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_index, slide_path in enumerate(slide_paths, start=1):
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                warned_placeholder_names: set[str] = set()
+                for shape in sp_tree.findall(".//p:sp", OOXML_NS):
+                    placeholder = object_placeholder_info(shape)
+                    if placeholder is None:
+                        continue
+                    placeholder_type, _placeholder_idx = placeholder
+                    name = object_name(shape) or "(unnamed)"
+                    text = object_text(shape).strip()
+                    if not text or PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+                        continue
+                    if placeholder_type not in {"title", "ctrTitle", "subTitle"} and "标题" not in name and "title" not in name.lower():
+                        continue
+                    sizes = object_font_sizes(shape)
+                    max_size = max(sizes) if sizes else None
+                    if slide_index == 1:
+                        if max_size is not None and (max_size < COVER_TITLE_MIN_PT or max_size > COVER_TITLE_MAX_PT):
+                            warnings.append(
+                                f"{slide_path}: cover title placeholder {name!r} uses {max_size:.1f} pt; "
+                                f"keep the main cover title around {COVER_TITLE_MIN_PT}-{COVER_TITLE_MAX_PT} pt per {TITLE_SYSTEM_REF}"
+                            )
+                            warned_placeholder_names.add(name)
+                        continue
+                    if max_size is not None and (max_size < CONTENT_TITLE_MIN_PT or max_size > CONTENT_TITLE_MAX_PT):
+                        warnings.append(
+                            f"{slide_path}: content title placeholder {name!r} uses {max_size:.1f} pt; "
+                            f"use {CONTENT_TITLE_MIN_PT}-{CONTENT_TITLE_MAX_PT} pt and resize the title zone instead of relying on PowerPoint defaults"
+                        )
+                        warned_placeholder_names.add(name)
+
+                title_objects = [
+                    obj
+                    for obj in iter_slide_objects(sp_tree)
+                    if is_top_title_object(obj, slide_w)
+                ]
+                if slide_index > 1 and len(title_objects) > 1:
+                    names = ", ".join(rect_label(obj) for obj in title_objects[:4])
+                    warnings.append(
+                        f"{slide_path}: multiple top title-like objects ({names}); keep one audience-facing title "
+                        f"and remove leftover title placeholders per {TITLE_SYSTEM_REF}"
+                    )
+
+                for obj in title_objects:
+                    _x, y, _width, height = obj["rect"]
+                    sizes = [float(size) for size in obj.get("font_sizes", [])]
+                    max_size = max(sizes) if sizes else None
+                    if slide_index == 1:
+                        if max_size is not None and (max_size < COVER_TITLE_MIN_PT or max_size > COVER_TITLE_MAX_PT):
+                            if str(obj.get("name", "")) in warned_placeholder_names:
+                                continue
+                            warnings.append(
+                                f"{slide_path}: cover title {rect_label(obj)} uses {max_size:.1f} pt; "
+                                f"keep the main cover title around {COVER_TITLE_MIN_PT}-{COVER_TITLE_MAX_PT} pt per {TITLE_SYSTEM_REF}"
+                            )
+                        continue
+
+                    if max_size is not None and (max_size < CONTENT_TITLE_MIN_PT or max_size > CONTENT_TITLE_MAX_PT):
+                        if str(obj.get("name", "")) in warned_placeholder_names:
+                            continue
+                        warnings.append(
+                            f"{slide_path}: content title {rect_label(obj)} uses {max_size:.1f} pt; "
+                            f"use {CONTENT_TITLE_MIN_PT}-{CONTENT_TITLE_MAX_PT} pt and resize the title zone instead of relying on PowerPoint defaults"
+                        )
+                    if height > inches(CONTENT_TITLE_MAX_BOX_HEIGHT_IN):
+                        warnings.append(
+                            f"{slide_path}: content title {rect_label(obj)} box is {height / EMUS_PER_INCH:.2f} in tall; "
+                            f"compress oversized title placeholders per {TITLE_SYSTEM_REF}"
+                        )
+                    if y + height > inches(CONTENT_TITLE_MAX_BOTTOM_IN):
+                        warnings.append(
+                            f"{slide_path}: content title {rect_label(obj)} pushes below {CONTENT_TITLE_MAX_BOTTOM_IN:.2f} in; "
+                            f"keep the top title band compact and start body content around 1.15-1.35 in"
+                        )
+    except Exception as exc:
+        warnings.append(f"could not inspect title system: {exc}")
+    return warnings
+
+
 def is_body_content_object(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
     if is_logo_object(obj, slide_w, slide_h):
         return False
@@ -1805,6 +1983,12 @@ def main() -> int:
         not muted_text_color_issues,
         "ok" if not muted_text_color_issues else "; ".join(muted_text_color_issues[:20]),
     )
+    unfilled_placeholder_issues = find_unfilled_placeholder_issues(pptx_path)
+    check(
+        "unfilled slide placeholders",
+        not unfilled_placeholder_issues,
+        "ok" if not unfilled_placeholder_issues else "; ".join(unfilled_placeholder_issues[:20]),
+    )
     notes_parts = find_notes_parts(pptx_path)
     check(
         "notes parts",
@@ -1823,6 +2007,12 @@ def main() -> int:
         warn(message)
     if len(content_utilization_warnings) > 20:
         warn(f"{len(content_utilization_warnings) - 20} additional content utilization warning(s) omitted")
+
+    title_system_warnings = find_title_system_warnings(pptx_path)
+    for message in title_system_warnings[:20]:
+        warn(message)
+    if len(title_system_warnings) > 20:
+        warn(f"{len(title_system_warnings) - 20} additional title system warning(s) omitted")
 
     risk_warnings = find_slide_risk_warnings(pptx_path)
     for message in risk_warnings[:20]:

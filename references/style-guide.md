@@ -48,7 +48,8 @@ For exact color and font tokens, `references/theme-contract.md` is the source of
 - Use bold `微软雅黑` for titles, section labels, card headings, and table headers.
 - Avoid `宋体`, `仿宋`, `楷体`, `黑体`, Calibri, Arial, Aptos, or theme-default fonts in normal editable text unless the user explicitly asks to match a source deck.
 - Do not import theme-factory font pairings such as DejaVu Sans, FreeSans, or FreeSerif into Chinese company PPTX work.
-- Normal slide titles are compact and top-left, usually `24-30 pt`.
+- Normal slide titles are compact and top-left, usually `24-30 pt`; see `references/title-system.md` before adjusting title size or title band height.
+- Remove unused title/subtitle placeholders instead of clearing their text. Final slides must not show `单击此处添加标题`, `单击此处添加副标题`, or similar PowerPoint default prompts.
 - Main body text is usually `13-18 pt`; use larger body text on sparse slides and split the slide before shrinking below readable size.
 - Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` on sparse explanation pages with obvious empty space.
 - Tables, dense process cards, captions, and footnotes may use tighter spacing; follow `references/typography.md` for the scenario-specific size and line-spacing rules.
@@ -81,11 +82,14 @@ Normal content pages usually include:
 - Logo at bottom-right.
 - Main content occupying the center with comfortable margins.
 
+The normal title band should feel compact. If a title looks too small inside a large title placeholder, first delete leftover placeholders and compress the title zone, then raise the title toward `26-28 pt`; do not keep an oversized empty title area.
+
 Section divider pages usually include:
 
 - Center blue horizontal bar.
 - Section number block attached to the bar.
 - Simple section title in white text inside the bar.
+- No extra top-left title placeholder.
 
 ## Screenshots
 
@@ -115,3 +119,4 @@ Section divider pages usually include:
 - DejaVu, FreeSans, FreeSerif, Aptos, Calibri, Arial, Songti, Fangsong, Kaiti, or other non-YaHei editable fonts in normal Chinese company content.
 - Center-aligned body paragraphs.
 - Keeping old screenshots, URLs, contacts, or product instructions from a source deck as accidental placeholders.
+- PowerPoint default placeholder prompts such as `单击此处添加标题`, `单击此处添加副标题`, or `Click to add title`.

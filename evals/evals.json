@@ -108,6 +108,17 @@
         "When code generation is unavoidable, validates the result with rendered slide images and the idtpptx QA helper's logo/content-utilization checks.",
         "Treats duplicate visible logos as a blocking issue and content-underuse warnings as pages requiring visual redesign."
       ]
+    },
+    {
+      "id": "title-placeholder-cleanup-and-fit",
+      "prompt": "请做一份 8 页 IDT/Inspur 风格 PPTX，主题是“AI 代码采纳统计评审方案”。需要封面、章节页、正文页和对比表页。最终文件里不要出现“单击此处添加标题/副标题”这类原始占位符；章节页只保留中间蓝色章节条标题；普通正文页标题要和顶部标题区域匹配，不要标题很小但上方空间很大，也不要为了填满标题框把字号放得过大。",
+      "expected_behavior": [
+        "Deletes or replaces all unused title/subtitle placeholders instead of clearing text and leaving placeholder shapes.",
+        "Keeps section divider pages to one center blue-bar title system without an extra top-left title placeholder.",
+        "Uses a compact normal content title band with about 24-30 pt title text and body content starting in the registered content zone.",
+        "Does not show PowerPoint default prompts such as 单击此处添加标题, 单击此处添加副标题, or Click to add title.",
+        "Runs the QA helper and treats placeholder/title-system blockers or warnings as issues to fix before delivery."
+      ]
     }
   ]
 }

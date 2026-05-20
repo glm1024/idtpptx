@@ -2,7 +2,7 @@
 
 Use this as the default typography contract for IDT/Inspur PPTX work. It is tuned for 16:9 internal reports, training decks, review materials, and operation manuals.
 
-The authoritative font contract lives in `references/theme-contract.md`. This file gives scenario-specific size, spacing, and alignment rules.
+The authoritative font contract lives in `references/theme-contract.md`. Title placeholder cleanup and title-zone decisions live in `references/title-system.md`. This file gives scenario-specific size, spacing, and alignment rules.
 
 ## Font Family
 
@@ -25,7 +25,7 @@ For 16:9 slides, use these ranges before shrinking content. If content does not 
 | Cover title | 38 pt | 34-44 pt | Use bold; keep it visually dominant but not marketing-style oversized. |
 | Cover subtitle | 24 pt | 20-28 pt | Use when the subtitle is a real qualifier, not a second title. |
 | Cover metadata/date/version | 15 pt | 13-16 pt | Keep plain text; do not put it in a white card. |
-| Normal slide title | 28 pt | 24-30 pt | Top-left, bold, usually one line. |
+| Normal slide title | 28 pt | 24-30 pt | Top-left, bold, usually one line; use `references/title-system.md` before changing the title zone. |
 | Section divider title | 26 pt | 22-30 pt | White text on the blue bar, bold. |
 | Card/process heading | 17 pt | 15-20 pt | Use bold; keep each heading short. |
 | Main body text | 15 pt | 13-18 pt | Use 16-18 pt on sparse pages, 13-15 pt on normal pages. |
@@ -37,6 +37,13 @@ For 16:9 slides, use these ranges before shrinking content. If content does not 
 | Big numeric callout | 36 pt | 30-48 pt | Pair with a 10-12 pt label. |
 
 Do not use body text below `12 pt` outside tables, labels, footnotes, or dense process cards. Do not use table body below `10.5 pt` unless the table is genuinely dense and cannot be split; never go below `9.5 pt` for deliverables intended to be read on screen.
+
+## Title Area Fit
+
+- For normal content slides, solve title mismatch with both layout and font sizing: remove leftover placeholders first, keep the top title band compact, then use `24-30 pt` title text.
+- Do not enlarge title text above the normal range just to fill a tall PowerPoint placeholder.
+- Do not keep a title placeholder taller than the title needs; if the title band pushes body content too low, compress the title area and move content up.
+- A long Chinese title may wrap to two lines at `22-26 pt`, but the title plus divider rule should still feel like a header, not a large empty hero area.
 
 ## Text Color Defaults
 

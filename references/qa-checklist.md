@@ -36,6 +36,7 @@ Fix before delivery:
 - Without an explicit user-approved style exception, the deck has drifted away from the fixed IDT/Inspur theme in `references/theme-contract.md`, such as a dominant dark tech, warm marketing, magazine, Swiss poster, or generic multi-theme palette.
 - The slide sequence was not mapped to registered page types in `references/layout-map.md`.
 - Placeholder text, old source-deck screenshots, old URLs, contacts, credentials, or product-specific source content remain unintentionally.
+- PowerPoint default prompts or unfilled placeholders remain in final slides, such as `单击此处添加标题`, `单击此处添加副标题`, `单击此处添加文本`, or `Click to add title`.
 - Agent/deck-production process text remains in final slides, such as `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, `不追求最终视觉定稿`, or similar notes about how the PPT was generated.
 - A deck-production setup page remains in the final deck, such as `初版目标与讨论范围`, `本轮先不展开`, or a page whose only purpose is to explain the draft's limitations rather than the business content.
 - Rendered text overlaps other text, table cells, screenshots, card borders, title rules, or the logo. Text overprint is a blocking readability bug.
@@ -43,6 +44,7 @@ Fix before delivery:
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
 - A slide has more than one visible Inspur logo, such as a master/layout logo plus an extra manually inserted logo.
 - Template chrome is duplicated inside the slide body, making the page look like a small PPT embedded inside a larger PPT.
+- A slide keeps more than one visible title system, such as a top-left title placeholder plus a section-divider title bar.
 - A screenshot needed for the task is too small to inspect after rendering.
 - A normal 3-5 column table is not readable at presentation size.
 - A normal table visibly mixes horizontal alignment modes or leaves short cell text stuck to the top/bottom instead of vertical middle.
@@ -64,6 +66,7 @@ Fix before delivery:
 - The mechanical helper warns about possible editable text overlap. Open the affected slide image and fix it unless the overlap is intentional and visually harmless.
 - The mechanical helper warns about text possibly overflowing its background/container. Open the affected slide image and fix it by wrapping, resizing the container, shortening the sentence, or splitting content.
 - The mechanical helper warns about mixed table alignment or non-middle table cell anchoring. Open the affected slide image and fix it unless a user-provided source table intentionally requires the exception.
+- The mechanical helper warns about title sizing or title-zone mismatch. Fix by deleting leftover placeholders, compressing the title band, and then adjusting title font size.
 - Normal business slides contain English-heavy labels or mixed Chinese-English phrases where a clear Chinese phrase exists, such as raw `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
 
 ### P2 Polish
@@ -81,7 +84,7 @@ Recommended commands:
 
 ```bash
 python -m markitdown output.pptx
-python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum"
+python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|单击此处添加|点击此处添加|click[[:space:]]+to[[:space:]]+add|xxxx|lorem|ipsum"
 unzip -t output.pptx
 python /path/to/pptx/scripts/office/validate.py output.pptx
 python /path/to/pptx/scripts/office/soffice.py --headless --convert-to pdf --outdir /tmp/render output.pptx
@@ -105,6 +108,8 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - New slides match the simple white-and-blue corporate style.
 - New slides do not introduce generic theme palettes, dark tech backgrounds, warm marketing fills, magazine-style color systems, or Swiss poster styling unless explicitly accepted by the user.
 - Titles are compact and aligned consistently.
+- Title placeholders are cleaned: no final slide shows PowerPoint default title/subtitle prompts, and section divider pages do not keep an extra top-left title placeholder.
+- Normal content titles fit the compact title band. If the title area looked too tall, the title zone was compressed before body content was shrunk.
 - Editable text uses `微软雅黑` / `Microsoft YaHei` by default. Any non-YaHei font in normal text is intentional, not a leftover theme/default font.
 - Normal editable text uses black or near-black, not muted gray, blue-gray, or pale low-contrast colors.
 - Main content fits the center content area without covering the logo.
@@ -119,7 +124,7 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 
 - No source-deck training text remains unless explicitly requested.
 - No old URLs, support contacts, email addresses, screenshots, product names, or credentials remain as accidental placeholders.
-- Placeholder words such as `项目名称`, `汇报主题`, `章节标题`, `正文页标题`, `截图占位`, `说明`, `对比项`, `方案 A`, or `方案 B` do not remain in final deliverables.
+- Placeholder words such as `项目名称`, `汇报主题`, `章节标题`, `正文页标题`, `截图占位`, `说明`, `对比项`, `方案 A`, `方案 B`, `单击此处添加标题`, or `Click to add title` do not remain in final deliverables.
 - No PPT-making process or draft-scaffolding text remains. A slide may describe project assumptions, scope boundaries, or next steps, but it must not describe the agent's plan for writing the deck or say that this generation pass chose not to finish evidence, visuals, screenshots, or data. By default, remove the whole meta page instead of rewriting it.
 - Technical wording follows the Chinese-first rule in `references/writing-style.md`: use Chinese for the business meaning, keep English only for accepted abbreviations, real module names, or precise code fields that the audience needs.
 - Screenshots belong to the current task and are readable.
@@ -127,7 +132,7 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 Recommended placeholder check:
 
 ```bash
-python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum"
+python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|单击此处添加|点击此处添加|click[[:space:]]+to[[:space:]]+add|xxxx|lorem|ipsum"
 python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.{0,8}(讨论范围|目标)|可讨论[[:space:]]*PPT|可讨论的?结构草稿|结构草稿|形成一版可讨论|后续.{0,8}(逐页)?补(充|齐).{0,8}(数据|截图|真实)|本轮.{0,6}不展开|先不展开|不追求最终视觉定稿|最终视觉定稿|先把主线讲顺.{0,12}证据补齐|先统一(口径|路径).{0,12}再讨论(实现)?细节"
 ```
 

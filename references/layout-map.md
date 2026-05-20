@@ -39,6 +39,7 @@ Rules:
 
 - Decide the full page sequence before replacing detailed text or media.
 - Use the registered template content zone at full slide scale. Do not place a compact mini-layout in the upper-left while leaving most of the right side and lower half empty.
+- Clean title placeholders before detailed content work. Replace the real page title, delete unused title/subtitle placeholders, and keep one title system per slide.
 - Reuse the template's page chrome. Do not add a second top rule, page marker, footer/logo, or artificial slide frame inside the existing template frame.
 - Treat the planning table as a working artifact, not a slide. By default, final decks should not include an initial `目标 / 范围 / 产出` page when that page only explains how the PPT draft was produced.
 - Do not create marketing landing pages, magazine-style spreads, Swiss-style poster pages, decorative hero images, WebGL/HTML slide structures, or arbitrary card grids inside this company PPTX skill.
@@ -71,6 +72,7 @@ Replace:
 Rules:
 
 - Put date, version, department, and objective copy as plain text on the cover canvas.
+- Keep one main title and one optional real subtitle. Delete any duplicated or unneeded title/subtitle placeholders before adjusting font size.
 - Do not create a white metadata card, white filled text box, white diagonal decoration, or empty white rectangle on top of the cover background.
 - If the cover needs more explanation than a short objective line, move that explanation to the next slide instead of adding a white panel to the cover.
 
@@ -90,6 +92,11 @@ Keep:
 - Section number block.
 - Simple white section title.
 
+Remove:
+
+- Any top-left title placeholder inherited from a content layout.
+- Any PowerPoint default prompt such as `单击此处添加标题`.
+
 ### 3. Text Explanation Page
 
 Use for definitions, context, principles, and plain explanation.
@@ -104,6 +111,7 @@ Best for:
 Rules:
 
 - Keep the top title compact.
+- Normal title text should usually be `24-30 pt`, with body content starting around `1.15-1.35 in` from the top. If the title area feels too tall, compress the title zone before shrinking body content.
 - Use short paragraphs or grouped bullet-like lines.
 - Use black or near-black body text; avoid gray explanatory text.
 - If the slide has only a few lines and obvious blank space, use larger body text with `1.5-1.7x` line spacing instead of leaving small single-spaced text.

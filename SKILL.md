@@ -17,6 +17,7 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Theme contract | `references/theme-contract.md` |
 | Theme preview | `references/theme-preview.md` |
 | Visual rules | `references/style-guide.md` |
+| Title system | `references/title-system.md` |
 | Page selection | `references/layout-map.md` |
 | Screenshot/image framing | `references/screenshot-framing.md` |
 | Typography and spacing | `references/typography.md` |
@@ -57,9 +58,10 @@ IDT/Inspur deck from zero when the company template is available.
 4. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
 5. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
 6. Use the base `pptx` editing workflow to duplicate template slides, delete unused slides, reorder the sequence, and replace text/media in existing layouts.
-7. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
-8. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-9. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+7. Normalize slide titles with `references/title-system.md`: delete unneeded title/subtitle placeholders, keep one title system per slide, and balance title font size against the compact template title band.
+8. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
+9. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
+10. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
@@ -73,6 +75,7 @@ The safest results come from reducing free-form design decisions:
 - Treat the template and `references/layout-map.md` as the golden source for page structure. Use registered company page types first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
 - Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `初版目标与讨论范围`, `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`. By default, delete the whole meta/planning slide instead of polishing it.
+- Clean title placeholders before polishing. Final decks must not show PowerPoint default prompts such as `单击此处添加标题` / `Click to add title`, and section divider pages should not keep a top-left title placeholder in addition to the center section bar.
 - Decide screenshot/image slots before touching assets. Preserve original screenshots when they are evidence; crop or scale them into a standard slot instead of redrawing them by default.
 - Let scripts catch mechanical defects. Placeholder residue, package references, notes parts, logo overlap, muted gray text, and rendering failures are QA bugs, not judgment calls.
 - When a rendered slide looks wrong, diagnose the cause first: theme drift, wrong page type, wrong material slot, component misuse, spacing problem, or logo-safe-zone problem. Do not fix by randomly shrinking text, adding margins, or covering issues with extra shapes.
@@ -118,6 +121,7 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 - For visual rules, read `references/style-guide.md`.
 - For fixed theme tokens and scenario variants, read `references/theme-contract.md`.
 - For visual calibration or theme-drift diagnosis, read `references/theme-preview.md`.
+- For title placeholder cleanup, title zone sizing, and title font-size decisions, read `references/title-system.md`.
 - For choosing pages, read `references/layout-map.md`.
 - For screenshots, generated images, or UI evidence, read `references/screenshot-framing.md`.
 - For font family, font size, line spacing, and density decisions, read `references/typography.md`.
@@ -144,6 +148,7 @@ Do not preserve source-deck business content:
 
 - Do not copy old training copy, URLs, email examples, screenshots, support contacts, or product-specific instructions unless the user explicitly asks for that exact content.
 - Replace all placeholders with the user's current material.
+- Delete unused title/subtitle placeholders entirely. Do not clear a title placeholder and leave the shape behind, because PowerPoint can show `单击此处添加标题` or `单击此处添加副标题` in edit mode.
 - Replace draft-process copy with reader-facing copy. Do not leave notes about how the PPT was planned, which evidence will be added later, or what this generation pass chose not to polish.
 - Delete deck-production setup pages before handoff. Keep a goal/scope page only when it is a real audience-facing business scope, not a note about producing an initial PPT draft.
 - If a screenshot slot is not needed, remove the entire placeholder group instead of leaving empty boxes.
@@ -151,7 +156,7 @@ Do not preserve source-deck business content:
 Before declaring a deck complete, run the full QA checklist in `references/qa-checklist.md`. At minimum, extract text and check for leftover template placeholders. Treat any hit as a bug:
 
 ```bash
-python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum"
+python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|单击此处添加|点击此处添加|click[[:space:]]+to[[:space:]]+add|xxxx|lorem|ipsum"
 ```
 
 When possible, run the bundled helper:
@@ -172,6 +177,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 
 - White canvas, restrained blue accents, minimal decoration.
 - Clear top title area, mostly left-aligned text.
+- Normal content titles should use a compact title band: delete stale title placeholders first, then use about `24-30 pt` title text rather than stretching a large PowerPoint placeholder.
 - Body, table, caption, and note text should default to black or near-black, not muted gray or blue-gray. Use red only for warnings, risks, key callouts, and screenshot annotations; use green/amber only for explicit status meaning.
 - Use `微软雅黑` / `Microsoft YaHei` as the default editable font. Do not rely on PowerPoint's theme defaults.
 - Use Chinese-first wording. Keep ordinary explanations, process labels, metric names, and card bodies in Chinese; reserve English for real product/module names, code fields, industry abbreviations, or terms that are genuinely clearer in English. Prefer `中文（English）` on first mention instead of English-only labels.
