@@ -151,6 +151,21 @@ TEXT_OVERLAP_MIN_RATIO = 0.12
 CONTAINER_TEXT_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.30
 CONTAINER_TEXT_OVERLAP_RATIO = 0.35
 CONTAINER_TEXT_TOLERANCE_IN = 0.04
+TABLE_ALIGNMENT_REF = "references/typography.md"
+TABLE_MIDDLE_ANCHORS = {"ctr", "mid", "middle"}
+TABLE_HORIZONTAL_ALIGNMENT_MAP = {
+    "": "left",
+    "l": "left",
+    "left": "left",
+    "ctr": "center",
+    "center": "center",
+    "r": "right",
+    "right": "right",
+    "just": "justify",
+    "dist": "distributed",
+    "thaiDist": "distributed",
+}
+TABLE_TOP_ALLOWED_CHARS = 80
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -1172,6 +1187,94 @@ def find_container_text_overflow_warnings(pptx_path: Path) -> list[str]:
     return warnings
 
 
+def table_cell_paragraphs(cell: ET.Element) -> list[str]:
+    paragraphs: list[str] = []
+    for paragraph in cell.findall("a:txBody/a:p", OOXML_NS):
+        text = "".join(node.text or "" for node in paragraph.findall(".//a:t", OOXML_NS)).strip()
+        if text:
+            paragraphs.append(text)
+    return paragraphs
+
+
+def normalize_table_horizontal_alignment(value: str | None) -> str:
+    raw = (value or "").strip()
+    return TABLE_HORIZONTAL_ALIGNMENT_MAP.get(raw, raw or "left")
+
+
+def table_cell_horizontal_alignments(cell: ET.Element) -> set[str]:
+    alignments: set[str] = set()
+    paragraphs = cell.findall("a:txBody/a:p", OOXML_NS)
+    for paragraph in paragraphs:
+        paragraph_properties = paragraph.find("a:pPr", OOXML_NS)
+        value = paragraph_properties.attrib.get("algn") if paragraph_properties is not None else None
+        alignments.add(normalize_table_horizontal_alignment(value))
+    return alignments or {"left"}
+
+
+def table_cell_vertical_anchor(cell: ET.Element) -> str:
+    cell_properties = cell.find("a:tcPr", OOXML_NS)
+    if cell_properties is None:
+        return ""
+    return cell_properties.attrib.get("anchor", "").strip()
+
+
+def allows_top_table_alignment(paragraphs: list[str]) -> bool:
+    if len(paragraphs) >= 2:
+        return True
+    text = "".join(paragraphs)
+    if len(text) >= TABLE_TOP_ALLOWED_CHARS:
+        return True
+    return bool(re.search(r"(^|\n)\s*(?:[-*•]|\d+[.)])\s+", text))
+
+
+def find_table_alignment_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                tables = root.findall(".//a:tbl", OOXML_NS)
+                for table_index, table in enumerate(tables, start=1):
+                    horizontal_modes: set[str] = set()
+                    vertical_not_middle = 0
+                    non_empty_cells = 0
+                    for cell in table.findall(".//a:tc", OOXML_NS):
+                        paragraphs = table_cell_paragraphs(cell)
+                        text = "".join(paragraphs).strip()
+                        if not text or PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+                            continue
+
+                        non_empty_cells += 1
+                        horizontal_modes.update(table_cell_horizontal_alignments(cell))
+
+                        anchor = table_cell_vertical_anchor(cell)
+                        if anchor not in TABLE_MIDDLE_ANCHORS and not allows_top_table_alignment(paragraphs):
+                            vertical_not_middle += 1
+
+                    if non_empty_cells == 0:
+                        continue
+
+                    if len(horizontal_modes) > 1:
+                        modes = ",".join(sorted(horizontal_modes))
+                        warnings.append(
+                            f"{slide_path}: table {table_index} mixes horizontal cell alignment modes={modes}; "
+                            f"choose one table-wide mode per {TABLE_ALIGNMENT_REF}"
+                        )
+
+                    if vertical_not_middle:
+                        warnings.append(
+                            f"{slide_path}: table {table_index} has {vertical_not_middle} short non-empty cell(s) "
+                            f"not vertically middle-anchored; set table cells to vertical middle per {TABLE_ALIGNMENT_REF}"
+                        )
+    except Exception as exc:
+        warnings.append(f"could not inspect table alignment: {exc}")
+    return warnings
+
+
 def find_slide_risk_warnings(pptx_path: Path) -> list[str]:
     warnings: list[str] = []
     slide_w, slide_h = slide_size(pptx_path)
@@ -1420,6 +1523,12 @@ def main() -> int:
         warn(message)
     if len(container_overflow_warnings) > 20:
         warn(f"{len(container_overflow_warnings) - 20} additional container text overflow warning(s) omitted")
+
+    table_alignment_warnings = find_table_alignment_warnings(pptx_path)
+    for message in table_alignment_warnings[:20]:
+        warn(message)
+    if len(table_alignment_warnings) > 20:
+        warn(f"{len(table_alignment_warnings) - 20} additional table alignment warning(s) omitted")
 
     markitdown_python, python_detail = resolve_python(args.python, ["markitdown"])
     if markitdown_python is None:

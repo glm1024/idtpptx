@@ -31,7 +31,7 @@ For 16:9 slides, use these ranges before shrinking content. If content does not 
 | Main body text | 15 pt | 13-18 pt | Use 16-18 pt on sparse pages, 13-15 pt on normal pages. |
 | Numbered bullets | 14.5 pt | 13-16 pt | Prefer short lines; avoid paragraph-length bullets. |
 | Process-card body | 12.5 pt | 11-14 pt | Compact, because cards usually appear in rows. |
-| Table header | 13 pt | 12-14.5 pt | Bold; center short headers unless the header is a long phrase. |
+| Table header | 13 pt | 12-14.5 pt | Bold; follows the table-wide horizontal alignment mode. |
 | Table body | 12 pt | 10.5-13.5 pt | Use `12-13 pt` for normal 3-5 column tables; reserve smaller sizes for dense tables. |
 | Captions, notes, sources | 9 pt | 8-10.5 pt | Use black or near-black; keep short. |
 | Big numeric callout | 36 pt | 30-48 pt | Pair with a 10-12 pt label. |
@@ -89,10 +89,11 @@ Default table alignment:
 
 - Vertically align table text to the middle by default. This is required for matrix, comparison, scope, responsibility, and capability tables where most cells are one or two lines.
 - Use top vertical alignment only when a cell contains a paragraph, a multi-item list, code, or `3+` wrapped lines. Do not top-align ordinary short table rows.
-- Header row: vertical middle; horizontal center for short labels such as `模块`, `能力`, `当前口径`, `建议`. Left-align only if the header itself is long or wraps.
-- Short categorical body cells should usually be horizontally centered: module names, status, priority, owner, yes/no, date, count, percentage, score, or short capability labels.
-- Descriptive body cells should be left-aligned: explanations, review comments, current paths, risk descriptions, actions, evidence, and any sentence-like text.
-- Numeric columns should be right-aligned only when comparing magnitudes across rows; otherwise center short numbers.
+- Choose one horizontal alignment mode for the whole table before filling content. Do not mix centered and left-aligned cells inside one table just because some cells are short and others are long.
+- Use **all-center mode** for compact matrices where nearly all cells are short labels, statuses, owners, dates, counts, percentages, scores, yes/no values, or one-line capability names.
+- Use **all-left mode** for evidence, risk, action, review, comparison, and responsibility tables where cells contain explanations, current paths, comments, or sentence-like Chinese text.
+- Header row follows the same horizontal mode as the body. Avoid centered headers with left-aligned body cells unless a provided source table or company template requires that exact treatment.
+- Avoid right-aligned numeric columns in normal IDT tables. If a financial/source-data table genuinely needs numeric right alignment, keep that as a documented exception or split it into a chart/source appendix rather than mixing alignment in a normal explanation table.
 - Keep left/right cell padding around `0.08-0.12 in` and top/bottom padding around `0.04-0.08 in`. Do not make rows tall while leaving small text visually floating in the middle.
 
 Default table sizing:
@@ -109,4 +110,4 @@ Default table sizing:
 - Normal explanation slide: `6-10` lines. Use `14-16 pt` body and `1.3-1.45x` line spacing.
 - Dense evidence slide: screenshots, tables, or `10+` lines. Use structured zones, `11-14 pt` text, and `1.1-1.28x` line spacing. Split the slide if readability depends on going smaller.
 - Process overview slide: card headings `16-18 pt`, card body `12-13 pt`, card line spacing `1.1-1.2x`. Avoid long card paragraphs.
-- Table slide: table body `12-13 pt` for normal 3-5 column tables, `10.5-11.5 pt` for dense tables, line spacing `1.05-1.18x`, vertical-middle alignment by default, and enough row height for Chinese characters. If the table overlaps the logo or needs smaller text, split it.
+- Table slide: table body `12-13 pt` for normal 3-5 column tables, `10.5-11.5 pt` for dense tables, line spacing `1.05-1.18x`, vertical-middle alignment by default, one consistent horizontal alignment mode per table, and enough row height for Chinese characters. If the table overlaps the logo or needs smaller text, split it.

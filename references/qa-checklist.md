@@ -43,6 +43,7 @@ Fix before delivery:
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
 - A screenshot needed for the task is too small to inspect after rendering.
 - A normal 3-5 column table is not readable at presentation size.
+- A normal table visibly mixes horizontal alignment modes or leaves short cell text stuck to the top/bottom instead of vertical middle.
 - Normal editable text uses muted gray, blue-gray, pale yellow, or another low-contrast color instead of black/near-black.
 - Zip integrity, OpenXML validation, package reference checks, relationship checks, non-negative shape extents, or PowerPoint compatibility checks fail.
 - Notes parts exist when speaker notes were not intentionally requested.
@@ -58,6 +59,7 @@ Fix before delivery:
 - Repeated elements are visibly misaligned.
 - The mechanical helper warns about possible editable text overlap. Open the affected slide image and fix it unless the overlap is intentional and visually harmless.
 - The mechanical helper warns about text possibly overflowing its background/container. Open the affected slide image and fix it by wrapping, resizing the container, shortening the sentence, or splitting content.
+- The mechanical helper warns about mixed table alignment or non-middle table cell anchoring. Open the affected slide image and fix it unless a user-provided source table intentionally requires the exception.
 - Normal business slides contain English-heavy labels or mixed Chinese-English phrases where a clear Chinese phrase exists, such as raw `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
 
 ### P2 Polish
@@ -128,7 +130,8 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Dense tables remain legible after rendering.
 - Normal 3-5 column tables with a few rows use `12-13 pt` body text; they do not waste space with small spreadsheet-like text inside oversized rows.
 - Table cells are vertically middle-aligned by default; only paragraph/list/code-heavy cells use top alignment.
-- Table horizontal alignment follows the content: short headers and categorical values are centered, while explanations, review comments, risks, evidence, and action text are left-aligned.
+- Each table uses one consistent horizontal alignment mode across header and body: all-center for compact categorical matrices, or all-left for explanation/evidence/risk/action tables.
+- Mixed center/left table alignment is treated as a defect unless it is inherited from a user-provided source table and intentionally preserved.
 - Sparse slides do not leave small single-spaced text floating in a large blank canvas; body text is enlarged, given `1.5-1.7x` line spacing, or the slide is redesigned.
 - Normal explanation/body slides use about `1.3-1.45x` line spacing; process cards, tables, captions, and footnotes use tighter spacing only when density requires it.
 - Body text stays at or above `12 pt` outside tables, captions, labels, and footnotes; table body text stays at or above `9.5 pt`.

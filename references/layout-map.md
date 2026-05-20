@@ -131,9 +131,9 @@ Rules:
 - Prefer fewer columns and readable row height.
 - Use black or near-black table text by default; do not use gray text for body cells.
 - Vertically align table text to the middle by default. Use top alignment only for paragraph-like cells, bullet lists, code, or cells with `3+` wrapped lines.
-- Header row should usually be centered horizontally and vertically.
-- Horizontally center short categorical columns such as module, status, owner, date, count, percentage, and short capability labels.
-- Left-align descriptive columns such as current path, review comment, risk, evidence, action, and sentence-like explanations.
+- Choose one horizontal alignment mode for the whole table before writing cell text. Use all-center mode only when the table is mostly short categorical values; use all-left mode when it contains explanations, evidence, risks, actions, or sentence-like text.
+- Header row follows the same horizontal mode as the body. Do not create a centered header row with mixed left/center body cells unless a provided source table explicitly requires it.
+- If columns need very different alignment treatments, the content probably needs a different layout, a split table, or shorter wording instead of a mixed-alignment table.
 - Use `12-13 pt` body text for normal 3-5 column tables with 3-7 rows. Use `10.5-11.5 pt` only for genuinely dense tables.
 - Use `1.05-1.18x` table line spacing and balanced cell padding; do not stretch rows while keeping the text small.
 - If table is too dense, split by category.

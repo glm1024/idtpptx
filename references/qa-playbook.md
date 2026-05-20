@@ -64,7 +64,8 @@ Look for:
 - Tables so dense that row text is not readable at normal presentation size.
 - Tables that use small body text while rows are tall and mostly empty.
 - Table text vertically stuck to the top or bottom when cells are otherwise short.
-- Descriptive table columns centered in a way that makes sentence-like content harder to scan.
+- A single table mixing centered headers, centered short cells, and left-aligned descriptive cells without an intentional source-table reason.
+- Sentence/evidence tables centered in a way that makes Chinese explanations harder to scan; compact categorical tables left-aligned in a way that makes the matrix look uneven.
 - Main body text that is still single-spaced on a sparse slide, or line spacing that is too loose for dense tables/process cards.
 - Mixed editable fonts such as YaHei plus Songti/Calibri/Arial/Aptos in the same normal body area.
 - Mixed Chinese-English wording that reads like raw implementation notes instead of a Chinese internal report.
@@ -102,7 +103,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check body, table, caption, and note text uses black or near-black; only warnings, risks, key callouts, and screenshot annotations use red.
 - Check wording is Chinese-first. Keep English for `AI`, `Git`, `IDE`, `API`, lowercase technical nouns such as `git` and `linux`, real module names, and necessary code fields; translate ordinary metrics, statuses, matching modes, and process labels.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
-- Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.
+- Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, and one consistent horizontal alignment mode for the whole table.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
 - Check the final sequence does not include deck-production setup pages. If a page only says what this draft will or will not cover, delete it rather than polishing it.
 - Check footnotes and sources are short enough not to collide with content.

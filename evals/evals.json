@@ -16,7 +16,8 @@
       "prompt": "请做一份方案对比 PPTX：对比 A、B、C 三种实施路径，说明适用场景、成本、风险和推荐结论，风格要适合内部评审。",
       "expected_behavior": [
         "Chooses Comparison Table or Choice rather than inventing colorful marketing cards.",
-        "Keeps table text readable, vertically aligned, and inside the company logo safe area.",
+        "Keeps table text readable, vertically middle-aligned, and inside the company logo safe area.",
+        "Chooses one horizontal alignment mode for the whole table instead of mixing centered and left-aligned cells.",
         "Uses only approved theme tokens and avoids warm marketing palettes or multi-theme color sets.",
         "Treats the recommendation as a restrained internal conclusion, not a sales slogan."
       ]
@@ -73,6 +74,17 @@
         "Keeps each card body text inside its card background instead of spanning across adjacent cards.",
         "Shortens copy, increases container height, or splits content when text cannot fit.",
         "Runs visual QA and treats container text overflow warnings as pages needing review."
+      ]
+    },
+    {
+      "id": "table-alignment-consistency",
+      "prompt": "请做一页“精确匹配候选：三层硬条件缺一不可”的 PPTX，用 4 列表格说明层级、判断内容、通过标准、业务含义。表格正文比较短但有解释句，要求单元格垂直居中，水平对齐整表统一，不要出现有的列居中、有的列左对齐。",
+      "expected_behavior": [
+        "Uses a registered Comparison Table layout rather than a card grid.",
+        "Sets all non-empty table cells to vertical-middle alignment unless a cell genuinely has paragraph/list/code-heavy content.",
+        "Chooses all-left or all-center as a table-wide horizontal mode and applies it consistently to header and body.",
+        "Does not mix centered and left-aligned cells as a visual shortcut.",
+        "Runs the QA helper and treats mixed table alignment warnings as pages needing review."
       ]
     }
   ]

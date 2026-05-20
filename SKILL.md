@@ -164,7 +164,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
 - Screenshots should preserve evidence by default. Use generated or redesigned images only when the user asks for a conceptual illustration or when the original screenshot is unusable for the chosen slot.
-- Tables should default to vertical-middle cell alignment. Center short categorical values, but left-align descriptive text; normal 3-5 column tables should usually use `12-13 pt` body text.
+- Tables should default to vertical-middle cell alignment. Pick one horizontal alignment mode for the whole table before filling content: all-center for compact categorical matrices, or all-left for sentence/evidence tables. Do not mix center and left alignment inside the same table as an aesthetic choice; normal 3-5 column tables should usually use `12-13 pt` body text.
 - Main content may use the space above and left of the bottom-right logo, but must not cover the logo itself. Keep a small breathing margin around the logo mark.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
 - Avoid base-`pptx` colorful infographic styling: multicolor numbered circles, multicolor card grids, alternating colored vertical bars, rainbow process flows, decorative icon grids, and shadows used only to make cards look designed.

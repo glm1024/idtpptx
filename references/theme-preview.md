@@ -14,7 +14,7 @@ A useful preview should include these five slide types:
 |---|---|
 | Cover | White/gray canvas, restrained blue band, plain metadata text, no redundant white card |
 | Text Explanation | Compact top-left title, black body text, restrained blue accents, readable line spacing |
-| Comparison Table | Quiet grid, middle-aligned cells, black text, light header fill, no heavy color blocks |
+| Comparison Table | Quiet grid, middle-aligned cells, one table-wide horizontal alignment mode, black text, light header fill, no heavy color blocks |
 | Screenshot Step | Real UI evidence in standard image slots, red annotations only where needed |
 | Process Summary | Simple blue/black structure, clear stages, no multicolor infographic styling |
 
