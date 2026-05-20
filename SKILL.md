@@ -159,6 +159,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Clear top title area, mostly left-aligned text.
 - Body, table, caption, and note text should default to black or near-black, not muted gray or blue-gray. Use red only for warnings, risks, key callouts, and screenshot annotations; use green/amber only for explicit status meaning.
 - Use `微软雅黑` / `Microsoft YaHei` as the default editable font. Do not rely on PowerPoint's theme defaults.
+- Use Chinese-first wording. Keep ordinary explanations, process labels, metric names, and card bodies in Chinese; reserve English for real product/module names, code fields, industry abbreviations, or terms that are genuinely clearer in English. Prefer `中文（English）` on first mention instead of English-only labels.
 - Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` when a sparse slide would otherwise leave small cramped text in a large blank area.
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.

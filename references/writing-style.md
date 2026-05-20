@@ -17,6 +17,7 @@ Avoid:
 - Abstract AI-sounding prose.
 - Over-polished consulting language.
 - Long paragraphs that bury the action.
+- Untranslated English labels or field-name lists in normal business slides.
 
 ## Titles
 
@@ -57,6 +58,34 @@ For recommendations, prefer:
 - `适用场景：`
 - `不适用场景：`
 - `下一步：`
+
+## Chinese-First Technical Wording
+
+Use Chinese as the default language for the deck. English is allowed when it is a real technical term, product/module name, code field, API name, or accepted abbreviation. The slide should still read like a Chinese internal report, not a pasted field list.
+
+Rules:
+
+- Translate the meaning first. Use English only to preserve precision.
+- For business-facing pages, write `中文（English）` on first mention when the English term matters, then use Chinese afterward.
+- Keep common abbreviations such as `AI`, `Git`, `IDE`, `API`, `SQL`, `URL`, `JSON`, `PPTX`, and `UI` when they are clearer than full Chinese.
+- If a code field is important, pair it with a Chinese explanation: `候选行数（candidateLines）`, `时间戳（sourceTimestamp）`.
+- If a code field is not important to the audience, do not show the field name. Use the business meaning instead.
+- Avoid English-only process cards, slash-separated English metrics, and mixed phrases that make the slide feel like raw implementation notes.
+
+Preferred rewrites:
+
+| Avoid | Use Instead |
+|---|---|
+| `generated / accepted / candidateLines` | `生成行 / 采纳行 / 候选行数` |
+| `exact / partial 匹配` | `精确匹配 / 部分匹配` |
+| `line match 明细` | `行级匹配明细` |
+| `daily facts` | `日汇总事实` |
+| `committed 事件` | `已提交事件` or `入库事实` when that is the business meaning |
+| `attribution job` | `归因任务` |
+| `rename` | `重命名` |
+| `Commit Report` | `提交报告（Commit Report）` only if it is the actual module name; otherwise `提交报告` |
+| `Commit Compare` | `提交对比（Commit Compare）` only if it is the actual feature name; otherwise `提交对比` |
+| `sourceTimestamp、occurrenceIndex` | `时间戳与顺序号（sourceTimestamp / occurrenceIndex）` on technical evidence pages only |
 
 ## Reader-Facing Content Only
 

@@ -224,6 +224,7 @@ Rules:
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
 - Reserve separate title and body zones inside each process card. If an English title wraps to two lines, move the body down, shorten the title, widen the card, stack fewer cards per row, or split the slide. Never let title text overlap body text.
+- Use Chinese-first process labels. English-only labels are acceptable only for real module names or standard abbreviations; otherwise translate them or use `中文（English）` on first mention.
 - Keep the final step, callout, or summary from overlapping the bottom-right logo.
 - Use real process stages. Do not invent numbers, percentages, or pseudo-KPIs just to make the layout feel fuller.
 

@@ -48,8 +48,20 @@
       "expected_behavior": [
         "Uses a Process / Workflow Summary layout only if all six stages remain readable.",
         "Keeps each process card title and body in separate zones; wrapped English titles do not overlap Chinese body text.",
+        "Uses Chinese-first process labels, such as 提交报告（Commit Report） only when Commit Report is the actual module name.",
         "Shortens labels, splits the workflow, or switches to a compact table when six cards cannot fit safely in one row.",
         "Runs visual QA and treats any text overlap as a blocking readability issue."
+      ]
+    },
+    {
+      "id": "chinese-first-technical-wording",
+      "prompt": "请做一页服务端归因流程 PPTX，原始材料里有 generated / accepted / candidateLines、exact / partial、daily facts、line match、rename、attribution job、sourceTimestamp、occurrenceIndex 等词。最终页面要适合公司内部汇报，不要显得中英混杂。",
+      "expected_behavior": [
+        "Uses Chinese as the primary wording for normal labels and explanations.",
+        "Rewrites generated / accepted / candidateLines as 生成行 / 采纳行 / 候选行数 or another clear Chinese metric phrase.",
+        "Rewrites exact / partial, daily facts, line match, rename, and attribution job into Chinese unless they are exact product or code names.",
+        "Keeps code fields such as sourceTimestamp and occurrenceIndex only when needed for technical precision, paired with Chinese explanations.",
+        "Runs the QA helper and treats Chinese-first wording warnings as pages needing review."
       ]
     }
   ]

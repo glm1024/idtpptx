@@ -56,6 +56,7 @@ Fix before delivery:
 - Tables are stretched to fill space while text remains small.
 - Repeated elements are visibly misaligned.
 - The mechanical helper warns about possible editable text overlap. Open the affected slide image and fix it unless the overlap is intentional and visually harmless.
+- Normal business slides contain English-heavy labels or mixed Chinese-English phrases where a clear Chinese phrase exists, such as raw `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
 
 ### P2 Polish
 
@@ -110,6 +111,7 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - No old URLs, support contacts, email addresses, screenshots, product names, or credentials remain as accidental placeholders.
 - Placeholder words such as `项目名称`, `汇报主题`, `章节标题`, `正文页标题`, `截图占位`, `说明`, `对比项`, `方案 A`, or `方案 B` do not remain in final deliverables.
 - No PPT-making process or draft-scaffolding text remains. A slide may describe project assumptions, scope boundaries, or next steps, but it must not describe the agent's plan for writing the deck or say that this generation pass chose not to finish evidence, visuals, screenshots, or data. By default, remove the whole meta page instead of rewriting it.
+- Technical wording follows the Chinese-first rule in `references/writing-style.md`: use Chinese for the business meaning, keep English only for accepted abbreviations, real module names, or precise code fields that the audience needs.
 - Screenshots belong to the current task and are readable.
 
 Recommended placeholder check:
@@ -132,6 +134,7 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Red arrows/boxes point to the intended UI detail and do not cover important text.
 - Multi-step screenshot pages read left to right.
 - Body copy uses direct internal-document Chinese.
+- Process cards, table headers, and callouts use Chinese-first labels. English-only labels and slash-separated field lists should be rewritten unless they are real product names, exact field names, or standard abbreviations.
 - No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, table, title rule, card title, or card body.
 - Process-card titles and bodies have separate vertical zones. If a card title wraps to two lines, the body does not collide with it.
 - No cover text is wrapped inside a redundant white filled shape or card.

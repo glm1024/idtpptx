@@ -42,6 +42,7 @@ High-risk slides:
 - Early setup or "discussion scope" pages, especially titles like `初版目标与讨论范围`; these usually should be removed from a final deck unless the user explicitly asked for a workshop agenda.
 - Dense tables, especially near the bottom-right logo.
 - Pages with long Chinese and English mixed labels; English tokens often widen text unexpectedly.
+- Pages with English-heavy metrics or field names on business-facing cards, such as `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
 - Sparse pages where only a few short body lines sit in a large blank area.
 - Titles that may wrap to two lines while a top divider line or marker was positioned for one line.
 - Screenshot pages with arrows, red boxes, or multiple screenshots.
@@ -65,6 +66,7 @@ Look for:
 - Descriptive table columns centered in a way that makes sentence-like content harder to scan.
 - Main body text that is still single-spaced on a sparse slide, or line spacing that is too loose for dense tables/process cards.
 - Mixed editable fonts such as YaHei plus Songti/Calibri/Arial/Aptos in the same normal body area.
+- Mixed Chinese-English wording that reads like raw implementation notes instead of a Chinese internal report.
 - Normal text rendered in gray, blue-gray, or other low-contrast muted colors instead of black/near-black.
 - Non-IDT theme drift: dark tech backgrounds, warm marketing palettes, magazine-style color systems, Swiss poster styling, or generic multi-theme colors.
 - Footer/source text colliding with the main content.
@@ -96,6 +98,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
 - Check the deck follows `references/theme-contract.md`; scenario variants may change density and page type, not the core color/font system.
 - Check body, table, caption, and note text uses black or near-black; only warnings, risks, key callouts, and screenshot annotations use red.
+- Check wording is Chinese-first. Keep English for `AI`, `Git`, `IDE`, `API`, real module names, and necessary code fields; translate ordinary metrics, statuses, matching modes, and process labels.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.

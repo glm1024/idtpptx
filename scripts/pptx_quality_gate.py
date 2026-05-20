@@ -35,6 +35,8 @@ PROCESS_LEAK_RE = re.compile(
     r"先把主线讲顺.{0,12}证据补齐|先统一(口径|路径).{0,12}再讨论(实现)?细节",
     re.IGNORECASE,
 )
+CJK_RE = re.compile(r"[\u4e00-\u9fff]")
+ENGLISH_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_+-]*")
 
 P_NS = {"p": "http://schemas.openxmlformats.org/presentationml/2006/main"}
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
@@ -92,6 +94,40 @@ ALLOWED_MONOSPACE_FONTS = {
     "sfmono-regular",
 }
 THEME_FILL_WARNING_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.25
+CHINESE_FIRST_REF = "references/writing-style.md"
+CHINESE_FIRST_ALLOWED_ENGLISH = {
+    "ai",
+    "api",
+    "bi",
+    "crm",
+    "erp",
+    "etl",
+    "excel",
+    "git",
+    "http",
+    "https",
+    "ide",
+    "idt",
+    "inspur",
+    "ip",
+    "json",
+    "kpi",
+    "ldap",
+    "mac",
+    "oa",
+    "okr",
+    "pc",
+    "pdf",
+    "ppt",
+    "pptx",
+    "sql",
+    "sso",
+    "ui",
+    "url",
+    "xml",
+    "word",
+    "commit",
+}
 TEXT_OVERLAP_MIN_WIDTH = EMUS_PER_INCH * 0.20
 TEXT_OVERLAP_MIN_HEIGHT = EMUS_PER_INCH * 0.10
 TEXT_OVERLAP_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.03
@@ -777,6 +813,71 @@ def is_theme_font_reference(font: str) -> bool:
     return normalize_font_face(font).startswith("+")
 
 
+def english_tokens(text: str) -> list[str]:
+    return ENGLISH_TOKEN_RE.findall(text)
+
+
+def is_camel_case_token(token: str) -> bool:
+    return bool(re.search(r"[a-z][A-Z]", token))
+
+
+def is_allowed_chinese_first_english(token: str) -> bool:
+    normalized = token.strip("_+-").lower()
+    if not normalized:
+        return True
+    if normalized in CHINESE_FIRST_ALLOWED_ENGLISH:
+        return True
+    return token.isupper() and 2 <= len(token) <= 8
+
+
+def should_warn_chinese_first(text: str) -> tuple[bool, list[str]]:
+    tokens = english_tokens(text)
+    if not tokens:
+        return False, []
+    unapproved = [token for token in tokens if not is_allowed_chinese_first_english(token)]
+    if not unapproved:
+        return False, []
+
+    has_cjk = bool(CJK_RE.search(text))
+    if has_cjk:
+        warning_weight = len(tokens) >= 2 or any(len(token) >= 8 or is_camel_case_token(token) for token in unapproved)
+        return warning_weight, unapproved
+    return len(tokens) >= 2, unapproved
+
+
+def find_chinese_first_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    if is_logo_object(obj, slide_w, slide_h):
+                        continue
+                    text = str(obj.get("text", "")).strip()
+                    if not text or PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+                        continue
+                    should_warn, terms = should_warn_chinese_first(text)
+                    if not should_warn:
+                        continue
+                    unique_terms = sorted(dict.fromkeys(terms), key=str.lower)
+                    warnings.append(
+                        f"{slide_path}: Chinese-first wording warning on {obj['kind']} {rect_label(obj)} "
+                        f"english_terms={','.join(unique_terms[:8])}; prefer Chinese labels per {CHINESE_FIRST_REF}"
+                    )
+    except Exception as exc:
+        warnings.append(f"could not inspect Chinese-first wording: {exc}")
+    return warnings
+
+
 def find_muted_text_color_issues(pptx_path: Path) -> list[str]:
     issues: list[str] = []
     try:
@@ -1213,6 +1314,12 @@ def main() -> int:
         warn(message)
     if len(theme_warnings) > 20:
         warn(f"{len(theme_warnings) - 20} additional theme drift warning(s) omitted")
+
+    chinese_first_warnings = find_chinese_first_warnings(pptx_path)
+    for message in chinese_first_warnings[:20]:
+        warn(message)
+    if len(chinese_first_warnings) > 20:
+        warn(f"{len(chinese_first_warnings) - 20} additional Chinese-first wording warning(s) omitted")
 
     text_overlap_warnings = find_text_overlap_warnings(pptx_path)
     for message in text_overlap_warnings[:20]:
