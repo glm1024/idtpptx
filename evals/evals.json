@@ -1,0 +1,35 @@
+{
+  "skill_name": "idtpptx",
+  "evals": [
+    {
+      "id": "operation-manual-screenshot-flow",
+      "prompt": "请用 IDT/Inspur 公司风格做一个 6 页 PPTX 操作手册，内容是根据三张系统截图讲解从登录、查询到导出报表的流程。截图必须保持原始界面语义，不要重画成插画或网页模板。",
+      "expected_behavior": [
+        "Maps the deck plan to registered layouts, especially Screenshot Step for screenshot-led pages.",
+        "Preserves screenshots as evidence assets with programmatic crop/scale instead of redesigning them.",
+        "Uses the fixed IDT/Inspur white, blue, black theme and YaHei editable text.",
+        "Runs or explicitly requests the idtpptx QA helper before delivery."
+      ]
+    },
+    {
+      "id": "solution-comparison-table",
+      "prompt": "请做一份方案对比 PPTX：对比 A、B、C 三种实施路径，说明适用场景、成本、风险和推荐结论，风格要适合内部评审。",
+      "expected_behavior": [
+        "Chooses Comparison Table or Choice rather than inventing colorful marketing cards.",
+        "Keeps table text readable, vertically aligned, and inside the company logo safe area.",
+        "Uses only approved theme tokens and avoids warm marketing palettes or multi-theme color sets.",
+        "Treats the recommendation as a restrained internal conclusion, not a sales slogan."
+      ]
+    },
+    {
+      "id": "external-dark-theme-normalization",
+      "prompt": "我有一份暗色科技风外部 PPTX，请帮我改成 IDT/Inspur 内部汇报风格，同时保留原有业务逻辑和关键图表。",
+      "expected_behavior": [
+        "Recognizes dark tech styling as non-default theme drift unless the user explicitly accepts that exception.",
+        "Normalizes editable slides toward white canvas, brand blue accents, black body text, and YaHei fonts.",
+        "Does not blindly preserve external theme fonts, dark backgrounds, neon fills, or decorative borders.",
+        "Uses the QA helper theme drift warnings as evidence for pages that still need manual review."
+      ]
+    }
+  ]
+}

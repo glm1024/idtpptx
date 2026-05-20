@@ -744,13 +744,15 @@ def is_allowed_font_face(font: str) -> bool:
     normalized = normalize_font_face(raw)
     if not normalized:
         return True
-    if normalized.startswith("+"):
-        return True
     if any(keyword in normalized for keyword in ALLOWED_FONT_KEYWORDS):
         return True
     if raw and any(keyword in raw for keyword in ALLOWED_FONT_KEYWORDS):
         return True
     return normalized in ALLOWED_MONOSPACE_FONTS
+
+
+def is_theme_font_reference(font: str) -> bool:
+    return normalize_font_face(font).startswith("+")
 
 
 def find_muted_text_color_issues(pptx_path: Path) -> list[str]:
@@ -806,7 +808,22 @@ def find_theme_drift_warnings(pptx_path: Path) -> list[str]:
                     text = str(obj.get("text", "")).strip()
                     if text and not PLACEHOLDER_RE.search(text):
                         fonts = sorted({str(font) for font in obj.get("fonts", [])})
-                        unexpected_fonts = [font for font in fonts if not is_allowed_font_face(font)]
+                        theme_font_refs = [font for font in fonts if is_theme_font_reference(font)]
+                        unexpected_fonts = [
+                            font
+                            for font in fonts
+                            if not is_theme_font_reference(font) and not is_allowed_font_face(font)
+                        ]
+                        if not fonts:
+                            warnings.append(
+                                f"{slide_path}: theme drift font on {obj['kind']} {rect_label(obj)} "
+                                f"has no explicit font; set YaHei per {THEME_CONTRACT_REF}"
+                            )
+                        if theme_font_refs:
+                            warnings.append(
+                                f"{slide_path}: theme drift font on {obj['kind']} {rect_label(obj)} "
+                                f"uses theme font reference={','.join(theme_font_refs)}; check {THEME_CONTRACT_REF}"
+                            )
                         if unexpected_fonts:
                             warnings.append(
                                 f"{slide_path}: theme drift font on {obj['kind']} {rect_label(obj)} "
@@ -823,24 +840,26 @@ def find_theme_drift_warnings(pptx_path: Path) -> list[str]:
 
                     fill = str(obj.get("fill", ""))
                     fill_hex = explicit_hex_color(fill)
-                    if fill_hex is None or is_allowed_theme_fill_color(fill):
+                    if fill_hex is None:
                         continue
 
                     rect = obj["rect"]
                     fill_area = rect_area(rect)
-                    if fill_area >= THEME_FILL_WARNING_MIN_AREA and not is_large_background_like(rect, slide_w, slide_h):
-                        warnings.append(
-                            f"{slide_path}: theme drift fill on {obj['kind']} {rect_label(obj)} "
-                            f"fill={fill_hex}; check {THEME_CONTRACT_REF}"
-                        )
-
                     luma = color_luma(fill_hex)
                     spread = color_spread(fill_hex)
-                    if is_large_background_like(rect, slide_w, slide_h) and (
+                    large_theme_background = is_large_background_like(rect, slide_w, slide_h) and (
                         (luma is not None and luma < 80) or (spread is not None and spread > 95)
-                    ):
+                    )
+                    if large_theme_background:
                         warnings.append(
                             f"{slide_path}: large dark/high-saturation background may be non-IDT theme "
+                            f"fill={fill_hex}; check {THEME_CONTRACT_REF}"
+                        )
+                        continue
+
+                    if not is_allowed_theme_fill_color(fill) and fill_area >= THEME_FILL_WARNING_MIN_AREA:
+                        warnings.append(
+                            f"{slide_path}: theme drift fill on {obj['kind']} {rect_label(obj)} "
                             f"fill={fill_hex}; check {THEME_CONTRACT_REF}"
                         )
     except Exception as exc:

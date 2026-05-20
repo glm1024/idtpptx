@@ -24,6 +24,7 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Final quality gate | `references/qa-checklist.md` |
 | QA playbook | `references/qa-playbook.md` |
 | Mechanical QA helper | `scripts/pptx_quality_gate.py` |
+| Regression evals | `evals/evals.json` |
 
 ## Hard Dependency
 

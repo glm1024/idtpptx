@@ -43,7 +43,7 @@ Do not use body text below `12 pt` outside tables, labels, footnotes, or dense p
 - Use `000000`, `111111`, `1F2933`, or template-compatible `202020` for normal editable text, including table cells, card bodies, captions, notes, and sources.
 - Do not use muted gray, blue-gray, or pale colors for normal text. If text is important enough to read, keep it black or near-black.
 - Use brand blue (`0062AC`, `00518E`, `213261`) for slide titles, section labels, table headers, and small brand accents, not for long paragraph bodies.
-- Use red (`D93025`, `C00000`, or annotation red `FF4B4B`) for warnings, risks, key conclusions, and screenshot boxes/arrows.
+- Use red (`D93025`, `C00000`, annotation red `FF4B4B`, or template-compatible `FF0000`) for warnings, risks, key conclusions, and screenshot boxes/arrows.
 - Use green only for completed/healthy/accepted status and amber only for pending/caution/needs-confirmation status. Keep the same meaning throughout a deck.
 - White text is allowed only on sufficiently dark blue/red/green fills.
 - If a copied page brings its own palette or font stack, treat that as theme drift and normalize it back to `references/theme-contract.md` unless the user explicitly accepted the exception.

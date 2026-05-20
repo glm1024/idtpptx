@@ -42,14 +42,15 @@ npx skills update -g -y
 
 维护这个仓库时，流程是：
 
-1. 修改 `SKILL.md`、`references/`、`assets/templates/` 或 `scripts/`。
-2. 本地检查 skill 是否能被识别：
+1. 修改 `SKILL.md`、`references/`、`assets/templates/`、`scripts/` 或 `evals/`。
+2. 如果改动会影响触发规则、版式选择、主题约束或 QA 行为，同步检查并更新 `evals/evals.json`。
+3. 本地检查 skill 是否能被识别：
 
    ```bash
    npx skills add /path/to/idtpptx -l
    ```
 
-3. 提交并推送到 GitHub。别人再运行 `npx skills update idtpptx -g -y` 就能拿到更新。
+4. 提交并推送到 GitHub。别人再运行 `npx skills update idtpptx -g -y` 就能拿到更新。
 
 ## 这个 skill 提供什么
 
@@ -64,6 +65,7 @@ npx skills update -g -y
 - 更适合中文内部汇报和培训材料的写法指导
 - 针对占位符清理、封面冗余白色面板、logo 本体防遮挡 / 版心一致性、截图可读性、主题漂移、OpenXML 结构校验和 PowerPoint 兼容性等公司级 QA 检查规则
 - 可复用的 PPT QA playbook 和机械检查脚本 `scripts/pptx_quality_gate.py`
+- 用于回归检查的轻量 eval 场景，位于 `evals/evals.json`
 
 ## 注意事项
 
