@@ -68,6 +68,7 @@ Rules:
 - Translate the meaning first. Use English only to preserve precision.
 - For business-facing pages, write `中文（English）` on first mention when the English term matters, then use Chinese afterward.
 - Keep common abbreviations such as `AI`, `Git`, `IDE`, `API`, `SQL`, `URL`, `JSON`, `PPTX`, and `UI` when they are clearer than full Chinese.
+- Keep technical nouns, commands, platforms, and ecosystem names in their normal industry form, including lowercase forms such as `git`, `linux`, `docker`, `nginx`, `mysql`, `redis`, `python`, `java`, `node`, `npm`, `vue`, `spring`, `kubernetes`, and `k8s`.
 - If a code field is important, pair it with a Chinese explanation: `候选行数（candidateLines）`, `时间戳（sourceTimestamp）`.
 - If a code field is not important to the audience, do not show the field name. Use the business meaning instead.
 - Avoid English-only process cards, slash-separated English metrics, and mixed phrases that make the slide feel like raw implementation notes.

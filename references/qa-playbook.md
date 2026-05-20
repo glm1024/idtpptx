@@ -98,7 +98,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
 - Check the deck follows `references/theme-contract.md`; scenario variants may change density and page type, not the core color/font system.
 - Check body, table, caption, and note text uses black or near-black; only warnings, risks, key callouts, and screenshot annotations use red.
-- Check wording is Chinese-first. Keep English for `AI`, `Git`, `IDE`, `API`, real module names, and necessary code fields; translate ordinary metrics, statuses, matching modes, and process labels.
+- Check wording is Chinese-first. Keep English for `AI`, `Git`, `IDE`, `API`, lowercase technical nouns such as `git` and `linux`, real module names, and necessary code fields; translate ordinary metrics, statuses, matching modes, and process labels.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.

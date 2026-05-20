@@ -58,6 +58,7 @@
       "prompt": "请做一页服务端归因流程 PPTX，原始材料里有 generated / accepted / candidateLines、exact / partial、daily facts、line match、rename、attribution job、sourceTimestamp、occurrenceIndex 等词。最终页面要适合公司内部汇报，不要显得中英混杂。",
       "expected_behavior": [
         "Uses Chinese as the primary wording for normal labels and explanations.",
+        "Keeps genuine technical nouns such as git and linux in English, even when lowercase.",
         "Rewrites generated / accepted / candidateLines as 生成行 / 采纳行 / 候选行数 or another clear Chinese metric phrase.",
         "Rewrites exact / partial, daily facts, line match, rename, and attribution job into Chinese unless they are exact product or code names.",
         "Keeps code fields such as sourceTimestamp and occurrenceIndex only when needed for technical precision, paired with Chinese explanations.",
