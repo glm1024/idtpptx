@@ -30,6 +30,16 @@
         "Does not blindly preserve external theme fonts, dark backgrounds, neon fills, or decorative borders.",
         "Uses the QA helper theme drift warnings as evidence for pages that still need manual review."
       ]
+    },
+    {
+      "id": "no-deck-process-leakage",
+      "prompt": "请做一份内部讨论用 PPTX，主题是 AI 代码采纳与入库归因机制复盘。可以先做初版，但最终 PPT 里不要出现你怎么规划 PPT、后续怎么补截图数据、这轮先不展开这些生成过程说明。",
+      "expected_behavior": [
+        "Keeps slide text reader-facing and business-facing, even when the deck is an initial discussion version.",
+        "Does not include phrases like 可讨论的结构草稿, 后续补充数据和截图, 本轮先不展开, or 不追求最终视觉定稿.",
+        "Uses assumptions, scope boundaries, risks, or next steps only when they belong to the project rather than the deck-production process.",
+        "Runs the QA helper so deck-drafting process leakage is checked before delivery."
+      ]
     }
   ]
 }

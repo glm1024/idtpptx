@@ -36,6 +36,7 @@ Fix before delivery:
 - Without an explicit user-approved style exception, the deck has drifted away from the fixed IDT/Inspur theme in `references/theme-contract.md`, such as a dominant dark tech, warm marketing, magazine, Swiss poster, or generic multi-theme palette.
 - The slide sequence was not mapped to registered page types in `references/layout-map.md`.
 - Placeholder text, old source-deck screenshots, old URLs, contacts, credentials, or product-specific source content remain unintentionally.
+- Agent/deck-production process text remains in final slides, such as `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, `不追求最终视觉定稿`, or similar notes about how the PPT was generated.
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
 - A screenshot needed for the task is too small to inspect after rendering.
 - A normal 3-5 column table is not readable at presentation size.
@@ -105,12 +106,14 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - No source-deck training text remains unless explicitly requested.
 - No old URLs, support contacts, email addresses, screenshots, product names, or credentials remain as accidental placeholders.
 - Placeholder words such as `项目名称`, `汇报主题`, `章节标题`, `正文页标题`, `截图占位`, `说明`, `对比项`, `方案 A`, or `方案 B` do not remain in final deliverables.
+- No PPT-making process or draft-scaffolding text remains. A slide may describe project assumptions, scope boundaries, or next steps, but it must not describe the agent's plan for writing the deck or say that this generation pass chose not to finish evidence, visuals, screenshots, or data.
 - Screenshots belong to the current task and are readable.
 
 Recommended placeholder check:
 
 ```bash
 python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标题|正文页标题|对比表页标题|步骤说明页标题|说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum"
+python -m markitdown output.pptx | grep -iE "可讨论[[:space:]]*PPT|可讨论的?结构草稿|结构草稿|形成一版可讨论|后续.{0,8}(逐页)?补(充|齐).{0,8}(数据|截图|真实)|本轮.{0,6}不展开|先不展开|不追求最终视觉定稿|最终视觉定稿|先把主线讲顺.{0,12}证据补齐|先统一(口径|路径).{0,12}再讨论(实现)?细节"
 ```
 
 ## Practical Readability

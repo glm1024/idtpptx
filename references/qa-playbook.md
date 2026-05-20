@@ -99,6 +99,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
+- Check the extracted text does not contain PPT-making process notes. Phrases such as `形成一版可讨论 PPT`, `结构草稿`, `后续补充数据和截图`, `本轮先不展开`, and `不追求最终视觉定稿` are generation scaffolding, not audience-facing content.
 - Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
 - For screenshots and generated images, check `references/screenshot-framing.md`: real screenshots remain faithful unless the user requested redesign, image groups have consistent ratios, and generated assets do not include deck chrome.

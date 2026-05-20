@@ -27,6 +27,13 @@ PLACEHOLDER_RE = re.compile(
     r"说明页标题|问题说明页标题|截图占位|方案 A|方案 B|对比项|xxxx|lorem|ipsum",
     re.IGNORECASE,
 )
+PROCESS_LEAK_RE = re.compile(
+    r"可讨论\s*PPT|可讨论的?结构草稿|结构草稿|形成一版可讨论|"
+    r"后续.{0,8}(逐页)?补(充|齐).{0,8}(数据|截图|真实)|"
+    r"本轮.{0,6}不展开|先不展开|不追求最终视觉定稿|最终视觉定稿|"
+    r"先把主线讲顺.{0,12}证据补齐|先统一(口径|路径).{0,12}再讨论(实现)?细节",
+    re.IGNORECASE,
+)
 
 P_NS = {"p": "http://schemas.openxmlformats.org/presentationml/2006/main"}
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
@@ -1163,6 +1170,11 @@ def main() -> int:
             hit_path.write_text("\n".join(hits), encoding="utf-8")
             report["artifacts"]["placeholder_hits"] = str(hit_path)
             check("placeholder scan", not hits, f"{len(hits)} hit(s)")
+            process_hits = [line for line in stdout.splitlines() if PROCESS_LEAK_RE.search(line)]
+            process_hit_path = outdir / "process-leak-hits.txt"
+            process_hit_path.write_text("\n".join(process_hits), encoding="utf-8")
+            report["artifacts"]["process_leak_hits"] = str(process_hit_path)
+            check("deck-drafting process leakage", not process_hits, f"{len(process_hits)} hit(s)")
         else:
             check("text extraction", False, (stderr or stdout).strip() or "markitdown failed")
 
