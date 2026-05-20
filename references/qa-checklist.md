@@ -39,6 +39,7 @@ Fix before delivery:
 - Agent/deck-production process text remains in final slides, such as `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, `不追求最终视觉定稿`, or similar notes about how the PPT was generated.
 - A deck-production setup page remains in the final deck, such as `初版目标与讨论范围`, `本轮先不展开`, or a page whose only purpose is to explain the draft's limitations rather than the business content.
 - Rendered text overlaps other text, table cells, screenshots, card borders, title rules, or the logo. Text overprint is a blocking readability bug.
+- Text intended to belong to a filled background box, card, note bar, or callout runs outside that container instead of wrapping inside it.
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
 - A screenshot needed for the task is too small to inspect after rendering.
 - A normal 3-5 column table is not readable at presentation size.
@@ -56,6 +57,7 @@ Fix before delivery:
 - Tables are stretched to fill space while text remains small.
 - Repeated elements are visibly misaligned.
 - The mechanical helper warns about possible editable text overlap. Open the affected slide image and fix it unless the overlap is intentional and visually harmless.
+- The mechanical helper warns about text possibly overflowing its background/container. Open the affected slide image and fix it by wrapping, resizing the container, shortening the sentence, or splitting content.
 - Normal business slides contain English-heavy labels or mixed Chinese-English phrases where a clear Chinese phrase exists, such as raw `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
 
 ### P2 Polish
@@ -136,6 +138,7 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Body copy uses direct internal-document Chinese.
 - Process cards, table headers, and callouts use Chinese-first labels. English-only labels and slash-separated field lists should be rewritten unless they are real product names, exact field names, or standard abbreviations.
 - No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, table, title rule, card title, or card body.
+- Text inside light-gray conclusion bars, note boxes, cards, and callouts remains inside the visible background with padding.
 - Process-card titles and bodies have separate vertical zones. If a card title wraps to two lines, the body does not collide with it.
 - No cover text is wrapped inside a redundant white filled shape or card.
 

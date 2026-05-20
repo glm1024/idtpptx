@@ -181,6 +181,7 @@ Rules:
 - Keep the explanation direct.
 - Number options with Chinese full-width parentheses when writing Chinese documents.
 - Use `1.3-1.45x` line spacing for option explanations, or `1.5x` when there are only two or three short options.
+- If using a conclusion bar, note box, or callout background, wrap the text inside that background with padding. Do not let the text box extend outside the filled area.
 - End with a short next-step sentence.
 
 ### 7. Problem/Solution Page
@@ -224,6 +225,7 @@ Rules:
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
 - Reserve separate title and body zones inside each process card. If an English title wraps to two lines, move the body down, shorten the title, widen the card, stack fewer cards per row, or split the slide. Never let title text overlap body text.
+- Keep card body text inside the card background. If a body sentence is wider than the card, wrap it, shorten it, or split the card; do not create a text box that spills across adjacent cards.
 - Use Chinese-first process labels. English-only labels are acceptable only for real module names or standard abbreviations; otherwise translate them or use `中文（English）` on first mention.
 - Keep the final step, callout, or summary from overlapping the bottom-right logo.
 - Use real process stages. Do not invent numbers, percentages, or pseudo-KPIs just to make the layout feel fuller.

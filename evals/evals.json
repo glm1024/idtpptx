@@ -64,6 +64,16 @@
         "Keeps code fields such as sourceTimestamp and occurrenceIndex only when needed for technical precision, paired with Chinese explanations.",
         "Runs the QA helper and treats Chinese-first wording warnings as pages needing review."
       ]
+    },
+    {
+      "id": "container-text-stays-inside-background",
+      "prompt": "请做一页一句话结论 PPTX：顶部是一条浅灰背景结论框，下面是目标、范围、结果三个卡片。结论文案和三个卡片正文都比较长，要求文字在背景框和卡片内自动换行，不要跑到背景框外面。",
+      "expected_behavior": [
+        "Wraps long conclusion text inside the light-gray conclusion bar with visible padding.",
+        "Keeps each card body text inside its card background instead of spanning across adjacent cards.",
+        "Shortens copy, increases container height, or splits content when text cannot fit.",
+        "Runs visual QA and treats container text overflow warnings as pages needing review."
+      ]
     }
   ]
 }

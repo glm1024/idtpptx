@@ -148,6 +148,9 @@ TEXT_OVERLAP_MIN_WIDTH = EMUS_PER_INCH * 0.20
 TEXT_OVERLAP_MIN_HEIGHT = EMUS_PER_INCH * 0.10
 TEXT_OVERLAP_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.03
 TEXT_OVERLAP_MIN_RATIO = 0.12
+CONTAINER_TEXT_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.30
+CONTAINER_TEXT_OVERLAP_RATIO = 0.35
+CONTAINER_TEXT_TOLERANCE_IN = 0.04
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -608,6 +611,21 @@ def padded_rect(
     x2 = min(slide_w, x + width + padding)
     y2 = min(slide_h, y + height + padding)
     return x1, y1, max(0, x2 - x1), max(0, y2 - y1)
+
+
+def rect_contains(
+    outer: tuple[float, float, float, float],
+    inner: tuple[float, float, float, float],
+    tolerance: float = 0,
+) -> bool:
+    ox, oy, ow, oh = outer
+    ix, iy, iw, ih = inner
+    return (
+        ix >= ox - tolerance
+        and iy >= oy - tolerance
+        and ix + iw <= ox + ow + tolerance
+        and iy + ih <= oy + oh + tolerance
+    )
 
 
 def related_part_path(zf: zipfile.ZipFile, source_path: str, relationship_suffix: str) -> str | None:
@@ -1100,6 +1118,60 @@ def find_text_overlap_warnings(pptx_path: Path) -> list[str]:
     return warnings
 
 
+def find_container_text_overflow_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    tolerance = inches(CONTAINER_TEXT_TOLERANCE_IN)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                objects = list(iter_slide_objects(sp_tree))
+                containers = [
+                    obj
+                    for obj in objects
+                    if obj["kind"] == "sp"
+                    and not str(obj.get("text", "")).strip()
+                    and str(obj.get("fill", ""))
+                    and rect_area(obj["rect"]) >= CONTAINER_TEXT_MIN_AREA
+                    and not is_large_background_like(obj["rect"], slide_w, slide_h)
+                    and not is_logo_object(obj, slide_w, slide_h)
+                ]
+                if not containers:
+                    continue
+                for obj in objects:
+                    text = str(obj.get("text", "")).strip()
+                    if not text or PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+                        continue
+                    if is_logo_object(obj, slide_w, slide_h):
+                        continue
+                    text_area = rect_area(obj["rect"])
+                    if text_area <= 0:
+                        continue
+                    for container in containers:
+                        intersection = rect_intersection(obj["rect"], container["rect"])
+                        intersection_area = rect_area(intersection)
+                        if intersection_area / text_area < CONTAINER_TEXT_OVERLAP_RATIO:
+                            continue
+                        if rect_contains(container["rect"], obj["rect"], tolerance):
+                            continue
+                        warnings.append(
+                            f"{slide_path}: text may overflow its background/container {rect_label(obj)} "
+                            f"against {rect_label(container)}; wrap or resize inside the box"
+                        )
+                        break
+    except Exception as exc:
+        warnings.append(f"could not inspect container text overflow: {exc}")
+    return warnings
+
+
 def find_slide_risk_warnings(pptx_path: Path) -> list[str]:
     warnings: list[str] = []
     slide_w, slide_h = slide_size(pptx_path)
@@ -1342,6 +1414,12 @@ def main() -> int:
         warn(message)
     if len(text_overlap_warnings) > 20:
         warn(f"{len(text_overlap_warnings) - 20} additional editable text overlap warning(s) omitted")
+
+    container_overflow_warnings = find_container_text_overflow_warnings(pptx_path)
+    for message in container_overflow_warnings[:20]:
+        warn(message)
+    if len(container_overflow_warnings) > 20:
+        warn(f"{len(container_overflow_warnings) - 20} additional container text overflow warning(s) omitted")
 
     markitdown_python, python_detail = resolve_python(args.python, ["markitdown"])
     if markitdown_python is None:

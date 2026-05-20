@@ -77,6 +77,8 @@ If a mostly empty slide still has small single-spaced body text, treat it as a l
 Text overlap is a layout failure, not a polish issue.
 
 - Do not let editable text boxes overlap other editable text boxes, screenshots, tables, card borders, or the logo.
+- When text sits on a filled background box, card, callout, or light-gray conclusion bar, the text box must stay inside that container with visible padding. Do not let the text run beyond the background shape.
+- Long one-sentence conclusions should wrap inside the bar. If the sentence cannot fit, increase the container height, reduce the sentence, split it into two lines, or move supporting detail to a separate card.
 - For process cards, reserve a stable heading band and body band. If the heading becomes two lines, the body must move down with enough gap.
 - Mixed English and Chinese labels often wrap unexpectedly. Test long English terms such as `Commit Report`, `Commit Compare`, and module names in the actual rendered slide before delivery.
 - If text only fits by reducing body text below the minimum readable size, split the card row, use fewer cards per slide, shorten the label, or move details into a separate table. Do not accept overprinted text.

@@ -58,6 +58,7 @@ Look for:
 - Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
 - Text, table borders, cell fills, screenshots, callouts, charts, or background shapes overlapping the bottom-right logo.
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
+- Text that visually belongs to a filled note/card/conclusion background but extends past the right or bottom edge of that background.
 - Process-card headings overlapping card body text, especially when English labels wrap to two lines.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
@@ -71,6 +72,7 @@ Look for:
 - Non-IDT theme drift: dark tech backgrounds, warm marketing palettes, magazine-style color systems, Swiss poster styling, or generic multi-theme colors.
 - Footer/source text colliding with the main content.
 - Uneven alignment among repeated cards, columns, table rows, or step boxes.
+- Conclusion bars, note boxes, and cards where the visible background is shorter or narrower than the text.
 - Large empty placeholder regions left after deleting source content.
 - Low contrast text in light blue, gray, blue-gray, or pale yellow zones.
 - Images or screenshots with mismatched crop density, inconsistent ratios, or important UI text squeezed too small.
@@ -106,6 +108,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
 - Check the extracted text does not contain PPT-making process notes. Phrases such as `形成一版可讨论 PPT`, `结构草稿`, `后续补充数据和截图`, `本轮先不展开`, and `不追求最终视觉定稿` are generation scaffolding, not audience-facing content.
+- Check every text-on-background treatment: the text must wrap inside the filled rectangle/card/callout, not extend beyond its visible boundary.
 - Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
 - For screenshots and generated images, check `references/screenshot-framing.md`: real screenshots remain faithful unless the user requested redesign, image groups have consistent ratios, and generated assets do not include deck chrome.
