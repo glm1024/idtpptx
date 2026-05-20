@@ -48,19 +48,22 @@ When this skill is installed on another machine, do not assume any local absolut
 
 ## Default Approach
 
-Prefer template-based editing over drawing new slides from scratch.
+Template-derived editing is the default delivery path. Do not create an
+IDT/Inspur deck from zero when the company template is available.
 
 1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the first-choice template.
 2. Read `references/theme-contract.md` and keep the fixed IDT/Inspur theme tokens as the visual source of truth.
 3. Analyze the target content and map each section to one of the registered page types in `references/layout-map.md`.
 4. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
 5. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
-6. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
+6. Use the base `pptx` editing workflow to duplicate template slides, delete unused slides, reorder the sequence, and replace text/media in existing layouts.
 7. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
 8. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
 9. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
+
+If a task asks for a new company-style deck but does not explicitly forbid using the template, treat it as template-based work. In particular, do not jump to PptxGenJS just because the base `pptx` skill offers a "create from scratch" path.
 
 ## Cross-Agent Stability Rules
 
@@ -82,13 +85,21 @@ Do not import `theme-factory` palettes, fonts, or showcase assets. Ocean, Forest
 
 Only update the theme when the user provides a company-approved template, brand guide, or style-correct reference deck and asks to adapt the skill. In that case, update `references/theme-contract.md` first, then update related style and QA rules.
 
-## Generation Policy
+## Template-First Generation Policy
 
 Do not treat `idtpptx` as permission to bypass the base `pptx` skill. The safest path is still:
 
 1. Start from the `idtpptx` template.
 2. Use the base `pptx` editing workflow to duplicate, delete, reorder, and edit slides.
-3. Use PptxGenJS from scratch only when template-based editing is truly not practical.
+3. Reuse template masters, layouts, placeholders, logo/media relationships, and existing brand elements wherever possible.
+
+PptxGenJS is a fallback, not the normal `idtpptx` route. Use PptxGenJS or another from-scratch generator only when one of these is true:
+
+- No usable company template or reference deck is available.
+- The user explicitly asks for a scratch-generated deck or prototype.
+- The requested structure cannot be produced by duplicating and editing registered template layouts, and you explain that tradeoff before delivery.
+
+When the template contains the logo or other shared brand media, do not embed a new copy of the same logo on every slide. Prefer the template's master/layout logo or reuse the existing media relationship. Per-slide duplicate image embedding is a PowerPoint compatibility risk and should be treated as a warning sign during QA.
 
 If PptxGenJS or another generator is used from scratch, run an explicit PowerPoint-compatibility cleanup before delivery:
 
@@ -96,6 +107,8 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 - Remove notes relationships, notes content type overrides, and `p:notesMasterIdLst` when notes are not required.
 - Normalize generated line shapes so `a:xfrm/a:ext` `cx` and `cy` are never negative. Use `flipH` or `flipV` to preserve direction.
 - Remove `[Content_Types].xml` overrides for parts that do not exist in the package.
+- Validate picture/media relationships: every `a:blip` embed must resolve to an existing internal image part with a valid image content type and decodable image bytes.
+- Treat generic attachment/package icons, broken images, or PowerPoint "repair" prompts as delivery blockers even when LibreOffice renders the deck.
 - Run `scripts/pptx_quality_gate.py`; do not deliver if it reports `BLOCK`.
 
 ## What To Load

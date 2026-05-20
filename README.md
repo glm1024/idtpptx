@@ -59,6 +59,7 @@ npx skills update -g -y
 - 固定的 IDT/Inspur 主题 contract：颜色 token、字体 contract、场景变体和禁止用途
 - 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
 - 登记版式优先、截图槽位优先的稳定生成规则，减少不同模型自由发挥造成的偏差
+- 模板派生优先的生成路线：默认复制和编辑公司模板页，不把 PptxGenJS 从零生成当作公司 PPT 的常规路径
 - 截图和生成配图的保真、裁切、比例和素材边界规则
 - 默认微软雅黑字体、不同内容密度下的字号、行距和表格对齐规则
 - 默认黑色/近黑色文字、红色重点提示和受控语义色规则
@@ -72,9 +73,11 @@ npx skills update -g -y
 - `idtpptx` 不替代基础 `pptx` skill。
 - 基础 `pptx` skill 负责 PPTX 文件读取、拆包、复制页面、XML 编辑、打包、渲染和通用 QA。
 - `idtpptx` 只负责公司风格和模板约束。
+- 有公司模板时，默认走模板派生和 XML 编辑路线；PptxGenJS/from-scratch 只用于没有可用模板、用户明确要求从零生成，或模板无法表达目标结构的例外场景。
 - `idtpptx` 不生成 HTML 网页 PPT，不引入 WebGL、浏览器动效、Swiss poster 或杂志风模板；这些应作为独立 web deck workflow 处理。
 - `idtpptx` 不提供通用主题库，不复制或依赖 `theme-factory` 的 10 套主题、字体或 showcase PDF；默认只使用固定公司主题。
-- 交付前必须完成内容、视觉、压缩包、OpenXML 结构和 PowerPoint 兼容性检查；不能只以 LibreOffice 成功渲染作为最终依据。
+- 交付前必须完成内容、视觉、压缩包、图片/media 关系、OpenXML 结构和 PowerPoint 兼容性检查；不能只以 LibreOffice 成功渲染作为最终依据。
+- 如果 PowerPoint 提示“发现内容有问题/需要修复”，或修复后图片变成附件/包对象图标，视为未交付成功，需要回到 PPTX 包结构和媒体关系继续修。
 - 如果依赖安装在另一个 Python 环境里，可追加 `--python python` 或设置 `IDTPPTX_PYTHON=python`。
 - 模板中可能包含公司品牌元素，只应在授权场景下使用和分享。
 

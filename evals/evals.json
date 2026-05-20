@@ -12,6 +12,17 @@
       ]
     },
     {
+      "id": "template-first-company-review-deck",
+      "prompt": "请用 idtpptx 做一份 15 页公司内部评审 PPTX，主题是 AI 代码采纳统计。已有公司模板，除非确实做不到，不要从 0 生成。",
+      "expected_behavior": [
+        "Uses assets/templates/inspur-pragmatic-template-v1.pptx as the starting package.",
+        "Follows the base pptx editing workflow to duplicate, delete, reorder, and replace content in template slides.",
+        "Does not use PptxGenJS/from-scratch generation as the default route just because this is a new deck.",
+        "Reuses template master/layout logo and media relationships where possible instead of embedding a fresh logo image on every slide.",
+        "Runs the QA helper and treats PowerPoint repair prompts or attachment-like image artifacts as delivery blockers."
+      ]
+    },
+    {
       "id": "solution-comparison-table",
       "prompt": "请做一份方案对比 PPTX：对比 A、B、C 三种实施路径，说明适用场景、成本、风险和推荐结论，风格要适合内部评审。",
       "expected_behavior": [

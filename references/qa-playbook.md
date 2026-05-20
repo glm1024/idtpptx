@@ -19,8 +19,11 @@ Every final deck needs:
 1. Text extraction and placeholder scan.
 2. Zip package integrity check.
 3. OpenXML validation through the base `pptx` skill.
-4. PDF/image render and visual inspection.
-5. Explicit final note about any skipped check.
+4. Picture/media relationship checks.
+5. PDF/image render and visual inspection.
+6. Explicit final note about any skipped check.
+
+For company-style decks, the expected creation route is template-derived editing. If the company template is usable, duplicate and edit template pages through the base `pptx` editing workflow. Treat PptxGenJS/from-scratch generation as an exception that must be justified and checked more strictly.
 
 The helper script can run most mechanical checks:
 
@@ -123,6 +126,9 @@ Known failure patterns:
 - `p:notesMasterIdLst` after `p:sldIdLst` in `ppt/presentation.xml`: LibreOffice may render it, but PowerPoint can prompt to repair. Valid order puts `p:notesMasterIdLst` before `p:sldIdLst`.
 - `[Content_Types].xml` `Override` entries that point to package parts that no longer exist, such as stale `ppt/slideMasters/slideMasterN.xml` entries after generator cleanup.
 - Broken or stale relationship ids after duplicating, deleting, or reordering slides.
+- Broken image relationships: an `a:blip` embed id does not exist in the slide/layout/master `.rels`, the relationship target is missing, external, not under `ppt/media`, lacks an image content type, or the actual PNG/JPEG/GIF bytes are invalid.
+- PowerPoint repair followed by images turning into generic attachment/package icons. Treat this as a media/package defect, not a cosmetic issue.
+- Repeatedly embedding the same template logo as separate media files on every slide. This may render, but it is a sign that the deck was generated from scratch instead of reusing the template master/layout and should be inspected carefully.
 - Negative `a:xfrm/a:ext` dimensions on generated line shapes. If a line is drawn from right to left or bottom to top, normalize the bounding box to positive width/height and use `flipH`/`flipV` to preserve direction.
 - Unintentional `ppt/notesSlides/` and `ppt/notesMasters/` parts from generated decks. If the deck has no speaker notes, remove notes parts, the notes relationships, notes content types, and `p:notesMasterIdLst`.
 - Orphaned notes, media, charts, or layouts left after template cleanup.

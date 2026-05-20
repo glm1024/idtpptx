@@ -9,6 +9,7 @@ and LibreOffice rendering when that skill is available.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -40,6 +41,7 @@ ENGLISH_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_+-]*")
 
 P_NS = {"p": "http://schemas.openxmlformats.org/presentationml/2006/main"}
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
+R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 OOXML_NS = {"p": P_NS["p"], "a": A_NS}
 CT_NS = "http://schemas.openxmlformats.org/package/2006/content-types"
 REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
@@ -166,6 +168,15 @@ TABLE_HORIZONTAL_ALIGNMENT_MAP = {
     "thaiDist": "distributed",
 }
 TABLE_TOP_ALLOWED_CHARS = 80
+IMAGE_REL_TYPE_SUFFIX = "/image"
+IMAGE_CONTENT_TYPE_PREFIX = "image/"
+IMAGE_SIGNATURE_CHECKS = {
+    ".png": lambda data: data.startswith(b"\x89PNG\r\n\x1a\n"),
+    ".jpg": lambda data: data.startswith(b"\xff\xd8\xff"),
+    ".jpeg": lambda data: data.startswith(b"\xff\xd8\xff"),
+    ".gif": lambda data: data.startswith((b"GIF87a", b"GIF89a")),
+}
+REPEATED_MEDIA_HASH_WARNING_THRESHOLD = 5
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -322,6 +333,55 @@ def relationship_source_dir(rel_path: str) -> str:
     return dirname(owner_part)
 
 
+def relationship_target_path(rel_path: str, target: str) -> str:
+    target_without_fragment = target.split("#", 1)[0]
+    if target_without_fragment.startswith("/"):
+        return target_without_fragment.lstrip("/")
+    return normpath(f"{relationship_source_dir(rel_path)}/{target_without_fragment}").lstrip("/")
+
+
+def rels_path_for_part(part_path: str) -> str:
+    return f"{dirname(part_path)}/_rels/{Path(part_path).name}.rels"
+
+
+def parse_relationships(zf: zipfile.ZipFile, rel_path: str) -> dict[str, dict[str, str]]:
+    relationships: dict[str, dict[str, str]] = {}
+    if rel_path not in zf.namelist():
+        return relationships
+    root = ET.fromstring(zf.read(rel_path))
+    for rel in root.findall(f"{{{REL_NS}}}Relationship"):
+        rel_id = rel.attrib.get("Id", "")
+        if rel_id:
+            relationships[rel_id] = {
+                "type": rel.attrib.get("Type", ""),
+                "target": rel.attrib.get("Target", ""),
+                "target_mode": rel.attrib.get("TargetMode", ""),
+            }
+    return relationships
+
+
+def parse_content_types(zf: zipfile.ZipFile) -> tuple[dict[str, str], dict[str, str]]:
+    root = ET.fromstring(zf.read("[Content_Types].xml"))
+    defaults = {
+        item.attrib.get("Extension", "").lower(): item.attrib.get("ContentType", "")
+        for item in root.findall(f"{{{CT_NS}}}Default")
+        if item.attrib.get("Extension")
+    }
+    overrides = {
+        item.attrib.get("PartName", "").lstrip("/"): item.attrib.get("ContentType", "")
+        for item in root.findall(f"{{{CT_NS}}}Override")
+        if item.attrib.get("PartName")
+    }
+    return defaults, overrides
+
+
+def part_content_type(part_path: str, defaults: dict[str, str], overrides: dict[str, str]) -> str:
+    if part_path in overrides:
+        return overrides[part_path]
+    extension = Path(part_path).suffix.lower().lstrip(".")
+    return defaults.get(extension, "")
+
+
 def find_package_reference_issues(pptx_path: Path) -> tuple[list[str], list[str]]:
     missing_overrides: list[str] = []
     missing_relationships: list[str] = []
@@ -340,17 +400,12 @@ def find_package_reference_issues(pptx_path: Path) -> tuple[list[str], list[str]
             rel_paths = sorted(name for name in names if name.endswith(".rels"))
             for rel_path in rel_paths:
                 rel_root = ET.fromstring(zf.read(rel_path))
-                source_dir = relationship_source_dir(rel_path)
                 for rel in rel_root.findall(f"{{{REL_NS}}}Relationship"):
                     target = rel.attrib.get("Target", "")
                     mode = rel.attrib.get("TargetMode")
                     if not target or mode == "External" or target.startswith(("http:", "https:", "mailto:")):
                         continue
-                    target_without_fragment = target.split("#", 1)[0]
-                    if target_without_fragment.startswith("/"):
-                        resolved = target_without_fragment.lstrip("/")
-                    else:
-                        resolved = normpath(f"{source_dir}/{target_without_fragment}").lstrip("/")
+                    resolved = relationship_target_path(rel_path, target)
                     if resolved not in names:
                         rel_id = rel.attrib.get("Id", "(no id)")
                         missing_relationships.append(f"{rel_path} {rel_id} -> {target} ({resolved})")
@@ -358,6 +413,108 @@ def find_package_reference_issues(pptx_path: Path) -> tuple[list[str], list[str]
         return [f"could not inspect package references: {exc}"], []
 
     return missing_overrides, missing_relationships
+
+
+def has_valid_image_signature(part_path: str, data: bytes) -> bool:
+    signature_check = IMAGE_SIGNATURE_CHECKS.get(Path(part_path).suffix.lower())
+    if signature_check is None:
+        return True
+    return signature_check(data)
+
+
+def find_picture_media_issues(pptx_path: Path) -> tuple[list[str], list[str]]:
+    issues: list[str] = []
+    warnings: list[str] = []
+
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            names = set(zf.namelist())
+            defaults, overrides = parse_content_types(zf)
+            referenced_images: set[str] = set()
+            image_hashes: dict[str, list[str]] = {}
+
+            rel_paths = sorted(name for name in names if name.endswith(".rels"))
+            for rel_path in rel_paths:
+                relationships = parse_relationships(zf, rel_path)
+                for rel_id, rel in relationships.items():
+                    rel_type = rel.get("type", "")
+                    target = rel.get("target", "")
+                    if not rel_type.endswith(IMAGE_REL_TYPE_SUFFIX):
+                        continue
+                    if rel.get("target_mode") == "External":
+                        issues.append(f"{rel_path} {rel_id}: external linked image target={target!r}; embed images for delivery")
+                        continue
+                    if not target:
+                        issues.append(f"{rel_path} {rel_id}: image relationship has empty target")
+                        continue
+                    resolved = relationship_target_path(rel_path, target)
+                    referenced_images.add(resolved)
+                    if resolved not in names:
+                        issues.append(f"{rel_path} {rel_id}: image target missing {target!r} ({resolved})")
+                        continue
+                    content_type = part_content_type(resolved, defaults, overrides)
+                    if not content_type:
+                        issues.append(f"{resolved}: missing image content type in [Content_Types].xml")
+                    elif not content_type.startswith(IMAGE_CONTENT_TYPE_PREFIX):
+                        issues.append(f"{resolved}: relationship type is image but content type is {content_type!r}")
+                    data = zf.read(resolved)
+                    if not has_valid_image_signature(resolved, data):
+                        issues.append(f"{resolved}: image bytes do not match {Path(resolved).suffix.lower()} signature")
+                    digest = hashlib.sha256(data).hexdigest()
+                    image_hashes.setdefault(digest, []).append(resolved)
+                    if not resolved.startswith("ppt/media/"):
+                        warnings.append(f"{rel_path} {rel_id}: image target is outside ppt/media ({resolved})")
+
+            xml_parts = sorted(
+                name
+                for name in names
+                if (
+                    name.startswith("ppt/slides/slide")
+                    or name.startswith("ppt/slideLayouts/slideLayout")
+                    or name.startswith("ppt/slideMasters/slideMaster")
+                )
+                and name.endswith(".xml")
+            )
+            for xml_part in xml_parts:
+                rels_path = rels_path_for_part(xml_part)
+                relationships = parse_relationships(zf, rels_path)
+                root = ET.fromstring(zf.read(xml_part))
+                for blip in root.findall(".//a:blip", OOXML_NS):
+                    embed_id = blip.attrib.get(f"{{{R_NS}}}embed")
+                    link_id = blip.attrib.get(f"{{{R_NS}}}link")
+                    if link_id:
+                        issues.append(f"{xml_part}: picture uses linked image relationship {link_id}; embed images for delivery")
+                    if not embed_id:
+                        continue
+                    rel = relationships.get(embed_id)
+                    if rel is None:
+                        issues.append(f"{xml_part}: picture references missing image relationship {embed_id} in {rels_path}")
+                        continue
+                    if not rel.get("type", "").endswith(IMAGE_REL_TYPE_SUFFIX):
+                        issues.append(
+                            f"{xml_part}: picture relationship {embed_id} is not an image relationship "
+                            f"({rel.get('type', '')})"
+                        )
+
+            media_parts = {name for name in names if name.startswith("ppt/media/") and not name.endswith("/")}
+            orphan_media = sorted(media_parts - referenced_images)
+            if orphan_media:
+                warnings.append(
+                    f"{len(orphan_media)} unreferenced media part(s), first={'; '.join(orphan_media[:6])}; "
+                    "remove stale media after template cleanup when practical"
+                )
+
+            for duplicate_paths in image_hashes.values():
+                unique_paths = sorted(set(duplicate_paths))
+                if len(unique_paths) >= REPEATED_MEDIA_HASH_WARNING_THRESHOLD:
+                    warnings.append(
+                        f"same image bytes embedded as {len(unique_paths)} separate media parts; "
+                        f"first={'; '.join(unique_paths[:6])}; prefer template master/layout/shared media"
+                    )
+    except Exception as exc:
+        issues.append(f"could not inspect picture/media relationships: {exc}")
+
+    return list(dict.fromkeys(issues)), list(dict.fromkeys(warnings))
 
 
 def find_negative_extents(pptx_path: Path) -> list[str]:
@@ -1454,6 +1611,16 @@ def main() -> int:
         not missing_relationships,
         "ok" if not missing_relationships else "; ".join(missing_relationships[:20]),
     )
+    picture_media_issues, picture_media_warnings = find_picture_media_issues(pptx_path)
+    check(
+        "picture/media relationships",
+        not picture_media_issues,
+        "ok" if not picture_media_issues else "; ".join(picture_media_issues[:20]),
+    )
+    for message in picture_media_warnings[:20]:
+        warn(message)
+    if len(picture_media_warnings) > 20:
+        warn(f"{len(picture_media_warnings) - 20} additional picture/media warning(s) omitted")
     negative_extents = find_negative_extents(pptx_path)
     check(
         "non-negative shape extents",
