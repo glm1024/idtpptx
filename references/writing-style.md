@@ -62,6 +62,8 @@ For recommendations, prefer:
 
 Final slides should read like a document for the audience, not like an agent's work plan for making the PPT.
 
+Default final-deck rule: delete the entire meta/setup page if its job is to explain why this PPT is an initial draft, what the generation pass will not cover, or how screenshots/data will be added later. Do not simply rewrite that page unless the user explicitly asked for a workshop agenda or discussion-scope slide.
+
 Allowed:
 
 - Business scope, delivery scope, implementation scope, and data-scope statements that the audience needs to know.
@@ -73,7 +75,7 @@ Not allowed in final slide text:
 - How the agent planned to write the PPT.
 - Statements that evidence, screenshots, or data will be filled in later because this generation pass did not include them.
 - Visual-production caveats such as `本轮先不展开`, `不追求最终视觉定稿`, `先形成可讨论的结构草稿`, or `后续逐页补充数据和截图`.
-- Meta-purpose copy such as `形成一版可讨论 PPT` unless the user explicitly asks for that phrase.
+- Meta-purpose titles or copy such as `初版目标与讨论范围`, `形成一版可讨论 PPT`, or `本轮先不展开` unless the user explicitly asks for that exact workshop framing.
 
 Rewrite meta-process wording into audience-facing wording:
 

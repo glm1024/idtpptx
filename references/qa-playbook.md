@@ -39,6 +39,7 @@ Open the individual slide image for any high-risk slide. Contact sheets are usef
 High-risk slides:
 
 - Cover slides, especially when metadata/objective text was added after template replacement.
+- Early setup or "discussion scope" pages, especially titles like `初版目标与讨论范围`; these usually should be removed from a final deck unless the user explicitly asked for a workshop agenda.
 - Dense tables, especially near the bottom-right logo.
 - Pages with long Chinese and English mixed labels; English tokens often widen text unexpectedly.
 - Sparse pages where only a few short body lines sit in a large blank area.
@@ -56,6 +57,7 @@ Look for:
 - Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
 - Text, table borders, cell fills, screenshots, callouts, charts, or background shapes overlapping the bottom-right logo.
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
+- Process-card headings overlapping card body text, especially when English labels wrap to two lines.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
 - Tables that use small body text while rows are tall and mostly empty.
@@ -97,6 +99,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
+- Check the final sequence does not include deck-production setup pages. If a page only says what this draft will or will not cover, delete it rather than polishing it.
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
 - Check the extracted text does not contain PPT-making process notes. Phrases such as `形成一版可讨论 PPT`, `结构草稿`, `后续补充数据和截图`, `本轮先不展开`, and `不追求最终视觉定稿` are generation scaffolding, not audience-facing content.

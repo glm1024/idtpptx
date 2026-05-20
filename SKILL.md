@@ -56,8 +56,9 @@ Prefer template-based editing over drawing new slides from scratch.
 4. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
 5. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
 6. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
-7. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-8. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+7. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
+8. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
+9. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
@@ -68,7 +69,7 @@ The safest results come from reducing free-form design decisions:
 - Treat `references/theme-contract.md` as the golden source for colors, fonts, and scenario variants. Do not ask the user to choose from generic themes and do not create a new theme from the topic alone.
 - Treat the template and `references/layout-map.md` as the golden source for page structure. Use registered company page types first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
-- Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`.
+- Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `初版目标与讨论范围`, `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`. By default, delete the whole meta/planning slide instead of polishing it.
 - Decide screenshot/image slots before touching assets. Preserve original screenshots when they are evidence; crop or scale them into a standard slot instead of redrawing them by default.
 - Let scripts catch mechanical defects. Placeholder residue, package references, notes parts, logo overlap, muted gray text, and rendering failures are QA bugs, not judgment calls.
 - When a rendered slide looks wrong, diagnose the cause first: theme drift, wrong page type, wrong material slot, component misuse, spacing problem, or logo-safe-zone problem. Do not fix by randomly shrinking text, adding margins, or covering issues with extra shapes.
@@ -129,6 +130,7 @@ Do not preserve source-deck business content:
 - Do not copy old training copy, URLs, email examples, screenshots, support contacts, or product-specific instructions unless the user explicitly asks for that exact content.
 - Replace all placeholders with the user's current material.
 - Replace draft-process copy with reader-facing copy. Do not leave notes about how the PPT was planned, which evidence will be added later, or what this generation pass chose not to polish.
+- Delete deck-production setup pages before handoff. Keep a goal/scope page only when it is a real audience-facing business scope, not a note about producing an initial PPT draft.
 - If a screenshot slot is not needed, remove the entire placeholder group instead of leaving empty boxes.
 
 Before declaring a deck complete, run the full QA checklist in `references/qa-checklist.md`. At minimum, extract text and check for leftover template placeholders. Treat any hit as a bug:

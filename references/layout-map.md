@@ -38,6 +38,7 @@ Before editing slide content, create a simple planning table:
 Rules:
 
 - Decide the full page sequence before replacing detailed text or media.
+- Treat the planning table as a working artifact, not a slide. By default, final decks should not include an initial `目标 / 范围 / 产出` page when that page only explains how the PPT draft was produced.
 - Do not create marketing landing pages, magazine-style spreads, Swiss-style poster pages, decorative hero images, WebGL/HTML slide structures, or arbitrary card grids inside this company PPTX skill.
 - If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. Do not hide a new page type inside one deck as a one-off.
 - If no registered type fits, default to Text Explanation Page and keep it restrained.
@@ -215,12 +216,14 @@ Not for:
 - UI click-by-click instructions that need screenshots.
 - Quantitative comparisons that belong in a table or chart.
 - Decorative pipeline art with no operational sequence.
+- A deck-production plan, draft scope, or `初版目标与讨论范围` page. Those are working notes and should be removed from final PPT handoff unless explicitly requested.
 
 Rules:
 
 - Prefer a restrained blue/black sequence, a compact table, or a light line flow.
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
+- Reserve separate title and body zones inside each process card. If an English title wraps to two lines, move the body down, shorten the title, widen the card, stack fewer cards per row, or split the slide. Never let title text overlap body text.
 - Keep the final step, callout, or summary from overlapping the bottom-right logo.
 - Use real process stages. Do not invent numbers, percentages, or pseudo-KPIs just to make the layout feel fuller.
 

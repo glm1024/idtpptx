@@ -36,9 +36,20 @@
       "prompt": "请做一份内部讨论用 PPTX，主题是 AI 代码采纳与入库归因机制复盘。可以先做初版，但最终 PPT 里不要出现你怎么规划 PPT、后续怎么补截图数据、这轮先不展开这些生成过程说明。",
       "expected_behavior": [
         "Keeps slide text reader-facing and business-facing, even when the deck is an initial discussion version.",
+        "Removes the whole 初版目标与讨论范围 or deck-production setup page unless the user explicitly asks for that page.",
         "Does not include phrases like 可讨论的结构草稿, 后续补充数据和截图, 本轮先不展开, or 不追求最终视觉定稿.",
         "Uses assumptions, scope boundaries, risks, or next steps only when they belong to the project rather than the deck-production process.",
         "Runs the QA helper so deck-drafting process leakage is checked before delivery."
+      ]
+    },
+    {
+      "id": "workflow-card-no-text-collision",
+      "prompt": "请做一页端到端数据链路 PPTX：插件采集、事实上报、Commit Report、归因任务、日汇总事实、管理端展示。页面要是终稿效果，不要文字互相盖住，也不要为了塞下六个步骤把字号压到看不清。",
+      "expected_behavior": [
+        "Uses a Process / Workflow Summary layout only if all six stages remain readable.",
+        "Keeps each process card title and body in separate zones; wrapped English titles do not overlap Chinese body text.",
+        "Shortens labels, splits the workflow, or switches to a compact table when six cards cannot fit safely in one row.",
+        "Runs visual QA and treats any text overlap as a blocking readability issue."
       ]
     }
   ]

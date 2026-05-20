@@ -72,6 +72,15 @@ If a mostly empty slide still has small single-spaced body text, treat it as a l
 - For card grids, keep card body compact and put more spacing between cards than inside each card.
 - Do not compensate for an empty slide by adding blank filler shapes. Improve typography, enlarge evidence screenshots, or split/rebalance the layout.
 
+## Text Collision Rules
+
+Text overlap is a layout failure, not a polish issue.
+
+- Do not let editable text boxes overlap other editable text boxes, screenshots, tables, card borders, or the logo.
+- For process cards, reserve a stable heading band and body band. If the heading becomes two lines, the body must move down with enough gap.
+- Mixed English and Chinese labels often wrap unexpectedly. Test long English terms such as `Commit Report`, `Commit Compare`, and module names in the actual rendered slide before delivery.
+- If text only fits by reducing body text below the minimum readable size, split the card row, use fewer cards per slide, shorten the label, or move details into a separate table. Do not accept overprinted text.
+
 ## Table Typography And Alignment
 
 Default table alignment:

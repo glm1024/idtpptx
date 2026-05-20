@@ -28,6 +28,7 @@ PLACEHOLDER_RE = re.compile(
     re.IGNORECASE,
 )
 PROCESS_LEAK_RE = re.compile(
+    r"初版目标与讨论范围|初版.{0,8}(讨论范围|目标)|"
     r"可讨论\s*PPT|可讨论的?结构草稿|结构草稿|形成一版可讨论|"
     r"后续.{0,8}(逐页)?补(充|齐).{0,8}(数据|截图|真实)|"
     r"本轮.{0,6}不展开|先不展开|不追求最终视觉定稿|最终视觉定稿|"
@@ -91,6 +92,10 @@ ALLOWED_MONOSPACE_FONTS = {
     "sfmono-regular",
 }
 THEME_FILL_WARNING_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.25
+TEXT_OVERLAP_MIN_WIDTH = EMUS_PER_INCH * 0.20
+TEXT_OVERLAP_MIN_HEIGHT = EMUS_PER_INCH * 0.10
+TEXT_OVERLAP_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.03
+TEXT_OVERLAP_MIN_RATIO = 0.12
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -402,6 +407,16 @@ def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float,
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
     return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
+
+
+def rect_intersection(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> tuple[float, float, float, float]:
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    x1 = max(ax, bx)
+    y1 = max(ay, by)
+    x2 = min(ax + aw, bx + bw)
+    y2 = min(ay + ah, by + bh)
+    return x1, y1, max(0, x2 - x1), max(0, y2 - y1)
 
 
 def inches(value: float) -> float:
@@ -923,6 +938,51 @@ def find_edge_warnings(pptx_path: Path) -> list[str]:
     return warnings
 
 
+def find_text_overlap_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                text_objects: list[dict[str, object]] = []
+                for obj in iter_slide_objects(sp_tree):
+                    text = str(obj.get("text", "")).strip()
+                    if not text or PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+                        continue
+                    if is_logo_object(obj, slide_w, slide_h):
+                        continue
+                    rect = obj["rect"]
+                    if rect_area(rect) <= 0:
+                        continue
+                    text_objects.append(obj)
+                for idx, left in enumerate(text_objects):
+                    for right in text_objects[idx + 1 :]:
+                        ix, iy, iw, ih = rect_intersection(left["rect"], right["rect"])
+                        intersection_area = iw * ih
+                        if iw < TEXT_OVERLAP_MIN_WIDTH or ih < TEXT_OVERLAP_MIN_HEIGHT:
+                            continue
+                        if intersection_area < TEXT_OVERLAP_MIN_AREA:
+                            continue
+                        smaller_area = min(rect_area(left["rect"]), rect_area(right["rect"]))
+                        if smaller_area <= 0 or intersection_area / smaller_area < TEXT_OVERLAP_MIN_RATIO:
+                            continue
+                        warnings.append(
+                            f"{slide_path}: possible editable text overlap between {rect_label(left)} "
+                            f"and {rect_label(right)}; inspect render"
+                        )
+    except Exception as exc:
+        warnings.append(f"could not inspect editable text overlap: {exc}")
+    return warnings
+
+
 def find_slide_risk_warnings(pptx_path: Path) -> list[str]:
     warnings: list[str] = []
     slide_w, slide_h = slide_size(pptx_path)
@@ -1153,6 +1213,12 @@ def main() -> int:
         warn(message)
     if len(theme_warnings) > 20:
         warn(f"{len(theme_warnings) - 20} additional theme drift warning(s) omitted")
+
+    text_overlap_warnings = find_text_overlap_warnings(pptx_path)
+    for message in text_overlap_warnings[:20]:
+        warn(message)
+    if len(text_overlap_warnings) > 20:
+        warn(f"{len(text_overlap_warnings) - 20} additional editable text overlap warning(s) omitted")
 
     markitdown_python, python_detail = resolve_python(args.python, ["markitdown"])
     if markitdown_python is None:
