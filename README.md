@@ -56,6 +56,8 @@ npx skills update -g -y
 - 清理过业务内容的公司风格 PPTX 模板，位于 `assets/templates/`
 - 简单务实的白底蓝色企业风格规则
 - 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
+- 登记版式优先、截图槽位优先的稳定生成规则，减少不同模型自由发挥造成的偏差
+- 截图和生成配图的保真、裁切、比例和素材边界规则
 - 默认微软雅黑字体、不同内容密度下的字号、行距和表格对齐规则
 - 默认黑色/近黑色文字、红色重点提示和受控语义色规则
 - 更适合中文内部汇报和培训材料的写法指导
@@ -67,6 +69,7 @@ npx skills update -g -y
 - `idtpptx` 不替代基础 `pptx` skill。
 - 基础 `pptx` skill 负责 PPTX 文件读取、拆包、复制页面、XML 编辑、打包、渲染和通用 QA。
 - `idtpptx` 只负责公司风格和模板约束。
+- `idtpptx` 不生成 HTML 网页 PPT，不引入 WebGL、浏览器动效、Swiss poster 或杂志风模板；这些应作为独立 web deck workflow 处理。
 - 交付前必须完成内容、视觉、压缩包、OpenXML 结构和 PowerPoint 兼容性检查；不能只以 LibreOffice 成功渲染作为最终依据。
 - 如果依赖安装在另一个 Python 环境里，可追加 `--python python` 或设置 `IDTPPTX_PYTHON=python`。
 - 模板中可能包含公司品牌元素，只应在授权场景下使用和分享。

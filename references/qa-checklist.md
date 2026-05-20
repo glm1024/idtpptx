@@ -25,6 +25,43 @@ If the current agent/runtime Python cannot import `markitdown`, `defusedxml`, or
 
 The helper is a gate, not a substitute for visual inspection. If it reports `BLOCK`, fix the blocker. If it reports `PASS`, inspect the rendered slide images or contact sheet before delivery.
 
+## Severity Levels
+
+Use this severity model so different agents make the same delivery decision.
+
+### P0 Blocking
+
+Fix before delivery:
+
+- The slide sequence was not mapped to registered page types in `references/layout-map.md`.
+- Placeholder text, old source-deck screenshots, old URLs, contacts, credentials, or product-specific source content remain unintentionally.
+- Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
+- A screenshot needed for the task is too small to inspect after rendering.
+- A normal 3-5 column table is not readable at presentation size.
+- Normal editable text uses muted gray, blue-gray, pale yellow, or another low-contrast color instead of black/near-black.
+- Zip integrity, OpenXML validation, package reference checks, relationship checks, non-negative shape extents, or PowerPoint compatibility checks fail.
+- Notes parts exist when speaker notes were not intentionally requested.
+
+### P1 Must Fix Unless Explicitly Accepted
+
+- The chosen page type does not match the content shape.
+- A generated image includes its own PPT title, footer, page number, logo, watermark, or decorative frame.
+- Screenshot groups use mismatched crop density, size, or ratio.
+- Sparse pages keep small single-spaced text in a large blank area.
+- Tables are stretched to fill space while text remains small.
+- Repeated elements are visibly misaligned.
+
+### P2 Polish
+
+- Captions, notes, or sources are longer than needed.
+- Red annotation boxes are visually heavier than the UI detail they identify.
+- A page has avoidable empty placeholder-shaped regions after cleanup.
+
+### P3 Optional
+
+- Minor wording improvements that do not change meaning.
+- Small spacing refinements that do not affect readability or brand safety.
+
 Recommended commands:
 
 ```bash
@@ -42,6 +79,8 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 
 ## Brand And Layout
 
+- The deck uses only registered company page types unless a new reusable page type has been added to `references/layout-map.md`.
+- For non-trivial decks, a slide planning table exists before detailed edits: page number, registered page type, reason, main material/screenshot slot, and logo risk.
 - Cover slides do not contain redundant white cards, white filled metadata boxes, white diagonal strips, or empty white overlay shapes.
 - Cover metadata and objective copy sit directly on the canvas; if they need a panel to be readable, simplify the cover or move the detail to slide 2.
 - Normal content slides keep the top rule, top-right blue marker, and bottom-right logo unless intentionally using cover/closing style.
@@ -85,6 +124,15 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 - No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, or table.
 - No cover text is wrapped inside a redundant white filled shape or card.
 
+## Screenshots And Generated Images
+
+- `references/screenshot-framing.md` was followed for any screenshot, product image, generated diagram, or UI evidence.
+- Screenshots preserve the real UI by default; they were not redrawn or beautified unless requested or necessary for readability.
+- The selected image slot and ratio were decided before cropping, scaling, or generating assets.
+- Screenshot groups use one ratio, one crop density, and one caption style.
+- Generated images are embedded assets only; they do not include PPT chrome, titles, footers, page numbers, logos, watermarks, or decorative frames.
+- Long or narrow screenshots were cropped to the meaningful area or split into same-size panels instead of being squeezed into one unreadable image.
+
 ## PowerPoint Compatibility
 
 - Do not rely on LibreOffice rendering alone. LibreOffice can tolerate OOXML ordering issues that PowerPoint reports as "content has a problem" and tries to repair.
@@ -100,7 +148,9 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 ## Final Verification
 
 - Render slides to images using the base `pptx` skill workflow.
-- Inspect affected slides visually.
+- Use the contact sheet for scanning only. Open individual slide images for every high-risk page: cover, dense table, screenshot page, sparse text page, logo-adjacent layout, and any slide edited after the first render.
+- Inspect affected slides visually and structurally.
+- If a slide looks wrong, first classify the cause: wrong page type, wrong material slot, component misuse, spacing problem, logo-safe-zone problem, or real content overload. Do not fix by randomly shrinking text, adding margins, or hiding defects under extra shapes.
 - Treat any content that overlaps the bottom-right logo mark as a blocking layout bug.
 - Treat generic multicolor process decoration as a blocking brand bug when it comes from the base `pptx` visual style rather than from user-specified company material.
 - Run zip and OpenXML validation after the last edit, not before.

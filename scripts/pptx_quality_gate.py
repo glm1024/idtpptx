@@ -35,9 +35,13 @@ CT_NS = "http://schemas.openxmlformats.org/package/2006/content-types"
 REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
 EMUS_PER_INCH = 914400
 DEFAULT_LOGO_PADDING_IN = 0.06
+EDGE_TOLERANCE_IN = 0.02
+NEAR_EDGE_IN = 0.06
+LOGO_WARNING_PADDING_IN = 0.30
 LOGO_METADATA_RE = re.compile(r"logo|inspur|浪潮|标志", re.IGNORECASE)
 WHITE_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA"}
 WHITE_SCHEME_VALUES = {"bg1", "lt1"}
+PLACEHOLDER_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA", "F2F2F2", "F5F5F5", "EFEFEF", "EDEDED"}
 MUTED_TEXT_LUMA_THRESHOLD = 80
 MUTED_TEXT_CHANNEL_SPREAD = 50
 
@@ -334,6 +338,39 @@ def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float,
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
     return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
+
+
+def inches(value: float) -> float:
+    return value * EMUS_PER_INCH
+
+
+def rect_area(rect: tuple[float, float, float, float]) -> float:
+    _x, _y, width, height = rect
+    return max(0, width) * max(0, height)
+
+
+def rect_label(obj: dict[str, object]) -> str:
+    name = str(obj.get("name", "")) or "(unnamed)"
+    text = str(obj.get("text", ""))
+    if text:
+        return f"{name!r} text={text[:30]!r}"
+    return repr(name)
+
+
+def is_significant_edge_object(obj: dict[str, object]) -> bool:
+    if obj["kind"] in {"pic", "graphicFrame"}:
+        return True
+    return bool(str(obj.get("text", "")).strip())
+
+
+def is_large_background_like(rect: tuple[float, float, float, float], slide_w: int, slide_h: int) -> bool:
+    x, y, width, height = rect
+    return (
+        x <= inches(0.05)
+        and y <= inches(0.05)
+        and width >= slide_w * 0.9
+        and height >= slide_h * 0.9
+    )
 
 
 def make_group_transform(
@@ -639,6 +676,118 @@ def find_muted_text_color_issues(pptx_path: Path) -> list[str]:
     return issues
 
 
+def find_edge_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    off_tolerance = inches(EDGE_TOLERANCE_IN)
+    near_edge = inches(NEAR_EDGE_IN)
+
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    if is_logo_object(obj, slide_w, slide_h):
+                        continue
+                    rect = obj["rect"]
+                    x, y, width, height = rect
+                    if width <= 0 or height <= 0:
+                        continue
+
+                    off_slide = (
+                        x < -off_tolerance
+                        or y < -off_tolerance
+                        or x + width > slide_w + off_tolerance
+                        or y + height > slide_h + off_tolerance
+                    )
+                    if off_slide:
+                        warnings.append(f"{slide_path}: {obj['kind']} {rect_label(obj)} extends outside slide bounds")
+                        continue
+
+                    if not is_significant_edge_object(obj):
+                        continue
+                    if is_large_background_like(rect, slide_w, slide_h):
+                        continue
+                    near = x < near_edge or y < near_edge or slide_w - (x + width) < near_edge or slide_h - (y + height) < near_edge
+                    if near:
+                        warnings.append(f"{slide_path}: {obj['kind']} {rect_label(obj)} is very close to slide edge")
+    except Exception as exc:
+        warnings.append(f"could not inspect slide edge risks: {exc}")
+
+    return warnings
+
+
+def find_slide_risk_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                objects = list(iter_slide_objects(sp_tree))
+                picture_count = sum(1 for obj in objects if obj["kind"] == "pic" and not is_logo_object(obj, slide_w, slide_h))
+                graphic_count = sum(1 for obj in objects if obj["kind"] == "graphicFrame")
+                text_count = sum(1 for obj in objects if str(obj.get("text", "")).strip())
+                empty_filled = [
+                    obj
+                    for obj in objects
+                    if obj["kind"] == "sp"
+                    and not str(obj.get("text", "")).strip()
+                    and str(obj.get("fill", "")).upper() in PLACEHOLDER_FILL_VALUES
+                    and rect_area(obj["rect"]) >= inches(1.0) * inches(0.45)
+                    and not is_large_background_like(obj["rect"], slide_w, slide_h)
+                ]
+
+                reasons: list[str] = []
+                if picture_count >= 2:
+                    reasons.append(f"{picture_count} non-logo images")
+                if len(objects) >= 30:
+                    reasons.append(f"{len(objects)} positioned objects")
+                if graphic_count >= 1 and text_count >= 8:
+                    reasons.append("table/chart plus dense text")
+                if empty_filled:
+                    reasons.append(f"{len(empty_filled)} large empty filled shape(s)")
+
+                logo_warning_rects = logo_protection_rects(
+                    zf,
+                    slide_path,
+                    slide_w,
+                    slide_h,
+                    LOGO_WARNING_PADDING_IN,
+                )
+                if logo_warning_rects:
+                    near_logo = [
+                        obj
+                        for obj in objects
+                        if not is_logo_object(obj, slide_w, slide_h)
+                        and any(overlaps(obj["rect"], logo_rect) for logo_rect in logo_warning_rects)
+                    ]
+                    if near_logo:
+                        reasons.append(f"{len(near_logo)} object(s) near bottom-right logo")
+
+                if reasons:
+                    warnings.append(f"{slide_path}: high-risk visual inspection recommended ({'; '.join(reasons)})")
+    except Exception as exc:
+        warnings.append(f"could not inspect high-risk slides: {exc}")
+
+    return warnings
+
+
 def find_notes_parts(pptx_path: Path) -> list[str]:
     try:
         with zipfile.ZipFile(pptx_path) as zf:
@@ -787,6 +936,18 @@ def main() -> int:
         args.allow_notes or not notes_parts,
         "ok" if not notes_parts else f"{len(notes_parts)} note-related part(s); pass --allow-notes only when speaker notes are intentional",
     )
+
+    edge_warnings = find_edge_warnings(pptx_path)
+    for message in edge_warnings[:20]:
+        warn(message)
+    if len(edge_warnings) > 20:
+        warn(f"{len(edge_warnings) - 20} additional slide edge warning(s) omitted")
+
+    risk_warnings = find_slide_risk_warnings(pptx_path)
+    for message in risk_warnings[:20]:
+        warn(message)
+    if len(risk_warnings) > 20:
+        warn(f"{len(risk_warnings) - 20} additional high-risk slide warning(s) omitted")
 
     markitdown_python, python_detail = resolve_python(args.python, ["markitdown"])
     if markitdown_python is None:

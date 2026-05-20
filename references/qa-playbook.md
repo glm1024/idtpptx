@@ -8,6 +8,8 @@ Use this playbook when a deck is more than a small text edit, when it was genera
 - A positive signal is not a pass by itself: text extraction, zip integrity, LibreOffice rendering, and PowerPoint compatibility check different failure modes.
 - Run validation after the last edit. A deck can be valid before a final repack and invalid afterward.
 - Do not deliver a deck that PowerPoint prompts to repair, even if it looks fine after repair.
+- Structure comes before polish. If a slide feels wrong, first check whether the registered page type and screenshot/image slot fit the content before tuning margins, fonts, or colors.
+- Mechanical checks are not taste checks, and visual checks are not package checks. Treat them as separate layers.
 
 ## Minimum Delivery Gate
 
@@ -41,6 +43,8 @@ High-risk slides:
 - Sparse pages where only a few short body lines sit in a large blank area.
 - Titles that may wrap to two lines while a top divider line or marker was positioned for one line.
 - Screenshot pages with arrows, red boxes, or multiple screenshots.
+- Generated image pages where the image might contain its own title, footer, page number, logo, or fake deck frame.
+- Pages whose layout uses the space near the bottom-right logo.
 - Slides copied from templates where empty placeholders may still exist as blank boxes.
 - Any slide edited after the first render.
 
@@ -61,10 +65,26 @@ Look for:
 - Uneven alignment among repeated cards, columns, table rows, or step boxes.
 - Large empty placeholder regions left after deleting source content.
 - Low contrast text in light blue, gray, blue-gray, or pale yellow zones.
+- Images or screenshots with mismatched crop density, inconsistent ratios, or important UI text squeezed too small.
+- Generated visuals that look like a standalone poster or slide instead of an asset inside the company PPT.
+
+## Structure Diagnosis
+
+When visual QA finds a problem, classify it before fixing:
+
+- **Wrong page type**: the content should move to another registered type in `layout-map.md`, such as Comparison Table instead of card-like process boxes.
+- **Wrong material slot**: a screenshot or image was placed in a slot too small, too wide, or too close to the logo.
+- **Component misuse**: a table, card, arrow, or callout was used as decoration rather than evidence.
+- **Spacing problem**: the structure is right, but title, body, table, screenshot, or caption spacing needs adjustment.
+- **Logo-safe-zone problem**: content uses the lower-right area without protecting the actual logo mark.
+- **Content overload**: the page needs to split, not shrink.
+
+Do not repair a wrong structure by randomly shrinking text, adding arbitrary margins, covering old elements with new shapes, or inserting decorative cards.
 
 ## Content Inspection Heuristics
 
 - Read extracted text in slide order. Confirm the narrative still works without relying on visuals.
+- Confirm non-trivial decks were planned against registered page types before detailed editing.
 - Check slide titles are specific and name the page's job.
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
 - Check body, table, caption, and note text uses black or near-black; only warnings, risks, key callouts, and screenshot annotations use red.
@@ -75,6 +95,7 @@ Look for:
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
 - Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
+- For screenshots and generated images, check `references/screenshot-framing.md`: real screenshots remain faithful unless the user requested redesign, image groups have consistent ratios, and generated assets do not include deck chrome.
 
 ## Package And PowerPoint Compatibility
 

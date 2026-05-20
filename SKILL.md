@@ -16,6 +16,7 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | First-choice template | `assets/templates/inspur-pragmatic-template-v1.pptx` |
 | Visual rules | `references/style-guide.md` |
 | Page selection | `references/layout-map.md` |
+| Screenshot/image framing | `references/screenshot-framing.md` |
 | Typography and spacing | `references/typography.md` |
 | Chinese business wording | `references/writing-style.md` |
 | Final quality gate | `references/qa-checklist.md` |
@@ -36,6 +37,8 @@ Use the base `pptx` skill for reading, thumbnailing, unpacking, slide duplicatio
 
 Style precedence is strict: if the base `pptx` skill's general design ideas conflict with this company's style, follow `idtpptx`. Do not inherit the base `pptx` skill's colorful infographic defaults, such as multicolor step circles, rainbow process cards, decorative icon grids, or heavy card shadows, unless the user explicitly asks for a livelier non-IDT style.
 
+Do not import web-slide patterns into this skill. `idtpptx` creates and edits PowerPoint `.pptx` files; it does not generate single-file HTML decks, WebGL backgrounds, Motion-based browser slides, Swiss-style poster systems, or magazine web presentations. If the user asks for a web deck, use a separate web-deck skill instead of changing this PPTX workflow.
+
 If the `pptx` skill is not installed or cannot be found, stop and ask the user to install it before continuing. Do not silently fall back to ad hoc PPTX manipulation.
 
 When this skill is installed on another machine, do not assume any local absolute path for `pptx`. Resolve the installed `pptx` skill by skill name or by the host agent's skill loading mechanism.
@@ -45,12 +48,24 @@ When this skill is installed on another machine, do not assume any local absolut
 Prefer template-based editing over drawing new slides from scratch.
 
 1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the first-choice template.
-2. Analyze the target content and map each section to one of the reusable page types in `references/layout-map.md`.
-3. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
-4. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-5. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+2. Analyze the target content and map each section to one of the registered page types in `references/layout-map.md`.
+3. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
+4. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
+5. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
+6. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
+7. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
+
+## Cross-Agent Stability Rules
+
+The safest results come from reducing free-form design decisions:
+
+- Treat the template and `references/layout-map.md` as the golden source for page structure. Use registered company page types first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
+- Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
+- Decide screenshot/image slots before touching assets. Preserve original screenshots when they are evidence; crop or scale them into a standard slot instead of redrawing them by default.
+- Let scripts catch mechanical defects. Placeholder residue, package references, notes parts, logo overlap, muted gray text, and rendering failures are QA bugs, not judgment calls.
+- When a rendered slide looks wrong, diagnose the cause first: wrong page type, wrong material slot, component misuse, spacing problem, or logo-safe-zone problem. Do not fix by randomly shrinking text, adding margins, or covering issues with extra shapes.
 
 ## Generation Policy
 
@@ -72,6 +87,7 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 
 - For visual rules, read `references/style-guide.md`.
 - For choosing pages, read `references/layout-map.md`.
+- For screenshots, generated images, or UI evidence, read `references/screenshot-framing.md`.
 - For font family, font size, line spacing, and density decisions, read `references/typography.md`.
 - For wording and tone, read `references/writing-style.md`.
 - Before final delivery, read `references/qa-checklist.md` and run its required checks.
@@ -127,6 +143,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` when a sparse slide would otherwise leave small cramped text in a large blank area.
 - One idea per slide when possible, but moderate information density is acceptable for training/manual decks.
 - Screenshots and tables are primary visual evidence.
+- Screenshots should preserve evidence by default. Use generated or redesigned images only when the user asks for a conceptual illustration or when the original screenshot is unusable for the chosen slot.
 - Tables should default to vertical-middle cell alignment. Center short categorical values, but left-align descriptive text; normal 3-5 column tables should usually use `12-13 pt` body text.
 - Main content may use the space above and left of the bottom-right logo, but must not cover the logo itself. Keep a small breathing margin around the logo mark.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
