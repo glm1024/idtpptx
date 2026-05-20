@@ -55,13 +55,14 @@ npx skills update -g -y
 
 - 清理过业务内容的公司风格 PPTX 模板，位于 `assets/templates/`
 - 简单务实的白底蓝色企业风格规则
+- 固定的 IDT/Inspur 主题 contract：颜色 token、字体 contract、场景变体和禁止用途
 - 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
 - 登记版式优先、截图槽位优先的稳定生成规则，减少不同模型自由发挥造成的偏差
 - 截图和生成配图的保真、裁切、比例和素材边界规则
 - 默认微软雅黑字体、不同内容密度下的字号、行距和表格对齐规则
 - 默认黑色/近黑色文字、红色重点提示和受控语义色规则
 - 更适合中文内部汇报和培训材料的写法指导
-- 针对占位符清理、封面冗余白色面板、logo 本体防遮挡 / 版心一致性、截图可读性、OpenXML 结构校验和 PowerPoint 兼容性等公司级 QA 检查规则
+- 针对占位符清理、封面冗余白色面板、logo 本体防遮挡 / 版心一致性、截图可读性、主题漂移、OpenXML 结构校验和 PowerPoint 兼容性等公司级 QA 检查规则
 - 可复用的 PPT QA playbook 和机械检查脚本 `scripts/pptx_quality_gate.py`
 
 ## 注意事项
@@ -70,6 +71,9 @@ npx skills update -g -y
 - 基础 `pptx` skill 负责 PPTX 文件读取、拆包、复制页面、XML 编辑、打包、渲染和通用 QA。
 - `idtpptx` 只负责公司风格和模板约束。
 - `idtpptx` 不生成 HTML 网页 PPT，不引入 WebGL、浏览器动效、Swiss poster 或杂志风模板；这些应作为独立 web deck workflow 处理。
+- `idtpptx` 不提供通用主题库，不复制或依赖 `theme-factory` 的 10 套主题、字体或 showcase PDF；默认只使用固定公司主题。
 - 交付前必须完成内容、视觉、压缩包、OpenXML 结构和 PowerPoint 兼容性检查；不能只以 LibreOffice 成功渲染作为最终依据。
 - 如果依赖安装在另一个 Python 环境里，可追加 `--python python` 或设置 `IDTPPTX_PYTHON=python`。
 - 模板中可能包含公司品牌元素，只应在授权场景下使用和分享。
+
+改动主题规则后，除常规检查外，还要运行 QA helper 并刷新本机安装副本，确认后续会话能读取最新 `theme-contract`。

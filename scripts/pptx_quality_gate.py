@@ -44,6 +44,46 @@ WHITE_SCHEME_VALUES = {"bg1", "lt1"}
 PLACEHOLDER_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA", "F2F2F2", "F5F5F5", "EFEFEF", "EDEDED"}
 MUTED_TEXT_LUMA_THRESHOLD = 80
 MUTED_TEXT_CHANNEL_SPREAD = 50
+THEME_CONTRACT_REF = "references/theme-contract.md"
+THEME_TEXT_COLOR_VALUES = {
+    "000000",
+    "111111",
+    "1F2933",
+    "202020",
+    "213261",
+    "0062AC",
+    "00518E",
+    "FFFFFF",
+    "D93025",
+    "C00000",
+    "FF4B4B",
+    "FF0000",
+    "2E7D32",
+    "70AD47",
+    "FFC000",
+    "D6B656",
+}
+THEME_FILL_COLOR_VALUES = THEME_TEXT_COLOR_VALUES | {
+    "FAFAFA",
+    "FDFDFD",
+    "F2F2F2",
+    "F2F4F7",
+    "EDEDED",
+    "F5F5F5",
+    "A4A3A4",
+    "D9D9D9",
+    "BBE0E3",
+}
+ALLOWED_FONT_KEYWORDS = ("微软雅黑", "microsoft yahei", "yahei")
+ALLOWED_MONOSPACE_FONTS = {
+    "consolas",
+    "menlo",
+    "monaco",
+    "courier new",
+    "courier",
+    "sfmono-regular",
+}
+THEME_FILL_WARNING_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.25
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -334,6 +374,23 @@ def object_text_colors(element: ET.Element) -> list[str]:
     return colors
 
 
+def object_font_faces(element: ET.Element) -> list[str]:
+    fonts: list[str] = []
+    for font_node in element.findall(".//a:latin", OOXML_NS):
+        typeface = font_node.attrib.get("typeface", "").strip()
+        if typeface:
+            fonts.append(typeface)
+    for font_node in element.findall(".//a:ea", OOXML_NS):
+        typeface = font_node.attrib.get("typeface", "").strip()
+        if typeface:
+            fonts.append(typeface)
+    for font_node in element.findall(".//a:cs", OOXML_NS):
+        typeface = font_node.attrib.get("typeface", "").strip()
+        if typeface:
+            fonts.append(typeface)
+    return sorted(set(fonts))
+
+
 def overlaps(a: tuple[float, float, float, float], b: tuple[float, float, float, float]) -> bool:
     ax, ay, aw, ah = a
     bx, by, bw, bh = b
@@ -425,6 +482,7 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
             "text": object_text(child),
             "fill": object_fill(child),
             "text_colors": object_text_colors(child),
+            "fonts": object_font_faces(child),
             "rect": transform(xfrm_rect(xfrm)),
         }
 
@@ -645,6 +703,56 @@ def is_muted_gray_text_color(color: str) -> bool:
     return channel_spread <= MUTED_TEXT_CHANNEL_SPREAD and luma >= MUTED_TEXT_LUMA_THRESHOLD
 
 
+def explicit_hex_color(color: str) -> str | None:
+    if not color or color.startswith("scheme:"):
+        return None
+    value = color.strip().lstrip("#").upper()
+    return value if parse_hex_rgb(value) is not None else None
+
+
+def color_luma(color: str) -> float | None:
+    rgb = parse_hex_rgb(color)
+    if rgb is None:
+        return None
+    r, g, b = rgb
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def color_spread(color: str) -> int | None:
+    rgb = parse_hex_rgb(color)
+    if rgb is None:
+        return None
+    return max(rgb) - min(rgb)
+
+
+def is_allowed_theme_text_color(color: str) -> bool:
+    value = explicit_hex_color(color)
+    return value is None or value in THEME_TEXT_COLOR_VALUES
+
+
+def is_allowed_theme_fill_color(color: str) -> bool:
+    value = explicit_hex_color(color)
+    return value is None or value in THEME_FILL_COLOR_VALUES
+
+
+def normalize_font_face(font: str) -> str:
+    return re.sub(r"\s+", " ", font.strip()).lower()
+
+
+def is_allowed_font_face(font: str) -> bool:
+    raw = font.strip()
+    normalized = normalize_font_face(raw)
+    if not normalized:
+        return True
+    if normalized.startswith("+"):
+        return True
+    if any(keyword in normalized for keyword in ALLOWED_FONT_KEYWORDS):
+        return True
+    if raw and any(keyword in raw for keyword in ALLOWED_FONT_KEYWORDS):
+        return True
+    return normalized in ALLOWED_MONOSPACE_FONTS
+
+
 def find_muted_text_color_issues(pptx_path: Path) -> list[str]:
     issues: list[str] = []
     try:
@@ -674,6 +782,71 @@ def find_muted_text_color_issues(pptx_path: Path) -> list[str]:
     except Exception as exc:
         issues.append(f"could not inspect muted gray text colors: {exc}")
     return issues
+
+
+def find_theme_drift_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    if obj["kind"] == "pic" or is_logo_object(obj, slide_w, slide_h):
+                        continue
+
+                    text = str(obj.get("text", "")).strip()
+                    if text and not PLACEHOLDER_RE.search(text):
+                        fonts = sorted({str(font) for font in obj.get("fonts", [])})
+                        unexpected_fonts = [font for font in fonts if not is_allowed_font_face(font)]
+                        if unexpected_fonts:
+                            warnings.append(
+                                f"{slide_path}: theme drift font on {obj['kind']} {rect_label(obj)} "
+                                f"fonts={','.join(unexpected_fonts)}; check {THEME_CONTRACT_REF}"
+                            )
+
+                        colors = sorted({str(color) for color in obj.get("text_colors", [])})
+                        unexpected_colors = [color for color in colors if not is_allowed_theme_text_color(color)]
+                        if unexpected_colors:
+                            warnings.append(
+                                f"{slide_path}: theme drift text color on {obj['kind']} {rect_label(obj)} "
+                                f"colors={','.join(unexpected_colors)}; check {THEME_CONTRACT_REF}"
+                            )
+
+                    fill = str(obj.get("fill", ""))
+                    fill_hex = explicit_hex_color(fill)
+                    if fill_hex is None or is_allowed_theme_fill_color(fill):
+                        continue
+
+                    rect = obj["rect"]
+                    fill_area = rect_area(rect)
+                    if fill_area >= THEME_FILL_WARNING_MIN_AREA and not is_large_background_like(rect, slide_w, slide_h):
+                        warnings.append(
+                            f"{slide_path}: theme drift fill on {obj['kind']} {rect_label(obj)} "
+                            f"fill={fill_hex}; check {THEME_CONTRACT_REF}"
+                        )
+
+                    luma = color_luma(fill_hex)
+                    spread = color_spread(fill_hex)
+                    if is_large_background_like(rect, slide_w, slide_h) and (
+                        (luma is not None and luma < 80) or (spread is not None and spread > 95)
+                    ):
+                        warnings.append(
+                            f"{slide_path}: large dark/high-saturation background may be non-IDT theme "
+                            f"fill={fill_hex}; check {THEME_CONTRACT_REF}"
+                        )
+    except Exception as exc:
+        warnings.append(f"could not inspect theme drift: {exc}")
+
+    return warnings
 
 
 def find_edge_warnings(pptx_path: Path) -> list[str]:
@@ -948,6 +1121,12 @@ def main() -> int:
         warn(message)
     if len(risk_warnings) > 20:
         warn(f"{len(risk_warnings) - 20} additional high-risk slide warning(s) omitted")
+
+    theme_warnings = find_theme_drift_warnings(pptx_path)
+    for message in theme_warnings[:20]:
+        warn(message)
+    if len(theme_warnings) > 20:
+        warn(f"{len(theme_warnings) - 20} additional theme drift warning(s) omitted")
 
     markitdown_python, python_detail = resolve_python(args.python, ["markitdown"])
     if markitdown_python is None:

@@ -9,6 +9,7 @@ Use this playbook when a deck is more than a small text edit, when it was genera
 - Run validation after the last edit. A deck can be valid before a final repack and invalid afterward.
 - Do not deliver a deck that PowerPoint prompts to repair, even if it looks fine after repair.
 - Structure comes before polish. If a slide feels wrong, first check whether the registered page type and screenshot/image slot fit the content before tuning margins, fonts, or colors.
+- Theme comes before decoration. If a slide feels visually foreign, check `references/theme-contract.md` before adding new colors, fonts, backgrounds, or cards.
 - Mechanical checks are not taste checks, and visual checks are not package checks. Treat them as separate layers.
 
 ## Minimum Delivery Gate
@@ -44,6 +45,8 @@ High-risk slides:
 - Titles that may wrap to two lines while a top divider line or marker was positioned for one line.
 - Screenshot pages with arrows, red boxes, or multiple screenshots.
 - Generated image pages where the image might contain its own title, footer, page number, logo, or fake deck frame.
+- Generated chart/diagram pages where the asset may bring a dark tech, marketing, magazine, or poster-like theme.
+- Slides copied from external decks where fonts, fills, or accent colors may carry another theme.
 - Pages whose layout uses the space near the bottom-right logo.
 - Slides copied from templates where empty placeholders may still exist as blank boxes.
 - Any slide edited after the first render.
@@ -61,6 +64,7 @@ Look for:
 - Main body text that is still single-spaced on a sparse slide, or line spacing that is too loose for dense tables/process cards.
 - Mixed editable fonts such as YaHei plus Songti/Calibri/Arial/Aptos in the same normal body area.
 - Normal text rendered in gray, blue-gray, or other low-contrast muted colors instead of black/near-black.
+- Non-IDT theme drift: dark tech backgrounds, warm marketing palettes, magazine-style color systems, Swiss poster styling, or generic multi-theme colors.
 - Footer/source text colliding with the main content.
 - Uneven alignment among repeated cards, columns, table rows, or step boxes.
 - Large empty placeholder regions left after deleting source content.
@@ -73,13 +77,14 @@ Look for:
 When visual QA finds a problem, classify it before fixing:
 
 - **Wrong page type**: the content should move to another registered type in `layout-map.md`, such as Comparison Table instead of card-like process boxes.
+- **Theme drift**: the slide uses colors, fonts, generated imagery, or copied deck styling that violates `theme-contract.md`.
 - **Wrong material slot**: a screenshot or image was placed in a slot too small, too wide, or too close to the logo.
 - **Component misuse**: a table, card, arrow, or callout was used as decoration rather than evidence.
 - **Spacing problem**: the structure is right, but title, body, table, screenshot, or caption spacing needs adjustment.
 - **Logo-safe-zone problem**: content uses the lower-right area without protecting the actual logo mark.
 - **Content overload**: the page needs to split, not shrink.
 
-Do not repair a wrong structure by randomly shrinking text, adding arbitrary margins, covering old elements with new shapes, or inserting decorative cards.
+Do not repair a wrong structure or theme drift by randomly shrinking text, adding arbitrary margins, covering old elements with new shapes, or inserting decorative cards.
 
 ## Content Inspection Heuristics
 
@@ -87,6 +92,7 @@ Do not repair a wrong structure by randomly shrinking text, adding arbitrary mar
 - Confirm non-trivial decks were planned against registered page types before detailed editing.
 - Check slide titles are specific and name the page's job.
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
+- Check the deck follows `references/theme-contract.md`; scenario variants may change density and page type, not the core color/font system.
 - Check body, table, caption, and note text uses black or near-black; only warnings, risks, key callouts, and screenshot annotations use red.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, centered short labels, and left-aligned descriptive cells.

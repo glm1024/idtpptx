@@ -4,19 +4,22 @@
 
 This guide captures reusable company presentation style. It intentionally excludes source-deck business content.
 
+For exact color and font tokens, `references/theme-contract.md` is the source of truth. This guide explains how those tokens should feel and behave in slides.
+
 ## Visual Identity
 
 - Use a 16:9 widescreen deck.
 - Keep the background white by default.
-- Use Inspur blue as the primary accent. Current observed palette:
+- Use Inspur blue as the primary accent. See `references/theme-contract.md` for the authoritative token list. Current observed palette:
   - Primary blue: `0062AC`
   - Deep blue: `00518E`
   - Dark navy: `213261`
   - Neutral gray for fills/rules only: `A4A3A4`
   - Light cyan accent: `BBE0E3`
-- Use black or near-black for body text, table text, card text, captions, notes, and sources. Good defaults are `000000`, `111111`, or `1F2933`.
+- Use black or near-black for body text, table text, card text, captions, notes, and sources. Good defaults are `000000`, `111111`, `1F2933`, or template-compatible `202020`.
 - Do not use medium gray or blue-gray for normal editable text; it looks faint in projection and screenshots.
-- Use red primarily for warnings, risks, key callouts, arrows, boxes, or marking a specific UI location in screenshots. Good defaults are `D93025`, `C00000`, or existing annotation red `FF4B4B`.
+- Use red primarily for warnings, risks, key callouts, arrows, boxes, or marking a specific UI location in screenshots. Good defaults are `D93025`, `C00000`, existing annotation red `FF4B4B`, or template-compatible `FF0000`.
+- Do not replace the IDT/Inspur theme with generic palettes such as Ocean, Forest, Golden, Galaxy, warm marketing, dark tech, magazine, or Swiss poster themes.
 
 ## Color Discipline
 
@@ -27,6 +30,7 @@ This guide captures reusable company presentation style. It intentionally exclud
 - Green, amber, and red may be used only when they encode clear status, severity, or risk meaning. Use them consistently on the slide and avoid mixing semantic and decorative colors.
 - If a slide needs a secondary color, use at most one secondary semantic color beyond the blue/black/white brand palette unless the content itself is a status matrix.
 - Use green for completed/healthy/accepted states, amber for pending/caution/needs confirmation, and red for risk/error/important attention. Do not use red for ordinary category labels.
+- Treat unexpected dominant colors as theme drift. Fix the source token or layout choice instead of adding more colors to balance the slide.
 
 ## Brand Elements
 
@@ -42,6 +46,7 @@ This guide captures reusable company presentation style. It intentionally exclud
 - Default editable font is `微软雅黑` / `Microsoft YaHei` for Chinese, English, numbers, and punctuation.
 - Use bold `微软雅黑` for titles, section labels, card headings, and table headers.
 - Avoid `宋体`, `仿宋`, `楷体`, `黑体`, Calibri, Arial, Aptos, or theme-default fonts in normal editable text unless the user explicitly asks to match a source deck.
+- Do not import theme-factory font pairings such as DejaVu Sans, FreeSans, or FreeSerif into Chinese company PPTX work.
 - Normal slide titles are compact and top-left, usually `24-30 pt`.
 - Main body text is usually `13-18 pt`; use larger body text on sparse slides and split the slide before shrinking below readable size.
 - Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` on sparse explanation pages with obvious empty space.
@@ -101,7 +106,9 @@ Section divider pages usually include:
 - Marketing-style hero pages.
 - Cover pages with redundant white panels, empty white shapes, or white decorative cutouts.
 - Decorative gradient orbs, large abstract backgrounds, or unrelated illustrations.
+- Dark tech, warm marketing, magazine, Swiss poster, or multi-theme palette styling unless the user explicitly requests a non-IDT style exception.
 - Excessive icon grids.
 - Multicolor step circles, rainbow process cards, alternating colored vertical bars, and other base-`pptx` colorful infographic patterns without business meaning.
+- DejaVu, FreeSans, FreeSerif, Aptos, Calibri, Arial, Songti, Fangsong, Kaiti, or other non-YaHei editable fonts in normal Chinese company content.
 - Center-aligned body paragraphs.
 - Keeping old screenshots, URLs, contacts, or product instructions from a source deck as accidental placeholders.

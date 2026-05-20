@@ -14,6 +14,8 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 |------|-------------|
 | PPTX mechanics | Load the installed `pptx` skill |
 | First-choice template | `assets/templates/inspur-pragmatic-template-v1.pptx` |
+| Theme contract | `references/theme-contract.md` |
+| Theme preview | `references/theme-preview.md` |
 | Visual rules | `references/style-guide.md` |
 | Page selection | `references/layout-map.md` |
 | Screenshot/image framing | `references/screenshot-framing.md` |
@@ -48,12 +50,13 @@ When this skill is installed on another machine, do not assume any local absolut
 Prefer template-based editing over drawing new slides from scratch.
 
 1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the first-choice template.
-2. Analyze the target content and map each section to one of the registered page types in `references/layout-map.md`.
-3. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
-4. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
-5. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
-6. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-7. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+2. Read `references/theme-contract.md` and keep the fixed IDT/Inspur theme tokens as the visual source of truth.
+3. Analyze the target content and map each section to one of the registered page types in `references/layout-map.md`.
+4. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
+5. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
+6. Use the base `pptx` workflow to duplicate, delete, reorder, and edit slides.
+7. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
+8. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
@@ -61,11 +64,20 @@ For template-based work, finish structural edits first: choose page types, dupli
 
 The safest results come from reducing free-form design decisions:
 
+- Treat `references/theme-contract.md` as the golden source for colors, fonts, and scenario variants. Do not ask the user to choose from generic themes and do not create a new theme from the topic alone.
 - Treat the template and `references/layout-map.md` as the golden source for page structure. Use registered company page types first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
 - Decide screenshot/image slots before touching assets. Preserve original screenshots when they are evidence; crop or scale them into a standard slot instead of redrawing them by default.
 - Let scripts catch mechanical defects. Placeholder residue, package references, notes parts, logo overlap, muted gray text, and rendering failures are QA bugs, not judgment calls.
-- When a rendered slide looks wrong, diagnose the cause first: wrong page type, wrong material slot, component misuse, spacing problem, or logo-safe-zone problem. Do not fix by randomly shrinking text, adding margins, or covering issues with extra shapes.
+- When a rendered slide looks wrong, diagnose the cause first: theme drift, wrong page type, wrong material slot, component misuse, spacing problem, or logo-safe-zone problem. Do not fix by randomly shrinking text, adding margins, or covering issues with extra shapes.
+
+## Theme Policy
+
+The default theme is fixed: `IDT/Inspur Pragmatic`. Use scenario variants to choose density and layout, not different palettes.
+
+Do not import `theme-factory` palettes, fonts, or showcase assets. Ocean, Forest, Golden, Galaxy, dark tech, Swiss poster, magazine, and warm marketing styles are not `idtpptx` defaults.
+
+Only update the theme when the user provides a company-approved template, brand guide, or style-correct reference deck and asks to adapt the skill. In that case, update `references/theme-contract.md` first, then update related style and QA rules.
 
 ## Generation Policy
 
@@ -86,6 +98,8 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 ## What To Load
 
 - For visual rules, read `references/style-guide.md`.
+- For fixed theme tokens and scenario variants, read `references/theme-contract.md`.
+- For visual calibration or theme-drift diagnosis, read `references/theme-preview.md`.
 - For choosing pages, read `references/layout-map.md`.
 - For screenshots, generated images, or UI evidence, read `references/screenshot-framing.md`.
 - For font family, font size, line spacing, and density decisions, read `references/typography.md`.
@@ -156,9 +170,9 @@ The style is practical corporate training/reporting, not a marketing deck:
 When the user provides a better company-style PPT later:
 
 1. Analyze it with the base `pptx` skill.
-2. Compare it against the current `references/` rules.
-3. Add only reusable style principles, layout patterns, or QA rules.
+2. Compare it against `references/theme-contract.md` and the current `references/` rules.
+3. Add only reusable theme tokens, style principles, layout patterns, or QA rules.
 4. Do not dump source-deck content into the skill.
-5. If a new reference conflicts with old rules, update the rule and note the applicable scenario.
+5. If a new reference conflicts with old rules, update the contract/rule and note the applicable scenario.
 
 When updating the skill from a new reference deck, keep `SKILL.md` concise. Put detailed page-type or style discoveries in `references/`, and use assets only for reusable templates or brand resources.

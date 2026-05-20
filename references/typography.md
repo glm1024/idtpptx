@@ -2,6 +2,8 @@
 
 Use this as the default typography contract for IDT/Inspur PPTX work. It is tuned for 16:9 internal reports, training decks, review materials, and operation manuals.
 
+The authoritative font contract lives in `references/theme-contract.md`. This file gives scenario-specific size, spacing, and alignment rules.
+
 ## Font Family
 
 - Default font for all editable text: `微软雅黑` / `Microsoft YaHei`.
@@ -10,6 +12,7 @@ Use this as the default typography contract for IDT/Inspur PPTX work. It is tune
 - Avoid `宋体`, `仿宋`, `楷体`, `黑体`, Calibri, Arial, Aptos, or theme-default fonts in normal editable text unless the user explicitly asks to match a source deck.
 - Keep fonts inside screenshots as-is; do not edit screenshots just to normalize fonts.
 - Code, SQL, commands, file paths, and API snippets may use `Consolas`, `Menlo`, or another monospace font at `9-11 pt`. Short inline technical terms inside Chinese sentences should usually stay in `微软雅黑`.
+- Do not import generic theme-factory font pairs such as DejaVu Sans, FreeSans, FreeSerif, or serif-display headers into normal `idtpptx` decks.
 
 When generating with PptxGenJS or another code generator, set font explicitly on every text box and table cell. Do not rely on PowerPoint defaults.
 
@@ -37,12 +40,13 @@ Do not use body text below `12 pt` outside tables, labels, footnotes, or dense p
 
 ## Text Color Defaults
 
-- Use `000000`, `111111`, or `1F2933` for normal editable text, including table cells, card bodies, captions, notes, and sources.
+- Use `000000`, `111111`, `1F2933`, or template-compatible `202020` for normal editable text, including table cells, card bodies, captions, notes, and sources.
 - Do not use muted gray, blue-gray, or pale colors for normal text. If text is important enough to read, keep it black or near-black.
 - Use brand blue (`0062AC`, `00518E`, `213261`) for slide titles, section labels, table headers, and small brand accents, not for long paragraph bodies.
 - Use red (`D93025`, `C00000`, or annotation red `FF4B4B`) for warnings, risks, key conclusions, and screenshot boxes/arrows.
 - Use green only for completed/healthy/accepted status and amber only for pending/caution/needs-confirmation status. Keep the same meaning throughout a deck.
 - White text is allowed only on sufficiently dark blue/red/green fills.
+- If a copied page brings its own palette or font stack, treat that as theme drift and normalize it back to `references/theme-contract.md` unless the user explicitly accepted the exception.
 
 ## Line Spacing Defaults
 

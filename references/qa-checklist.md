@@ -33,6 +33,7 @@ Use this severity model so different agents make the same delivery decision.
 
 Fix before delivery:
 
+- Without an explicit user-approved style exception, the deck has drifted away from the fixed IDT/Inspur theme in `references/theme-contract.md`, such as a dominant dark tech, warm marketing, magazine, Swiss poster, or generic multi-theme palette.
 - The slide sequence was not mapped to registered page types in `references/layout-map.md`.
 - Placeholder text, old source-deck screenshots, old URLs, contacts, credentials, or product-specific source content remain unintentionally.
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
@@ -45,6 +46,7 @@ Fix before delivery:
 ### P1 Must Fix Unless Explicitly Accepted
 
 - The chosen page type does not match the content shape.
+- Local theme drift appears on individual pages: unauthorized accent colors, non-YaHei editable fonts, copied external theme styling, or a generated image with its own external visual frame.
 - A generated image includes its own PPT title, footer, page number, logo, watermark, or decorative frame.
 - Screenshot groups use mismatched crop density, size, or ratio.
 - Sparse pages keep small single-spaced text in a large blank area.
@@ -79,12 +81,14 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 
 ## Brand And Layout
 
+- `references/theme-contract.md` was followed for color tokens, font contract, and scenario variants.
 - The deck uses only registered company page types unless a new reusable page type has been added to `references/layout-map.md`.
 - For non-trivial decks, a slide planning table exists before detailed edits: page number, registered page type, reason, main material/screenshot slot, and logo risk.
 - Cover slides do not contain redundant white cards, white filled metadata boxes, white diagonal strips, or empty white overlay shapes.
 - Cover metadata and objective copy sit directly on the canvas; if they need a panel to be readable, simplify the cover or move the detail to slide 2.
 - Normal content slides keep the top rule, top-right blue marker, and bottom-right logo unless intentionally using cover/closing style.
 - New slides match the simple white-and-blue corporate style.
+- New slides do not introduce generic theme palettes, dark tech backgrounds, warm marketing fills, magazine-style color systems, or Swiss poster styling unless explicitly accepted by the user.
 - Titles are compact and aligned consistently.
 - Editable text uses `微软雅黑` / `Microsoft YaHei` by default. Any non-YaHei font in normal text is intentional, not a leftover theme/default font.
 - Normal editable text uses black or near-black, not muted gray, blue-gray, or pale low-contrast colors.
@@ -94,6 +98,7 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - No decorative gradients, stock-photo hero compositions, or marketing-style cards were introduced.
 - No base-`pptx` colorful infographic style was introduced: multicolor numbered circles, rainbow card grids, alternating colored vertical bars, decorative icon grids, and heavy card shadows are blocking brand issues unless the user explicitly requested that style.
 - Red text/boxes/arrows are reserved for warnings, risks, key callouts, and screenshot annotations. Green means completed/healthy/accepted; amber means pending/caution/needs confirmation. Color used only for decoration should be revised to the blue/black/white brand palette.
+- Theme-factory palettes, showcase styling, DejaVu/FreeSans/FreeSerif fonts, and generic theme picker behavior were not imported into the deck.
 
 ## Content Hygiene
 
@@ -151,6 +156,7 @@ python -m markitdown output.pptx | grep -iE "项目名称|汇报主题|章节标
 - Use the contact sheet for scanning only. Open individual slide images for every high-risk page: cover, dense table, screenshot page, sparse text page, logo-adjacent layout, and any slide edited after the first render.
 - Inspect affected slides visually and structurally.
 - If a slide looks wrong, first classify the cause: wrong page type, wrong material slot, component misuse, spacing problem, logo-safe-zone problem, or real content overload. Do not fix by randomly shrinking text, adding margins, or hiding defects under extra shapes.
+- If a slide feels like it came from another design system, classify it as theme drift first: wrong token, wrong font contract, wrong scenario variant, or source material carrying an external theme.
 - Treat any content that overlaps the bottom-right logo mark as a blocking layout bug.
 - Treat generic multicolor process decoration as a blocking brand bug when it comes from the base `pptx` visual style rather than from user-specified company material.
 - Run zip and OpenXML validation after the last edit, not before.
