@@ -50,6 +50,7 @@ DEFAULT_LOGO_PADDING_IN = 0.06
 EDGE_TOLERANCE_IN = 0.02
 NEAR_EDGE_IN = 0.06
 LOGO_WARNING_PADDING_IN = 0.30
+CONTENT_UTILIZATION_REF = "references/layout-map.md"
 LOGO_METADATA_RE = re.compile(r"logo|inspur|浪潮|标志", re.IGNORECASE)
 WHITE_FILL_VALUES = {"FFFFFF", "FDFDFD", "FAFAFA"}
 WHITE_SCHEME_VALUES = {"bg1", "lt1"}
@@ -177,6 +178,12 @@ IMAGE_SIGNATURE_CHECKS = {
     ".gif": lambda data: data.startswith((b"GIF87a", b"GIF89a")),
 }
 REPEATED_MEDIA_HASH_WARNING_THRESHOLD = 5
+CONTENT_BODY_TOP_IN = 0.70
+CONTENT_BODY_BOTTOM_IN = 0.70
+CONTENT_UNDERUSE_RIGHT_RATIO = 0.78
+CONTENT_UNDERUSE_BOTTOM_RATIO = 0.78
+CONTENT_UNDERUSE_WIDTH_RATIO = 0.72
+CONTENT_UNDERUSE_HEIGHT_RATIO = 0.62
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -770,6 +777,22 @@ def is_logo_object(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
     return False
 
 
+def is_logo_like_picture_anywhere(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
+    if is_logo_object(obj, slide_w, slide_h):
+        return True
+    if obj["kind"] != "pic" or str(obj["text"]):
+        return False
+    x, y, width, height = obj["rect"]
+    if width <= 0 or height <= 0:
+        return False
+    aspect_ratio = width / height
+    return (
+        0.45 * EMUS_PER_INCH <= width <= 3.4 * EMUS_PER_INCH
+        and 0.10 * EMUS_PER_INCH <= height <= 0.95 * EMUS_PER_INCH
+        and aspect_ratio >= 2.8
+    )
+
+
 def padded_rect(
     rect: tuple[float, float, float, float],
     padding_in: float,
@@ -862,6 +885,59 @@ def logo_protection_rects(
                 rects.append(padded_rect(obj["rect"], padding_in, slide_w, slide_h))
 
     return rects
+
+
+def logo_instances(
+    zf: zipfile.ZipFile,
+    slide_path: str,
+    slide_w: int,
+    slide_h: int,
+) -> list[tuple[str, dict[str, object]]]:
+    instances: list[tuple[str, dict[str, object]]] = []
+    for path in logo_source_paths(zf, slide_path):
+        if path not in zf.namelist():
+            continue
+        root = ET.fromstring(zf.read(path))
+        sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+        if sp_tree is None:
+            continue
+        for obj in iter_slide_objects(sp_tree):
+            if not overlaps(obj["rect"], (0, 0, slide_w, slide_h)):
+                continue
+            if is_logo_like_picture_anywhere(obj, slide_w, slide_h):
+                instances.append((path, obj))
+    return instances
+
+
+def find_duplicate_logo_issues(pptx_path: Path) -> list[str]:
+    issues: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                instances = logo_instances(zf, slide_path, slide_w, slide_h)
+                if len(instances) <= 1:
+                    continue
+                labels = []
+                for source_path, obj in instances[:6]:
+                    x, y, width, height = obj["rect"]
+                    labels.append(
+                        f"{source_path}:{rect_label(obj)}"
+                        f"@({x / EMUS_PER_INCH:.2f},{y / EMUS_PER_INCH:.2f},"
+                        f"{width / EMUS_PER_INCH:.2f},{height / EMUS_PER_INCH:.2f})"
+                    )
+                issues.append(
+                    f"{slide_path}: {len(instances)} visible logo-like object(s); "
+                    "reuse the template/master logo and remove manually inserted duplicates: "
+                    + "; ".join(labels)
+                )
+    except Exception as exc:
+        issues.append(f"could not inspect duplicate logos: {exc}")
+    return issues
 
 
 def find_logo_overlap_issues(
@@ -1242,6 +1318,81 @@ def find_edge_warnings(pptx_path: Path) -> list[str]:
     except Exception as exc:
         warnings.append(f"could not inspect slide edge risks: {exc}")
 
+    return warnings
+
+
+def is_body_content_object(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
+    if is_logo_object(obj, slide_w, slide_h):
+        return False
+    kind = obj["kind"]
+    if kind == "cxnSp":
+        return False
+    rect = obj["rect"]
+    x, y, width, height = rect
+    if width <= 0 or height <= 0:
+        return False
+    if is_large_background_like(rect, slide_w, slide_h):
+        return False
+
+    # Exclude template chrome: top rule/marker/title area and compact footers.
+    if y < inches(CONTENT_BODY_TOP_IN):
+        return False
+    if y + height > slide_h - inches(CONTENT_BODY_BOTTOM_IN) and height < inches(0.45):
+        return False
+
+    text = str(obj.get("text", "")).strip()
+    fill = str(obj.get("fill", ""))
+    if text:
+        return not (PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text))
+    if kind in {"pic", "graphicFrame"}:
+        return True
+    return bool(fill and rect_area(rect) >= inches(0.28) * inches(0.18))
+
+
+def find_content_utilization_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                body_objects = [
+                    obj
+                    for obj in iter_slide_objects(sp_tree)
+                    if is_body_content_object(obj, slide_w, slide_h)
+                ]
+                if len(body_objects) < 3:
+                    continue
+                min_x = min(obj["rect"][0] for obj in body_objects)
+                min_y = min(obj["rect"][1] for obj in body_objects)
+                max_x = max(obj["rect"][0] + obj["rect"][2] for obj in body_objects)
+                max_y = max(obj["rect"][1] + obj["rect"][3] for obj in body_objects)
+                width_ratio = (max_x - min_x) / slide_w
+                height_ratio = (max_y - min_y) / slide_h
+                right_ratio = max_x / slide_w
+                bottom_ratio = max_y / slide_h
+
+                if (
+                    right_ratio < CONTENT_UNDERUSE_RIGHT_RATIO
+                    and bottom_ratio < CONTENT_UNDERUSE_BOTTOM_RATIO
+                    and width_ratio < CONTENT_UNDERUSE_WIDTH_RATIO
+                    and height_ratio < CONTENT_UNDERUSE_HEIGHT_RATIO
+                ):
+                    warnings.append(
+                        f"{slide_path}: content appears confined to a small upper-left area "
+                        f"(bbox width={width_ratio:.0%}, height={height_ratio:.0%}, "
+                        f"right={right_ratio:.0%}, bottom={bottom_ratio:.0%}); "
+                        f"use the registered template content zone and avoid a mini-slide inside the page per {CONTENT_UTILIZATION_REF}"
+                    )
+    except Exception as exc:
+        warnings.append(f"could not inspect content area utilization: {exc}")
     return warnings
 
 
@@ -1636,6 +1787,12 @@ def main() -> int:
         not logo_overlap_issues,
         "ok" if not logo_overlap_issues else "; ".join(logo_overlap_issues[:20]),
     )
+    duplicate_logo_issues = find_duplicate_logo_issues(pptx_path)
+    check(
+        "single visible logo per slide",
+        not duplicate_logo_issues,
+        "ok" if not duplicate_logo_issues else "; ".join(duplicate_logo_issues[:20]),
+    )
     cover_white_panel_issues = find_cover_white_panel_issues(pptx_path)
     check(
         "cover white panels",
@@ -1660,6 +1817,12 @@ def main() -> int:
         warn(message)
     if len(edge_warnings) > 20:
         warn(f"{len(edge_warnings) - 20} additional slide edge warning(s) omitted")
+
+    content_utilization_warnings = find_content_utilization_warnings(pptx_path)
+    for message in content_utilization_warnings[:20]:
+        warn(message)
+    if len(content_utilization_warnings) > 20:
+        warn(f"{len(content_utilization_warnings) - 20} additional content utilization warning(s) omitted")
 
     risk_warnings = find_slide_risk_warnings(pptx_path)
     for message in risk_warnings[:20]:

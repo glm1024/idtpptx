@@ -38,6 +38,8 @@ Before editing slide content, create a simple planning table:
 Rules:
 
 - Decide the full page sequence before replacing detailed text or media.
+- Use the registered template content zone at full slide scale. Do not place a compact mini-layout in the upper-left while leaving most of the right side and lower half empty.
+- Reuse the template's page chrome. Do not add a second top rule, page marker, footer/logo, or artificial slide frame inside the existing template frame.
 - Treat the planning table as a working artifact, not a slide. By default, final decks should not include an initial `目标 / 范围 / 产出` page when that page only explains how the PPT draft was produced.
 - Do not create marketing landing pages, magazine-style spreads, Swiss-style poster pages, decorative hero images, WebGL/HTML slide structures, or arbitrary card grids inside this company PPTX skill.
 - If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. Do not hide a new page type inside one deck as a one-off.
@@ -242,4 +244,5 @@ Rules:
 - If no strong pattern fits, use Text Explanation Page.
 - Remove surplus placeholders, screenshot boxes, arrows, and table rows entirely; do not just clear their text.
 - Before finalizing a slide, make sure the bottom-right logo remains uncovered; do not reserve a large empty area above or left of it.
+- If rendered content looks like a small slide nested inside the template, pick a registered page type with a larger content slot, widen the table/process/screenshot group, or split the material. Do not fix it by adding another logo, page number, frame, or decorative empty panel.
 - If a slide looks awkward after rendering, first reassess the page-type choice and material slot. Avoid fixing a wrong structure by adding random margins, shrinking text below readable size, or adding decorative boxes.

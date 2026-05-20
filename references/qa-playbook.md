@@ -54,11 +54,14 @@ High-risk slides:
 - Slides copied from external decks where fonts, fills, or accent colors may carry another theme.
 - Pages whose layout uses the space near the bottom-right logo.
 - Slides copied from templates where empty placeholders may still exist as blank boxes.
+- Slides generated with a blank layout or custom code on top of a branded template; these often duplicate the template chrome and compress content into a small upper-left area.
 - Any slide edited after the first render.
 
 Look for:
 
 - Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
+- More than one visible Inspur logo on a slide. If the template already has the bottom-right or cover logo, remove manually inserted logo images.
+- A small inner slide effect: a second header line, page number, footer/logo, or content group appears inside the existing template frame, with large unused space on the right and bottom.
 - Text, table borders, cell fills, screenshots, callouts, charts, or background shapes overlapping the bottom-right logo.
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
 - Text that visually belongs to a filled note/card/conclusion background but extends past the right or bottom edge of that background.
@@ -92,6 +95,7 @@ When visual QA finds a problem, classify it before fixing:
 - **Component misuse**: a table, card, arrow, or callout was used as decoration rather than evidence.
 - **Spacing problem**: the structure is right, but title, body, table, screenshot, or caption spacing needs adjustment.
 - **Logo-safe-zone problem**: content uses the lower-right area without protecting the actual logo mark.
+- **Nested-slide problem**: generated content has its own mini header/footer/logo system or occupies only the upper-left of the template content zone. Rebuild using a registered template page type rather than tuning margins.
 - **Content overload**: the page needs to split, not shrink.
 
 Do not repair a wrong structure or theme drift by randomly shrinking text, adding arbitrary margins, covering old elements with new shapes, or inserting decorative cards.
@@ -129,6 +133,7 @@ Known failure patterns:
 - Broken image relationships: an `a:blip` embed id does not exist in the slide/layout/master `.rels`, the relationship target is missing, external, not under `ppt/media`, lacks an image content type, or the actual PNG/JPEG/GIF bytes are invalid.
 - PowerPoint repair followed by images turning into generic attachment/package icons. Treat this as a media/package defect, not a cosmetic issue.
 - Repeatedly embedding the same template logo as separate media files on every slide. This may render, but it is a sign that the deck was generated from scratch instead of reusing the template master/layout and should be inspected carefully.
+- Reusing a branded template while also drawing custom slide chrome and logos in generated code. This can pass package validation but fail visual QA because the page reads as a smaller PPT inside a larger PPT.
 - Negative `a:xfrm/a:ext` dimensions on generated line shapes. If a line is drawn from right to left or bottom to top, normalize the bounding box to positive width/height and use `flipH`/`flipV` to preserve direction.
 - Unintentional `ppt/notesSlides/` and `ppt/notesMasters/` parts from generated decks. If the deck has no speaker notes, remove notes parts, the notes relationships, notes content types, and `p:notesMasterIdLst`.
 - Orphaned notes, media, charts, or layouts left after template cleanup.

@@ -37,6 +37,7 @@ For exact color and font tokens, `references/theme-contract.md` is the source of
 - Keep the Inspur logo in the bottom-right on normal content slides.
 - Protect the logo mark itself, not a large lower-right empty zone. Content may use the space above and left of the logo.
 - No body text, table grid, screenshot, callout, chart, or decorative block may overlap the logo mark. Keep only a small breathing margin around the logo.
+- Use exactly one visible Inspur logo per slide unless the user explicitly provides a special cover/closing reference that shows otherwise. When the template or master already supplies the logo, do not insert another per-slide logo from code.
 - Keep the small blue corner marker at the top-right.
 - Keep the thin blue/gray header rule at the top.
 - Cover and closing slides may use a larger logo.
@@ -58,6 +59,8 @@ For exact color and font tokens, `references/theme-contract.md` is the source of
 - Use clear rectangular zones and generous white background.
 - Favor screenshots, tables, and annotated process evidence over abstract illustrations.
 - Keep content aligned to a consistent left edge.
+- Fill the registered template content zone. Avoid layouts that make the whole slide feel like a small slide pasted into the upper-left of a larger slide, with an unused right side and unused lower half.
+- Do not recreate template chrome inside the slide body. If the template already has a header rule, page marker, footer/logo, or title placeholder, replace or reuse those elements instead of drawing a second inner header/footer system.
 - Keep dense content from covering the bottom-right logo; the area above and left of the logo remains usable when it does not overlap the mark.
 - For process or workflow slides, prefer simple blue/black step labels, quiet tables, screenshot sequences, or light line flows over colorful step badges and card grids.
 - Do not create decorative cards, gradient hero sections, large stock imagery, or colorful infographic-heavy slides unless the user explicitly asks for a different style.

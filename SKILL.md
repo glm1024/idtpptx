@@ -101,6 +101,8 @@ PptxGenJS is a fallback, not the normal `idtpptx` route. Use PptxGenJS or anothe
 
 When the template contains the logo or other shared brand media, do not embed a new copy of the same logo on every slide. Prefer the template's master/layout logo or reuse the existing media relationship. Per-slide duplicate image embedding is a PowerPoint compatibility risk and should be treated as a warning sign during QA.
 
+Do not draw a second presentation shell inside the template. If a template layout already provides the top rule, page marker, logo, or other page chrome, do not manually add another title bar, page number, footer logo, or slide frame in generated code. Use the registered template page's real content zone, or duplicate/edit that page type directly. A rendered slide where the material sits only in the upper-left while the right and bottom remain mostly empty should be treated as a structure bug, not as acceptable whitespace.
+
 If PptxGenJS or another generator is used from scratch, run an explicit PowerPoint-compatibility cleanup before delivery:
 
 - Remove unintentional `ppt/notesSlides/` and `ppt/notesMasters/` parts unless speaker notes are explicitly required.

@@ -41,6 +41,8 @@ Fix before delivery:
 - Rendered text overlaps other text, table cells, screenshots, card borders, title rules, or the logo. Text overprint is a blocking readability bug.
 - Text intended to belong to a filled background box, card, note bar, or callout runs outside that container instead of wrapping inside it.
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
+- A slide has more than one visible Inspur logo, such as a master/layout logo plus an extra manually inserted logo.
+- Template chrome is duplicated inside the slide body, making the page look like a small PPT embedded inside a larger PPT.
 - A screenshot needed for the task is too small to inspect after rendering.
 - A normal 3-5 column table is not readable at presentation size.
 - A normal table visibly mixes horizontal alignment modes or leaves short cell text stuck to the top/bottom instead of vertical middle.
@@ -98,6 +100,8 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - Cover slides do not contain redundant white cards, white filled metadata boxes, white diagonal strips, or empty white overlay shapes.
 - Cover metadata and objective copy sit directly on the canvas; if they need a panel to be readable, simplify the cover or move the detail to slide 2.
 - Normal content slides keep the top rule, top-right blue marker, and bottom-right logo unless intentionally using cover/closing style.
+- Normal content slides have one visible logo only. When the master/layout already provides the logo, generated slide content must not insert another copy.
+- Slide content uses the registered content area at the intended scale. It must not appear as a compact inner deck clustered in the upper-left with a mostly empty right side and bottom half.
 - New slides match the simple white-and-blue corporate style.
 - New slides do not introduce generic theme palettes, dark tech backgrounds, warm marketing fills, magazine-style color systems, or Swiss poster styling unless explicitly accepted by the user.
 - Titles are compact and aligned consistently.
@@ -143,6 +147,7 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Body copy uses direct internal-document Chinese.
 - Process cards, table headers, and callouts use Chinese-first labels. English-only labels and slash-separated field lists should be rewritten unless they are real product names, exact field names, or standard abbreviations.
 - No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, table, title rule, card title, or card body.
+- No slide contains a second title/header/footer/logo system inside the template frame.
 - Text inside light-gray conclusion bars, note boxes, cards, and callouts remains inside the visible background with padding.
 - Process-card titles and bodies have separate vertical zones. If a card title wraps to two lines, the body does not collide with it.
 - No cover text is wrapped inside a redundant white filled shape or card.
@@ -168,6 +173,7 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Known failure mode: `.rels` files can point to deleted or renamed package parts after slide duplication, deletion, or cleanup. Treat any missing internal relationship target as blocking.
 - Known failure mode: picture shapes can reference missing, external, untyped, or corrupt image parts. PowerPoint may repair the deck and show the picture as a generic attachment-like object. Validate `ppt/slides/_rels/*.rels`, `ppt/slideLayouts/_rels/*.rels`, `ppt/slideMasters/_rels/*.rels`, `[Content_Types].xml`, and the actual `ppt/media/*` bytes.
 - Known failure mode: a generator can embed the same logo or image as separate media parts on many slides. This is not always invalid, but for company templates it is a warning sign; prefer the master/layout logo or shared template media.
+- Known failure mode: generated code can use a blank template layout, then draw its own title rule, page marker, content cards, and logo while the template master still renders the real slide chrome. This creates the "small PPT inside big PPT" effect and should be treated as a layout blocker.
 - Known failure mode: generated line shapes can produce negative `a:ext cx/cy` values when using end coordinates smaller than start coordinates. Normalize those to positive extents with `flipH`/`flipV`; PowerPoint may repair or delete the affected content.
 - Known failure mode: PptxGenJS can emit notes slides/notes master parts even when the deck does not intentionally use speaker notes. For `idtpptx` delivery decks, remove notes parts unless the user explicitly needs speaker notes. If notes are intentional, run the helper with `--allow-notes`.
 - If PowerPoint prompts for repair, treat the deck as not delivered. Inspect the validator output, fix the OOXML structure, repack, and re-run the full QA gate.

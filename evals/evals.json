@@ -97,6 +97,17 @@
         "Does not mix centered and left-aligned cells as a visual shortcut.",
         "Runs the QA helper and treats mixed table alignment warnings as pages needing review."
       ]
+    },
+    {
+      "id": "no-mini-deck-inside-template",
+      "prompt": "请用 idtpptx 公司模板生成一份内部评审 PPTX，可以用代码生成，但不要让页面看起来像一个小 PPT 套在大 PPT 里面，也不要每页出现两个浪潮 logo。",
+      "expected_behavior": [
+        "Reuses the template or master slide chrome instead of drawing a second title bar, page marker, footer, or slide frame inside the page.",
+        "Uses one visible Inspur logo per slide unless a user-provided cover or closing reference explicitly shows otherwise.",
+        "Fills the registered template content zone at full slide scale; content is not clustered only in the upper-left with a mostly empty right side and lower half.",
+        "When code generation is unavoidable, validates the result with rendered slide images and the idtpptx QA helper's logo/content-utilization checks.",
+        "Treats duplicate visible logos as a blocking issue and content-underuse warnings as pages requiring visual redesign."
+      ]
     }
   ]
 }
