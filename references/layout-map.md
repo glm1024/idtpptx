@@ -261,8 +261,8 @@ Best for:
 - Operational review process.
 - Data flow or attribution flow.
 - Multi-stage plan without screenshots.
-- Technical architecture or topology diagrams when selected through `ARC-01`
-  or `ARC-02` in `references/layout-registry.md`.
+- Technical architecture or topology diagrams when selected through `ARC-01`,
+  `ARC-02`, or `ARC-03` in `references/layout-registry.md`.
 
 Not for:
 
@@ -275,8 +275,10 @@ Rules:
 
 - Prefer a restrained blue/black sequence, a compact table, or a light line flow.
 - For technical diagrams, pick `ARC-01` when the explanation and diagram share
-  the slide; pick `ARC-02` when the diagram must be full width to keep labels
-  readable.
+  the slide in the standard text-left / diagram-right structure; pick
+  `ARC-03` when either diagram-left / text-right or text-left / diagram-right
+  split orientation is an explicit content decision; pick `ARC-02` when the
+  diagram must be full width to keep labels readable.
 - For phased rollout or month-by-month planning, pick `PRC-03` instead of a
   generic process card row.
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.

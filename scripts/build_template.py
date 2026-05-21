@@ -905,6 +905,181 @@ def add_arc_01a(prs: Presentation) -> None:
     )
 
 
+def add_arc_03a(prs: Presentation) -> None:
+    slide = prs.slides.add_slide(prs.slide_layouts[5])
+    style_title(slide, "图文拆分架构示例")
+
+    add_textbox(
+        slide,
+        "先看系统关系，再读右侧约束。",
+        0.70,
+        1.12,
+        11.95,
+        0.36,
+        font_size=13,
+        color=COLOR_BODY,
+    )
+
+    add_rect(slide, 0.70, 1.62, 7.15, 4.55, fill=COLOR_SOFT_WHITE, line=COLOR_GRID, line_width=0.75)
+    add_textbox(
+        slide,
+        "架构关系",
+        1.02,
+        1.88,
+        6.45,
+        0.30,
+        font_size=13,
+        color=COLOR_DARK_NAVY,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        valign=MSO_ANCHOR.MIDDLE,
+    )
+
+    top_nodes = [
+        (1.05, "入口层", COLOR_LIGHT_FILL, COLOR_DARK_NAVY),
+        (3.00, "编排服务", COLOR_PRIMARY_BLUE, COLOR_WHITE),
+        (4.95, "能力组件", COLOR_DEEP_BLUE, COLOR_WHITE),
+        (6.50, "数据底座", COLOR_LIGHT_FILL, COLOR_DARK_NAVY),
+    ]
+    for x, label, fill, text_color in top_nodes:
+        add_rect(
+            slide,
+            x,
+            2.42,
+            1.15,
+            0.58,
+            fill=fill,
+            line=COLOR_GRID if fill == COLOR_LIGHT_FILL else fill,
+            text=label,
+            font_size=10.8,
+            text_color=text_color,
+            bold=True,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+    for x in (2.33, 4.28, 6.18):
+        add_arrow(slide, x, 2.61, 0.34, 0.18, color=COLOR_PRIMARY_BLUE)
+
+    add_rect(slide, 1.05, 3.50, 6.45, 1.38, fill=COLOR_LIGHT_FILL, line=COLOR_GRID, line_width=0.6)
+    add_textbox(
+        slide,
+        "能力分层",
+        1.28,
+        3.68,
+        1.30,
+        0.26,
+        font_size=10.8,
+        color=COLOR_DARK_NAVY,
+        bold=True,
+        valign=MSO_ANCHOR.MIDDLE,
+    )
+    layer_items = [
+        (2.15, "任务调度"),
+        (3.72, "状态同步"),
+        (5.29, "审计追踪"),
+    ]
+    for x, label in layer_items:
+        add_rect(
+            slide,
+            x,
+            3.98,
+            1.25,
+            0.42,
+            fill=COLOR_SOFT_WHITE,
+            line=COLOR_GRID,
+            line_width=0.5,
+            text=label,
+            font_size=9.8,
+            text_color=COLOR_BODY,
+            align=PP_ALIGN.CENTER,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+
+    add_rect(
+        slide,
+        1.05,
+        5.24,
+        6.45,
+        0.46,
+        fill=COLOR_MID_FILL,
+        line=COLOR_GRID,
+        line_width=0.5,
+        text="示意图只保留主干结构，细节放到后续页展开。",
+        font_size=10.5,
+        text_color=COLOR_BODY,
+        align=PP_ALIGN.LEFT,
+        margin_x=0.10,
+        margin_y=0.04,
+    )
+
+    add_rect(slide, 8.15, 1.62, 4.50, 4.55, fill=COLOR_SOFT_WHITE, line=COLOR_GRID, line_width=0.75)
+    add_textbox(
+        slide,
+        "说明口径",
+        8.45,
+        1.88,
+        3.90,
+        0.30,
+        font_size=13,
+        color=COLOR_DARK_NAVY,
+        bold=True,
+        align=PP_ALIGN.CENTER,
+        valign=MSO_ANCHOR.MIDDLE,
+    )
+
+    cards = [
+        ("入口边界", "统一入口、权限和对象范围"),
+        ("核心链路", "先编排任务，再调用能力组件"),
+        ("数据约束", "关键状态和结果需要可追溯"),
+        ("输出结果", "面向评审沉淀结论和行动"),
+    ]
+    y = 2.42
+    for title, body in cards:
+        add_rect(slide, 8.45, y, 3.90, 0.64, fill=COLOR_LIGHT_FILL, line=COLOR_GRID, line_width=0.5)
+        add_rect(slide, 8.45, y, 0.08, 0.64, fill=COLOR_PRIMARY_BLUE, line=COLOR_PRIMARY_BLUE, line_width=0)
+        add_textbox(
+            slide,
+            title,
+            8.64,
+            y + 0.08,
+            3.48,
+            0.20,
+            font_size=10.8,
+            color=COLOR_DARK_NAVY,
+            bold=True,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+        add_textbox(
+            slide,
+            body,
+            8.64,
+            y + 0.34,
+            3.48,
+            0.18,
+            font_size=9.6,
+            color=COLOR_BODY,
+            valign=MSO_ANCHOR.MIDDLE,
+        )
+        y += 0.78
+
+    add_rect(
+        slide,
+        0.70,
+        6.28,
+        10.65,
+        0.34,
+        fill=COLOR_LIGHT_FILL,
+        line=COLOR_GRID,
+        line_width=0.5,
+        text="适用：图和文字同等重要；可按阅读顺序左右互换。",
+        font_size=10.5,
+        text_color=COLOR_BODY,
+        align=PP_ALIGN.LEFT,
+        margin_x=0.14,
+        margin_y=0.03,
+    )
+
+
 def add_arc_02a(prs: Presentation) -> None:
     slide = prs.slides.add_slide(prs.slide_layouts[5])
     style_title(slide, "技术架构示例")
@@ -1346,6 +1521,7 @@ def build_template(template: Path, output: Path) -> Path:
     add_ss_02a(prs)
     add_ss_03a(prs)
     add_arc_01a(prs)
+    add_arc_03a(prs)
     add_arc_02a(prs)
     add_tbl_02a(prs)
     add_tbl_03a(prs)

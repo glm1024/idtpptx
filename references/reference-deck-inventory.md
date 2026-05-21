@@ -56,6 +56,7 @@ variants first.
 | `SS-02` | `新邮箱系统使用培训-数据备份手册.pptx` screenshot instruction pages | Screenshot Step Page | The deck has many practical UI walkthrough pages with screenshot slots and red-arrow sequencing |
 | `TBL-02` | `云智能助手架构和功能设计方案1015_副本.pptx` protocol/route/comparison tables | Comparison Table Page | Adds a dense but controlled evidence-table variant for technical schemes |
 | `ARC-01` | `跨资源池调度方案设计v1.0-孔维亭.pptx`, `反向代理访问虚拟机控制台.pptx`, `跨云迁移分享.pptx` | Process / Workflow Summary Page | Provides a native technical architecture/flow explanation page instead of forcing diagrams into cards |
+| `ARC-03` | `跨云迁移分享.pptx` slide 10/18 and `跨资源池调度方案设计v1.0-孔维亭.pptx` slide 12/16/23 split diagram pages | Process / Workflow Summary Page | Adds bidirectional diagram/text split pages so architecture visuals can sit left or right by reading order |
 | `PRB-02` | `反向代理访问虚拟机控制台.pptx`, `裸金属图形化控制台v1.0.pptx` | Problem/Solution Page | Useful for 背景 / 问题 / 方案 / 约束 style technical explanation |
 | `DIR-01` | `反向代理访问虚拟机控制台.pptx`, `跨云迁移分享.pptx`, `裸金属图形化控制台v1.0.pptx` | Section Divider / Text Explanation Page | Numbered directory/progress page can support longer training decks |
 | `RPT-01` | `智能助手-资源-26年技术规划研讨-0.1_副本.pptx` | Text Explanation Page / Comparison Table Page | Planning and evaluation pages can inform leadership-review variants |
@@ -152,6 +153,8 @@ Useful references:
 Absorb:
 
 - Left explanation + right architecture diagram.
+- Left architecture diagram + right explanation, especially when the diagram is
+  the reading entry and the text explains roles, constraints, or conclusions.
 - Full-width technical topology with short notes.
 - Before/after or current/target architecture comparison.
 
@@ -203,8 +206,8 @@ slides into the `.pptx` template:
    `assets/templates/inspur-pragmatic-template-v1.pptx`.
 
 The current concrete layouts implemented in the V1 template are `COV-02`,
-`DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`, `ARC-02`, `TBL-02`, `TBL-03`,
-and `SUM-02`. This covers formal covers, directory/progress pages, roadmaps,
-screenshot operations, troubleshooting, left/right architecture explanations,
-full-width diagrams, dense evidence tables, metric tables, and decision recap
-pages.
+`DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`, `ARC-02`, `ARC-03`, `TBL-02`,
+`TBL-03`, and `SUM-02`. This covers formal covers, directory/progress pages,
+roadmaps, screenshot operations, troubleshooting, left/right architecture
+explanations, full-width diagrams, bidirectional diagram/text split pages,
+dense evidence tables, metric tables, and decision recap pages.

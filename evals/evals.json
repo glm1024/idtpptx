@@ -131,6 +131,17 @@
       ]
     },
     {
+      "id": "bidirectional-architecture-text-split",
+      "prompt": "请做两页 IDT/Inspur 风格技术方案 PPTX：第一页左侧是资源调度架构图、右侧是约束和价值说明；第二页左侧先写评审结论和边界，右侧放服务端归因链路图。两页都不要照搬模板样例，要根据内容保持左右图文拆分且文字不能跑出卡片。",
+      "expected_behavior": [
+        "Uses ARC-03 or equivalent registered split architecture recipe rather than forcing the content into generic cards or a full-width diagram.",
+        "Chooses diagram-left/text-right when the diagram is the reading entry and text-left/diagram-right when the conclusion or boundary should be read first.",
+        "Keeps diagram and narrative zones balanced, aligned, and inside the template content zone.",
+        "Builds narrative strips/cards with separate inner text boxes so body text wraps inside each frame.",
+        "Keeps all editable diagram and text elements in the fixed IDT/Inspur theme and runs the QA helper before delivery."
+      ]
+    },
+    {
       "id": "component-composition-not-template-clone",
       "prompt": "请用 idtpptx 做一份 10 页内部技术复盘 PPTX，内容包括一页结论、两页指标表、一页流程、一页技术架构图、两页问题排查和一页后续计划。不要让它看起来和内置 V1 模板 10 页样例基本一模一样，要保持浪潮风格但根据内容重新组合页面。",
       "expected_behavior": [

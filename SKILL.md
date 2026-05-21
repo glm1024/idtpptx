@@ -210,7 +210,7 @@ Template direction:
   official V1 template used by agents.
 - The V1 template contains cleaned sample slides for registered variants,
   currently `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`,
-  `ARC-02A`, `TBL-02A`, `TBL-03A`, and `SUM-02A`.
+  `ARC-02A`, `ARC-03A`, `TBL-02A`, `TBL-03A`, and `SUM-02A`.
 - These sample slides are specimens and fallbacks. They demonstrate one valid
   composition for each recipe, but final decks should be built by content-driven
   component composition unless the sample geometry is genuinely the best fit.
@@ -219,9 +219,9 @@ Template direction:
 - Do not create a second PPT template for normal use.
   Keep one V1 template and rebuild it through `scripts/build_template.py`.
 - Before adding `COV-02`, `DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`,
-  `ARC-02`, `TBL-02`, `TBL-03`, `SUM-02`, or any other cleaned sample to the
-  V1 template, follow `references/cleaned-layout-sample-specs.md` for geometry,
-  placeholder content, and promotion checks.
+  `ARC-02`, `ARC-03`, `TBL-02`, `TBL-03`, `SUM-02`, or any other cleaned
+  sample to the V1 template, follow `references/cleaned-layout-sample-specs.md`
+  for geometry, placeholder content, and promotion checks.
 
 Keep reusable elements:
 

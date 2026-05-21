@@ -82,6 +82,8 @@ Use the first matching branch:
    - Use `PRC-03` when the content is a phased roadmap, rollout path, or
      leadership update timeline.
    - Use `ARC-01` when explanation and diagram share the page.
+   - Use `ARC-03` when a diagram and narrative explanation need a stable
+     two-column split and either side may lead the reading order.
    - Use `ARC-02` when the diagram is the primary evidence and needs full
      width to keep labels readable.
 6. Problem diagnosis or exception handling -> `PRB-*`.
@@ -715,6 +717,77 @@ QA:
 - Do not make the diagram a small image floating in a large empty content zone.
 - Keep the explanation block and diagram visually connected; avoid two
   unrelated islands.
+
+### `ARC-03` Bidirectional Diagram / Narrative Split
+
+Page type: Process / Workflow Summary Page
+
+Status: registered variant; cleaned V1 template sample exists as `ARC-03A`
+
+Source inspiration:
+
+- `跨云迁移分享.pptx`, especially diagram-led feature and key-technology pages.
+- `跨资源池调度方案设计v1.0-孔维亭.pptx`, especially scenario diagram plus
+  explanation pages.
+- `反向代理访问虚拟机控制台.pptx`, for topology pages that pair a scheme diagram
+  with explanatory text.
+
+Best for:
+
+- Architecture, data path, deployment, resource scheduling, or platform
+  capability pages where the diagram and explanation are both necessary.
+- Diagram-left / text-right pages when the diagram is the reading entry or the
+  main evidence.
+- Text-left / diagram-right pages when the reader needs premise, boundary, or
+  conclusion first, then the architecture visual.
+- Simple or moderately complex diagrams that still remain readable in roughly
+  55-62% of the content width.
+
+Slots:
+
+- Slide title.
+- Optional one-line reading guide.
+- Diagram zone, usually 55-62% of the content width.
+- Narrative zone, usually 32-38% of the content width, with 3-4 explanation
+  strips/cards.
+- Optional bottom note only when it does not collide with the logo safe zone.
+
+Orientation rules:
+
+- `diagram-left`: use when the source material starts from a structure,
+  topology, or data path and the text explains what the parts mean.
+- `diagram-right`: use when the slide should first state the business premise,
+  boundary, conclusion, or risk, and then show the supporting architecture.
+- Reversing the visual orientation does not automatically reverse the semantic
+  flow. Keep arrows and data direction faithful to the actual architecture.
+
+Text limits:
+
+- Reading guide: <= 36 Chinese characters.
+- Narrative card title: 4-8 Chinese characters.
+- Narrative card body: 1-2 short lines, <= 28 Chinese characters per card.
+- Diagram node labels: <= 8 Chinese characters or accepted technical terms.
+
+Do not use for:
+
+- Wide, label-heavy architecture diagrams that need the full page; use
+  `ARC-02`.
+- Pure process steps with no system structure; use `PRC-*`.
+- Screenshot walkthroughs; use `SS-*`.
+- Dense criteria, protocol, or metric content that belongs in `TBL-*`.
+- Decorative illustration where the diagram carries no operational meaning.
+
+QA:
+
+- Both zones must look intentional and balanced; neither side should become a
+  tiny pasted object beside a large blank panel.
+- Text in narrative strips/cards must be inside each visible frame with padding
+  and wrapping; no row-wide text box may cross into the diagram zone.
+- Diagram labels must remain readable after rendering.
+- Keep source-specific business labels, customer names, URLs, IPs, and project
+  details out of the template specimen.
+- Keep all editable elements in the fixed theme tokens unless a semantic
+  red/green/amber status is explicitly required.
 
 ### `ARC-02` Full-Width Technical Diagram
 

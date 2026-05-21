@@ -87,7 +87,7 @@ npx skills update -g -y
 
 参考 PPT 的作用是研究和提炼，不是作为 skill 安装包内容。需要吸收时，先把结论写入 `references/reference-deck-inventory.md`、`references/reference-layout-extraction.md`、`references/component-system.md`、`references/composition-grammar.md`、`references/layout-map.md` 或 `references/layout-registry.md`，再用 `references/cleaned-layout-sample-specs.md` 约束清洗样例页，最后通过 `scripts/build_template.py` 重建唯一的 V1 主模板。
 
-当前内置模板 `assets/templates/inspur-pragmatic-template-v1.pptx` 是唯一给 AI 使用的 V1 主模板。它包含已登记、清洗、验证过的 `COV-02A` 正式评审封面、`DIR-01A` 目录进度页、`PRC-03A` 阶段推进页、`SS-02A` 多截图步骤页、`SS-03A` 故障排查截图页、`ARC-01A` 左说明右技术图页、`ARC-02A` 全宽技术架构图页、`TBL-02A` 密集证据表页、`TBL-03A` 指标/评估表页和 `SUM-02A` 决策复盘页。不要再让 AI 在多个 PPT 模板之间选择，也不要把这些样例页当成固定成品页序列；它们是风格标尺、组件样本和兜底参考。
+当前内置模板 `assets/templates/inspur-pragmatic-template-v1.pptx` 是唯一给 AI 使用的 V1 主模板。它包含已登记、清洗、验证过的 `COV-02A` 正式评审封面、`DIR-01A` 目录进度页、`PRC-03A` 阶段推进页、`SS-02A` 多截图步骤页、`SS-03A` 故障排查截图页、`ARC-01A` 左说明右技术图页、`ARC-02A` 全宽技术架构图页、`ARC-03A` 左图右文 / 右图左文拆分架构页、`TBL-02A` 密集证据表页、`TBL-03A` 指标/评估表页和 `SUM-02A` 决策复盘页。不要再让 AI 在多个 PPT 模板之间选择，也不要把这些样例页当成固定成品页序列；它们是风格标尺、组件样本和兜底参考。
 
 ## 注意事项
 

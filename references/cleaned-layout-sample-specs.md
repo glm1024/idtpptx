@@ -21,6 +21,7 @@ Current priority samples:
 - `SS-03`: troubleshooting screenshot with diagnosis blocks.
 - `ARC-01`: left explanation + right technical diagram.
 - `ARC-02`: full-width technical diagram.
+- `ARC-03`: bidirectional diagram / narrative split.
 - `TBL-02`: dense evidence / protocol table.
 - `TBL-03`: metric / evaluation table.
 - `SUM-02`: decision recap / handoff closing page.
@@ -411,6 +412,53 @@ QA:
   when labels become hard to read.
 - Keep source-specific diagrams out of the sample. Use neutral editable blocks.
 - Use red only for boundaries, warnings, or important annotations.
+
+## `ARC-03A` Bidirectional Diagram / Narrative Split
+
+Use when a technical architecture diagram and a narrative explanation are both
+first-class content, and either side may lead the reading order. The cleaned
+sample shows diagram-left / text-right because `ARC-01A` already covers the
+standard text-left / diagram-right specimen; generated decks may reverse the
+orientation when the premise or conclusion should be read first.
+
+Recommended geometry:
+
+| Element | x | y | w | h | Notes |
+|---|---:|---:|---:|---:|---|
+| Title | `0.37` | `0.10` | `12.60` | `0.72` | Use the real title placeholder |
+| Reading guide | `0.70` | `1.12` | `11.95` | `0.36` | One short conclusion |
+| Diagram panel | `0.70` | `1.62` | `7.20` | `4.55` | 55-62% content width |
+| Narrative panel | `8.20` | `1.62` | `4.45` | `4.55` | 3-4 explanation strips/cards |
+| Optional note | `0.70` | `6.28` | `11.20` | `0.34` | Keep clear of logo |
+
+Sample text:
+
+- Title: `图文拆分架构示例`
+- Reading guide: `先看系统关系，再读右侧约束。`
+- Diagram labels: `入口层` / `编排服务` / `能力组件` / `数据底座`
+- Narrative strip titles:
+  - `入口边界`
+  - `核心链路`
+  - `数据约束`
+  - `输出结果`
+- Optional note: `适用：图和文字同等重要；可按阅读顺序左右互换。`
+
+Text limits:
+
+- Reading guide: one short sentence.
+- Narrative strip title: 4-8 Chinese characters.
+- Narrative strip body: 1-2 short lines.
+- Diagram labels: <= 8 Chinese characters or accepted technical terms.
+
+QA:
+
+- Diagram and narrative panels must share the same top and bottom alignment.
+- Narrative strip/card text must be inside each visible strip with padding; no
+  text may cross into the diagram panel.
+- If the diagram labels become unreadable in 55-62% width, switch to `ARC-02`.
+- If the narrative body needs more than four strips or long paragraphs, split
+  the page or use a table/problem layout.
+- Keep source-specific diagrams out of the sample. Use neutral editable blocks.
 
 ## `ARC-02A` Full-Width Technical Diagram
 

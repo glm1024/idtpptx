@@ -30,7 +30,7 @@ current content, or when a low-risk fallback is needed.
 | Table | `TBL-*` | criteria, metrics, responsibilities, evidence | column count, row count, left/center mode |
 | Screenshot | `SS-*` | UI proof or operation steps | 1/2/3 slots, crop ratio, annotation density |
 | Process | `PRC-*` | non-UI flow or phased path | card count, timeline vs step row, note placement |
-| Architecture | `ARC-*` | topology, data path, system boundary | left/right vs full-width, node count, legend |
+| Architecture | `ARC-*` | topology, data path, system boundary | diagram/text orientation, full-width need, node count, legend |
 | Problem | `PRB-*` | FAQ, risk, issue handling | three-block diagnosis vs table |
 | Choice | `CHO-*` | options and recommendation | two-column, three-option, recommended path |
 | Summary | `SUM-*` | decision, owner, next action | field count, conclusion bar, action table |
@@ -53,6 +53,8 @@ Vary structure only when the content gives a reason:
 - Change card count to match item count.
 - Change table mode to match cell length.
 - Change diagram orientation to keep labels readable.
+- Change diagram/text side only when the reading order gives a reason: diagram
+  first for structure-led pages, text first for premise/conclusion-led pages.
 - Change screenshot count and crop ratio to preserve evidence.
 - Change title/subtitle split to keep the title band clean.
 - Change note placement when the logo safe zone or screenshot slot requires it.
@@ -102,6 +104,9 @@ the user explicitly asks for a production appendix.
 - Three UI screenshots with arrows -> `SS-02`, not `PRC-01`.
 - Four criteria with short pass/fail meanings -> `TBL-03`, not card grid.
 - One wide data-chain diagram with many labels -> `ARC-02`, not `ARC-01`.
+- A medium architecture diagram plus three explanation points -> `ARC-03`.
+- A conclusion that explains the architecture before showing it -> `ARC-03`
+  with text-left / diagram-right orientation.
 - Three open questions with short implications -> card composition under
   `PRB-01` or `TXT-01`, not a dense table.
 - A final decision with owner/date/next step -> `SUM-02`, not a generic thank

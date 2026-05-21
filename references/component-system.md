@@ -31,6 +31,7 @@ Use these component families before inventing a new full-slide template.
 | Process | step node, timeline axis, connector, phase block, boundary note | Ordered non-UI flow |
 | Screenshot | screenshot slot, caption, red annotation box, arrow, zoom crop | UI evidence |
 | Diagram | architecture node, lane, boundary box, connector, legend | Technical structure |
+| Split | diagram zone, narrative zone, explanation strip, orientation rule | Diagram/text pages |
 | Summary | decision field, owner/date field, next-action row | Handoff and closure |
 
 ## Component Contracts
@@ -104,6 +105,23 @@ Use these component families before inventing a new full-slide template.
   explicit risk/status meaning.
 - If a source diagram is too dense, recreate the structure with fewer nodes
   rather than shrinking it into an unreadable image.
+
+### Split Diagram / Text Components
+
+- Use a split component when a technical diagram and a narrative explanation
+  are both first-class slide content.
+- Support both orientations:
+  - diagram-left / text-right when the diagram is the reading entry;
+  - text-left / diagram-right when the conclusion or boundary needs to be read
+    before the diagram.
+- The diagram zone should usually own 55-62% of the content width. The
+  narrative zone should usually own 32-38% and contain 3-4 short strips/cards.
+- Build each narrative strip/card as its own visible frame plus inner text box.
+  Do not use one large text box that visually spills across the split.
+- Keep the two zones aligned to a shared top and bottom line. If either side
+  needs much more height, split the slide or switch to `ARC-02` / `TBL-*`.
+- Use source diagrams as structure references only. Remove source-specific
+  business labels before a split pattern becomes a reusable template specimen.
 
 ## Promotion Rule
 

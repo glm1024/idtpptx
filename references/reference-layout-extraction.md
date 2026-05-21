@@ -217,13 +217,17 @@ Reusable patterns:
 |---|---|---|---|
 | `ARC-01` | Left explanation + right diagram | Diagram needs narrative context | Promoted to registry; V1 template sample exists |
 | `ARC-02` | Full-width technical diagram with bottom notes | Diagram is the primary evidence | Promoted to registry; V1 template sample exists |
-| `ARC-03` | Current vs target architecture comparison | Before/after topology or migration方案 | Candidate registry addition |
+| `ARC-03` | Bidirectional diagram / narrative split | Diagram and text are both first-class; either side may lead | Promoted to registry; V1 template sample exists |
+| `ARC-04` | Current vs target architecture comparison | Before/after topology or migration方案 | Candidate registry addition |
 
 Rules to absorb:
 
 - Technical diagrams need readable labels more than decorative polish.
 - If the diagram is complex, give it the full page width and move notes below.
 - If the diagram is simple, left explanation + right diagram is efficient.
+- If a medium diagram is the reader's starting point, place the diagram left
+  and explanation right; if the premise/conclusion should be read first, place
+  text left and diagram right.
 - If comparing two architectures, use a mirrored left/right structure with one
   clear arrow or divider.
 
@@ -331,6 +335,7 @@ Promoted into `references/layout-registry.md` in this pass:
 | `PRC-03` Roadmap / Rollout Path | Covers project plans, phased rollout, and leadership update timelines |
 | `SS-03` Troubleshooting Screenshot | Gives FAQ/exception pages a stable screenshot + diagnosis structure |
 | `ARC-01` Left Explanation + Right Technical Diagram | Covers architecture pages where explanation and diagram are equally important |
+| `ARC-03` Bidirectional Diagram / Narrative Split | Covers common architecture pages with diagram-left/text-right or text-left/diagram-right reading order |
 | `TBL-02` Dense Evidence / Protocol Table | Covers dense technical evidence tables without shrinking into spreadsheet style |
 | `SUM-02` Decision Recap / Handoff | Replaces decorative closing pages with conclusion, owner, date, and action fields |
 
@@ -341,7 +346,7 @@ Remaining candidates should be reviewed before being added to
 |---|---|---|
 | `PRB-02` Background / Constraint / Scheme | Medium | Useful for technical方案说明, but should wait until real decks show repeated four-block explanation needs |
 | `TBL-04` Plan / Owner / Date Table | Medium | Useful for work plans, but should be distinct from `SUM-02` handoff tables |
-| `ARC-03` Current vs Target Architecture | Medium | Useful for migration and before/after topology, but needs careful two-diagram readability rules |
+| `ARC-04` Current vs Target Architecture | Medium | Useful for migration and before/after topology, but needs careful two-diagram readability rules |
 | `RPT-01` Current State / Gap / Action | Low-Medium | Useful for leadership reviews, but may overlap with `PRB-02` and `TBL-03` |
 
 Do not add all of them to the PPTX template at once. Promote one or two at a
@@ -353,7 +358,7 @@ The single official V1 template now contains the cleaned samples:
 
 - `assets/templates/inspur-pragmatic-template-v1.pptx`
 - Built by `scripts/build_template.py`
-- Contains cleaned `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`, `ARC-02A`, `TBL-02A`, `TBL-03A`, and `SUM-02A` sample slides.
+- Contains cleaned `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`, `ARC-02A`, `ARC-03A`, `TBL-02A`, `TBL-03A`, and `SUM-02A` sample slides.
 - Contains no source screenshots or source-deck business content.
 
 Do not keep a second PPT template for normal generation. The V1 template is the
@@ -365,8 +370,8 @@ components and recipes instead of duplicating the sample sequence page by page.
 
 Use the V1 template in real PPT generation/editing tasks and inspect whether
 `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`, `ARC-02A`,
-`TBL-02A`, `TBL-03A`, and `SUM-02A` reduce cover, directory, roadmap,
-screenshot, troubleshooting, architecture, table-page, and closing-page
+`ARC-03A`, `TBL-02A`, `TBL-03A`, and `SUM-02A` reduce cover, directory,
+roadmap, screenshot, troubleshooting, architecture split, table-page, and closing-page
 failure modes without making every deck look like the same template tour.
 
 Do not add more variants until these current samples have been used or reviewed
