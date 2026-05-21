@@ -23,6 +23,7 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Typography and spacing | `references/typography.md` |
 | Text box containment | `references/text-box-fit.md` |
 | Chinese business wording | `references/writing-style.md` |
+| Reference deck inventory | `references/reference-deck-inventory.md` |
 | Final quality gate | `references/qa-checklist.md` |
 | QA playbook | `references/qa-playbook.md` |
 | Mechanical QA helper | `scripts/pptx_quality_gate.py` |
@@ -208,3 +209,8 @@ When the user provides a better company-style PPT later:
 5. If a new reference conflicts with old rules, update the contract/rule and note the applicable scenario.
 
 When updating the skill from a new reference deck, keep `SKILL.md` concise. Put detailed page-type or style discoveries in `references/`, and use assets only for reusable templates or brand resources.
+
+If several company reference decks are collected at once, inventory them first in
+`references/reference-deck-inventory.md`. Do not merge decks into the template
+or copy slides into assets until the reusable layout pattern has a registered
+page type, slot rules, and QA boundaries.
