@@ -18,6 +18,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from collections import Counter
 from posixpath import dirname, normpath
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -201,6 +202,13 @@ CONTENT_UNDERUSE_RIGHT_RATIO = 0.78
 CONTENT_UNDERUSE_BOTTOM_RATIO = 0.78
 CONTENT_UNDERUSE_WIDTH_RATIO = 0.72
 CONTENT_UNDERUSE_HEIGHT_RATIO = 0.62
+IDTPPTX_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_IDTPPTX_TEMPLATE = IDTPPTX_ROOT / "assets/templates/inspur-pragmatic-template-v1.pptx"
+TEMPLATE_CLONE_REF = "references/composition-grammar.md"
+TEMPLATE_CLONE_SIMILARITY = 0.82
+TEMPLATE_CLONE_SOFT_SIMILARITY = 0.50
+TEMPLATE_CLONE_SEQUENCE_RATIO = 0.60
+TEMPLATE_CLONE_ANY_RATIO = 0.70
 
 
 def run(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
@@ -1634,6 +1642,140 @@ def find_content_utilization_warnings(pptx_path: Path) -> list[str]:
     return warnings
 
 
+def rounded_geometry_bucket(value: float) -> int:
+    return int(round(value / (EMUS_PER_INCH * 0.05)))
+
+
+def slide_geometry_signature(
+    zf: zipfile.ZipFile,
+    slide_path: str,
+    slide_w: int,
+    slide_h: int,
+) -> Counter[tuple[object, ...]]:
+    root = ET.fromstring(zf.read(slide_path))
+    sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+    signature: Counter[tuple[object, ...]] = Counter()
+    if sp_tree is None:
+        return signature
+
+    for obj in iter_slide_objects(sp_tree):
+        if is_logo_object(obj, slide_w, slide_h):
+            continue
+        rect = obj["rect"]
+        if is_large_background_like(rect, slide_w, slide_h):
+            continue
+        x, y, width, height = rect
+        if width <= 0 or height <= 0:
+            continue
+        key = (
+            obj.get("kind", ""),
+            rounded_geometry_bucket(x),
+            rounded_geometry_bucket(y),
+            rounded_geometry_bucket(width),
+            rounded_geometry_bucket(height),
+            str(obj.get("fill", "")),
+            bool(str(obj.get("text", "")).strip()),
+            bool(obj.get("placeholder_present", False)),
+            str(obj.get("placeholder_type", "")),
+        )
+        signature[key] += 1
+    return signature
+
+
+def deck_geometry_signatures(pptx_path: Path) -> list[Counter[tuple[object, ...]]]:
+    slide_w, slide_h = slide_size(pptx_path)
+    signatures: list[Counter[tuple[object, ...]]] = []
+    with zipfile.ZipFile(pptx_path) as zf:
+        for slide_path in slide_paths_in_order(pptx_path):
+            if slide_path not in zf.namelist():
+                continue
+            signatures.append(slide_geometry_signature(zf, slide_path, slide_w, slide_h))
+    return signatures
+
+
+def counter_intersection_size(
+    left: Counter[tuple[object, ...]],
+    right: Counter[tuple[object, ...]],
+) -> int:
+    return sum((left & right).values())
+
+
+def geometry_similarity(
+    left: Counter[tuple[object, ...]],
+    right: Counter[tuple[object, ...]],
+) -> float:
+    left_count = sum(left.values())
+    right_count = sum(right.values())
+    if left_count < 3 or right_count < 3:
+        return 0.0
+    intersection = counter_intersection_size(left, right)
+    return intersection / max(left_count, right_count)
+
+
+def same_path(left: Path, right: Path) -> bool:
+    try:
+        return left.samefile(right)
+    except OSError:
+        return left.resolve() == right.resolve()
+
+
+def find_template_clone_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    template_path = DEFAULT_IDTPPTX_TEMPLATE
+    if not template_path.exists() or same_path(pptx_path, template_path):
+        return warnings
+
+    try:
+        target_signatures = deck_geometry_signatures(pptx_path)
+        template_signatures = deck_geometry_signatures(template_path)
+        if not target_signatures or not template_signatures:
+            return warnings
+
+        sequential_matches: list[tuple[int, float]] = []
+        soft_sequence_matches: list[tuple[int, float]] = []
+        for index, target_signature in enumerate(target_signatures[: len(template_signatures)]):
+            similarity = geometry_similarity(target_signature, template_signatures[index])
+            if similarity >= TEMPLATE_CLONE_SIMILARITY:
+                sequential_matches.append((index + 1, similarity))
+            if similarity >= TEMPLATE_CLONE_SOFT_SIMILARITY:
+                soft_sequence_matches.append((index + 1, similarity))
+
+        any_matches = 0
+        for target_signature in target_signatures:
+            best = max((geometry_similarity(target_signature, ref) for ref in template_signatures), default=0.0)
+            if best >= TEMPLATE_CLONE_SIMILARITY:
+                any_matches += 1
+
+        sequential_threshold = max(5, int(len(template_signatures) * TEMPLATE_CLONE_SEQUENCE_RATIO))
+        any_threshold = max(6, int(len(target_signatures) * TEMPLATE_CLONE_ANY_RATIO))
+
+        sequence_warning_matches = sequential_matches
+        sequence_label = "closely"
+        if (
+            len(target_signatures) == len(template_signatures)
+            and len(sequence_warning_matches) < sequential_threshold
+            and len(soft_sequence_matches) >= sequential_threshold
+        ):
+            sequence_warning_matches = soft_sequence_matches
+            sequence_label = "structurally"
+
+        if len(target_signatures) == len(template_signatures) and len(sequence_warning_matches) >= sequential_threshold:
+            slide_list = ", ".join(f"{idx}({score:.0%})" for idx, score in sequence_warning_matches[:10])
+            warnings.append(
+                f"deck geometry {sequence_label} follows the V1 sample template sequence "
+                f"({len(sequence_warning_matches)}/{len(template_signatures)} positional matches: {slide_list}); "
+                f"re-plan from components and recipes per {TEMPLATE_CLONE_REF}"
+            )
+        elif any_matches >= any_threshold:
+            warnings.append(
+                f"{any_matches}/{len(target_signatures)} slide(s) closely match V1 sample template geometry; "
+                f"use the cleaned samples as specimens/fallbacks, not as the default final deck sequence per {TEMPLATE_CLONE_REF}"
+            )
+    except Exception as exc:
+        warnings.append(f"could not inspect template clone risk: {exc}")
+    return warnings
+
+
 def find_text_overlap_warnings(pptx_path: Path) -> list[str]:
     warnings: list[str] = []
     slide_w, slide_h = slide_size(pptx_path)
@@ -2192,6 +2334,12 @@ def main() -> int:
         warn(message)
     if len(content_utilization_warnings) > 20:
         warn(f"{len(content_utilization_warnings) - 20} additional content utilization warning(s) omitted")
+
+    template_clone_warnings = find_template_clone_warnings(pptx_path)
+    for message in template_clone_warnings[:20]:
+        warn(message)
+    if len(template_clone_warnings) > 20:
+        warn(f"{len(template_clone_warnings) - 20} additional template clone warning(s) omitted")
 
     title_system_warnings = find_title_system_warnings(pptx_path)
     for message in title_system_warnings[:20]:

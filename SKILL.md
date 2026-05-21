@@ -20,6 +20,8 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Title system | `references/title-system.md` |
 | Page selection | `references/layout-map.md` |
 | Layout variants | `references/layout-registry.md` |
+| Component system | `references/component-system.md` |
+| Composition grammar | `references/composition-grammar.md` |
 | Cleaned sample slide specs | `references/cleaned-layout-sample-specs.md` |
 | Screenshot/image framing | `references/screenshot-framing.md` |
 | Typography and spacing | `references/typography.md` |
@@ -55,32 +57,73 @@ When this skill is installed on another machine, do not assume any local absolut
 
 ## Default Approach
 
-Template-derived editing is the default delivery path. Do not create an
-IDT/Inspur deck from zero when the company template is available.
+Template-derived composition is the default delivery path. Do not create an
+IDT/Inspur deck from zero when the company template is available, but also do
+not make every deck a page-by-page clone of the V1 sample template.
 
-1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the only official V1 template.
-2. Read `references/theme-contract.md` and keep the fixed IDT/Inspur theme tokens as the visual source of truth.
-3. Analyze the target content and map each section first to a registered page type in `references/layout-map.md`, then to a specific layout ID in `references/layout-registry.md` when multiple variants could fit.
-4. For `COV-02`, `DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`, `ARC-02`, `TBL-02`, `TBL-03`, or `SUM-02`, duplicate the corresponding cleaned sample slide from the V1 template and follow `references/cleaned-layout-sample-specs.md` for geometry and slot limits.
-5. Before editing individual slide content, draft a slide plan with page number, layout ID, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
-6. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
-7. Use the base `pptx` editing workflow to duplicate template slides, delete unused slides, reorder the sequence, and replace text/media in existing layouts.
-8. Normalize slide titles with `references/title-system.md`: delete unneeded title/subtitle placeholders, keep one title system per slide, and balance title font size against the compact template title band.
-9. For any card, note bar, callout, or framed component, follow `references/text-box-fit.md`: calculate the visible frame first, place text in an inner box, enable wrapping, and shorten/split content before it can run outside the frame.
-10. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
-11. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-12. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the only
+   official V1 template for master chrome, logo, theme relationships, and visual
+   calibration.
+2. Read `references/theme-contract.md` and keep the fixed IDT/Inspur theme
+   tokens as the visual source of truth.
+3. Analyze the target content and map each section first to a registered page
+   type in `references/layout-map.md`.
+4. Read `references/component-system.md` and
+   `references/composition-grammar.md`; choose components and composition
+   recipes by content shape: screenshots, table density, process length,
+   diagram width, conclusion priority, and logo risk.
+5. Use `references/layout-registry.md` to choose a layout ID as a recipe, not as
+   a mandatory full-slide clone. The cleaned V1 sample slide is a specimen and
+   fallback, not the normal unit of generation.
+6. Before editing individual slide content, draft a slide plan with page number,
+   intent, layout ID, selected components, material shape, variant reason, and
+   QA risk. Keep this plan outside the final deck.
+7. If screenshots or generated images are involved, read
+   `references/screenshot-framing.md` and decide the slot, ratio, and fidelity
+   policy before inserting or generating assets.
+8. Use the base `pptx` editing workflow to start from the V1 template, reuse
+   master/layout chrome, duplicate/delete/reorder slides when useful, and build
+   final pages by composing registered components in the real content zone.
+9. Duplicate a cleaned sample slide only when its geometry genuinely matches the
+   current content, or when a low-risk fallback is better than a one-off layout.
+   If the deck begins to match the V1 sample sequence, re-plan from components.
+10. Normalize slide titles with `references/title-system.md`: delete unneeded
+    title/subtitle placeholders, keep one title system per slide, and balance
+    title font size against the compact template title band.
+11. For any card, note bar, callout, or framed component, follow
+    `references/text-box-fit.md`: calculate the visible frame first, place text
+    in an inner box, enable wrapping, and shorten/split content before it can
+    run outside the frame.
+12. Before final delivery, remove planning/meta slides that were useful only for
+    making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this
+    pass will not do" pages. The user normally wants the final PPT, not the
+    agent's production scaffold.
+13. Keep the deck visually quiet, operational, and content-first. Company style
+    overrides generic presentation-design advice from the base `pptx` skill.
+14. Run the final quality gate in `references/qa-checklist.md`. A deck is not
+    complete until content, visual rendering, package validation, and PowerPoint
+    compatibility checks pass. For complex decks, generated decks, or
+    PowerPoint handoff, also read `references/qa-playbook.md`.
 
-For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
+For template-based work, finish structural edits first: choose page intents,
+components, recipes, and slide order; then edit text and media. Do not start
+content replacement before the target slide sequence and component plan are
+settled.
 
-If a task asks for a new company-style deck but does not explicitly forbid using the template, treat it as template-based work. In particular, do not jump to PptxGenJS just because the base `pptx` skill offers a "create from scratch" path.
+If a task asks for a new company-style deck but does not explicitly forbid using
+the template, treat it as template-derived composition. In particular, do not
+jump to PptxGenJS just because the base `pptx` skill offers a "create from
+scratch" path.
 
 ## Cross-Agent Stability Rules
 
 The safest results come from reducing free-form design decisions:
 
 - Treat `references/theme-contract.md` as the golden source for colors, fonts, and scenario variants. Do not ask the user to choose from generic themes and do not create a new theme from the topic alone.
-- Treat the template, `references/layout-map.md`, and `references/layout-registry.md` as the golden source for page structure. Use registered company page types and layout IDs first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
+- Treat the template, `references/layout-map.md`, `references/layout-registry.md`, `references/component-system.md`, and `references/composition-grammar.md` as the golden source for page structure. Use registered company page types, recipes, and components first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
+- Treat layout IDs as recipes. A cleaned V1 sample slide shows one valid specimen, not the only valid final page.
+- Do not choose layouts randomly for visual variety. Variety must come from content shape: number of screenshots, table density, process steps, diagram width, conclusion priority, and evidence type.
+- Avoid template-clone decks. If the generated deck follows the V1 sample slide count, order, and geometry too closely, re-plan from components instead of adding decoration.
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
 - Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `初版目标与讨论范围`, `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`. By default, delete the whole meta/planning slide instead of polishing it.
 - Clean title placeholders before polishing. Final decks must not show PowerPoint default prompts such as `单击此处添加标题` / `Click to add title`, and section divider pages should not keep a top-left title placeholder in addition to the center section bar.
@@ -97,23 +140,24 @@ Do not import `theme-factory` palettes, fonts, or showcase assets. Ocean, Forest
 
 Only update the theme when the user provides a company-approved template, brand guide, or style-correct reference deck and asks to adapt the skill. In that case, update `references/theme-contract.md` first, then update related style and QA rules.
 
-## Template-First Generation Policy
+## Template-Derived Composition Policy
 
 Do not treat `idtpptx` as permission to bypass the base `pptx` skill. The safest path is still:
 
 1. Start from the `idtpptx` template.
-2. Use the base `pptx` editing workflow to duplicate, delete, reorder, and edit slides.
-3. Reuse template masters, layouts, placeholders, logo/media relationships, and existing brand elements wherever possible.
+2. Reuse template masters, layouts, placeholders, logo/media relationships, and existing brand elements wherever possible.
+3. Compose final slides from registered components and recipes.
+4. Duplicate, delete, reorder, and edit cleaned sample slides only when they are a genuine fit or a deliberate fallback.
 
 PptxGenJS is a fallback, not the normal `idtpptx` route. Use PptxGenJS or another from-scratch generator only when one of these is true:
 
 - No usable company template or reference deck is available.
 - The user explicitly asks for a scratch-generated deck or prototype.
-- The requested structure cannot be produced by duplicating and editing registered template layouts, and you explain that tradeoff before delivery.
+- The requested structure cannot be produced by template-derived component composition, and you explain that tradeoff before delivery.
 
 When the template contains the logo or other shared brand media, do not embed a new copy of the same logo on every slide. Prefer the template's master/layout logo or reuse the existing media relationship. Per-slide duplicate image embedding is a PowerPoint compatibility risk and should be treated as a warning sign during QA.
 
-Do not draw a second presentation shell inside the template. If a template layout already provides the top rule, page marker, logo, or other page chrome, do not manually add another title bar, page number, footer logo, or slide frame in generated code. Use the registered template page's real content zone, or duplicate/edit that page type directly. A rendered slide where the material sits only in the upper-left while the right and bottom remain mostly empty should be treated as a structure bug, not as acceptable whitespace.
+Do not draw a second presentation shell inside the template. If a template layout already provides the top rule, page marker, logo, or other page chrome, do not manually add another title bar, page number, footer logo, or slide frame in generated code. Use the registered template page's real content zone and compose within it. A rendered slide where the material sits only in the upper-left while the right and bottom remain mostly empty should be treated as a structure bug, not as acceptable whitespace.
 
 If PptxGenJS or another generator is used from scratch, run an explicit PowerPoint-compatibility cleanup before delivery:
 
@@ -133,6 +177,8 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 - For title placeholder cleanup, title zone sizing, and title font-size decisions, read `references/title-system.md`.
 - For choosing pages, read `references/layout-map.md`.
 - For choosing among layout variants such as `COV-01`, `TBL-02`, or `SS-02`, read `references/layout-registry.md`.
+- For component-level building blocks, read `references/component-system.md`.
+- For combining components into varied pages, read `references/composition-grammar.md`.
 - For building or updating cleaned sample slides in the V1 template, read `references/cleaned-layout-sample-specs.md`.
 - For screenshots, generated images, or UI evidence, read `references/screenshot-framing.md`.
 - For font family, font size, line spacing, and density decisions, read `references/typography.md`.
@@ -144,7 +190,10 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 
 ## Template Policy
 
-The V1 template was distilled from a practical internal training deck. The original training content is not part of the skill. Treat the template as a layout and brand-style source only.
+The V1 template was distilled from practical internal decks. The original
+business content is not part of the skill. Treat the template as a master
+chrome, brand-style source, component specimen board, and fallback reference,
+not as a fixed deck that should be cloned page by page.
 
 Keep the distributable skill small. `assets/templates/` should contain only the
 single official V1 company template and reusable brand assets needed at
@@ -162,8 +211,11 @@ Template direction:
 - The V1 template contains cleaned sample slides for registered variants,
   currently `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`,
   `ARC-02A`, `TBL-02A`, `TBL-03A`, and `SUM-02A`.
+- These sample slides are specimens and fallbacks. They demonstrate one valid
+  composition for each recipe, but final decks should be built by content-driven
+  component composition unless the sample geometry is genuinely the best fit.
 - Prefer a Guizang-style mechanism adapted to native PPTX: one compact company
-  template + registered layout IDs + slot rules + QA checks.
+  template + registered components + recipe IDs + slot rules + QA checks.
 - Do not create a second PPT template for normal use.
   Keep one V1 template and rebuild it through `scripts/build_template.py`.
 - Before adding `COV-02`, `DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`,
@@ -226,6 +278,8 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Tables should default to vertical-middle cell alignment. Pick one horizontal alignment mode for the whole table before filling content: all-center for compact categorical matrices, or all-left for sentence/evidence tables. Do not mix center and left alignment inside the same table as an aesthetic choice; normal 3-5 column tables should usually use `12-13 pt` body text.
 - Framed text must stay inside its visible frame in both horizontal and vertical directions. Use an inner text box, wrapping, and content reduction; if it still does not fit at readable size, split the card row or slide.
 - Main content may use the space above and left of the bottom-right logo, but must not cover the logo itself. Keep a small breathing margin around the logo mark.
+- Reuse the finite component system for variety. A deck should feel like the
+  same company style, not the same sample slide sequence with replaced text.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
 - Avoid base-`pptx` colorful infographic styling: multicolor numbered circles, multicolor card grids, alternating colored vertical bars, rainbow process flows, decorative icon grids, and shadows used only to make cards look designed.
 - Use non-blue colors only when they encode a stable business meaning, such as red annotation/risk or consistent status colors.

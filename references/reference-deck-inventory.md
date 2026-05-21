@@ -195,9 +195,11 @@ Guardrails:
 Continue from the registered layout backlog instead of copying raw reference
 slides into the `.pptx` template:
 
-1. Refine the candidate IDs in `references/layout-registry.md`.
-2. Pick 5-8 high-value reference slides and describe their slots in text.
-3. Only after the slot rules are stable, rebuild the single official template:
+1. Extract reusable components into `references/component-system.md`.
+2. Describe page composition rules in `references/composition-grammar.md`.
+3. Refine the candidate IDs in `references/layout-registry.md`.
+4. Pick 5-8 high-value reference slides and describe their slots in text.
+5. Only after the slot rules are stable, rebuild the single official template:
    `assets/templates/inspur-pragmatic-template-v1.pptx`.
 
 The current concrete layouts implemented in the V1 template are `COV-02`,

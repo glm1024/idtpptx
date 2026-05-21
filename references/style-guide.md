@@ -61,11 +61,17 @@ For exact color and font tokens, `references/theme-contract.md` is the source of
 - Use clear rectangular zones and generous white background.
 - Favor screenshots, tables, and annotated process evidence over abstract illustrations.
 - Keep content aligned to a consistent left edge.
+- Build pages from the component system in `references/component-system.md` and
+  the composition grammar in `references/composition-grammar.md`. The V1 sample
+  slides are visual specimens, not a fixed final-deck sequence.
 - Fill the registered template content zone. Avoid layouts that make the whole slide feel like a small slide pasted into the upper-left of a larger slide, with an unused right side and unused lower half.
 - Do not recreate template chrome inside the slide body. If the template already has a header rule, page marker, footer/logo, or title placeholder, replace or reuse those elements instead of drawing a second inner header/footer system.
 - Keep dense content from covering the bottom-right logo; the area above and left of the logo remains usable when it does not overlap the mark.
 - For process or workflow slides, prefer simple blue/black step labels, quiet tables, screenshot sequences, or light line flows over colorful step badges and card grids.
 - Do not create decorative cards, gradient hero sections, large stock imagery, or colorful infographic-heavy slides unless the user explicitly asks for a different style.
+- Do not pursue variety by random decoration. Vary page structure only when the
+  material shape changes, such as screenshot count, table density, process
+  length, diagram width, or conclusion priority.
 
 ## Cover Slides
 

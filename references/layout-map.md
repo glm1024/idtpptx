@@ -1,11 +1,17 @@
 # Layout Map
 
-Use the template slides as reusable page types. Do not preserve source business content.
+Use registered page types as composition recipes. Do not preserve source
+business content, and do not treat template sample slides as fixed final pages.
 
-This file is the registered page-type map for `idtpptx`. It is a guardrail against free-form slide invention across different models and agents.
+This file is the registered page-type map for `idtpptx`. It is a guardrail
+against free-form slide invention across different models and agents, while
+still allowing content-driven component composition.
 
 For specific layout variants and IDs, read `references/layout-registry.md` after
 choosing the broad page type here.
+
+For component selection and page composition, read
+`references/component-system.md` and `references/composition-grammar.md`.
 
 ## Template Asset
 
@@ -13,9 +19,11 @@ Primary template:
 
 `assets/templates/inspur-pragmatic-template-v1.pptx`
 
-This template contains cleaned placeholder pages distilled from a pragmatic
-Inspur-style reference corpus, including cover, directory/progress, roadmap,
-screenshot, troubleshooting, architecture, table, and handoff samples.
+This template contains master chrome, logo/media relationships, and cleaned
+sample pages distilled from a pragmatic Inspur-style reference corpus. The
+sample pages are specimens and fallbacks for cover, directory/progress,
+roadmap, screenshot, troubleshooting, architecture, table, and handoff recipes.
+They are not a mandatory final deck sequence.
 
 ## Registered Page Types
 
@@ -45,7 +53,14 @@ Before editing slide content, create a simple planning table:
 
 Rules:
 
-- Decide the full page sequence before replacing detailed text or media.
+- Decide the full page sequence, page intent, layout ID, and component plan
+  before replacing detailed text or media.
+- Use layout IDs as recipes, not as instructions to clone full sample slides.
+- Generate variety through registered components and content-driven composition:
+  table density, screenshot count, process length, diagram width, and conclusion
+  priority.
+- Do not choose layouts randomly to make slides look different. If more than one
+  recipe fits, choose the one whose slots match the material most directly.
 - Use the registered template content zone at full slide scale. Do not place a compact mini-layout in the upper-left while leaving most of the right side and lower half empty.
 - Clean title placeholders before detailed content work. Replace the real page title, delete unused title/subtitle placeholders, and keep one title system per slide.
 - Reuse the template's page chrome. Do not add a second top rule, page marker, footer/logo, or artificial slide frame inside the existing template frame.
@@ -54,6 +69,9 @@ Rules:
 - If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. If only a variant is missing under an existing page type, register it in `references/layout-registry.md`. Do not hide a new page type inside one deck as a one-off.
 - If no registered type fits, default to Text Explanation Page and keep it restrained.
 - For any registered page type that uses visible cards, callouts, note bars, or conclusion boxes, apply `references/text-box-fit.md`: the visible frame owns an inner text zone, and text must not extend beyond the frame.
+- If the generated deck has the same count, order, and geometry as the V1
+  sample template, treat it as a template-clone risk and re-plan from
+  `references/composition-grammar.md`.
 
 ## Page Type Details
 

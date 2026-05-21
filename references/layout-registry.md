@@ -2,41 +2,67 @@
 
 This is the controlled layout registry for `idtpptx`.
 
-Use this file when choosing among multiple company-style layout variants. The
+Use this file when choosing among multiple company-style layout recipes. The
 goal is to make layout choice deterministic across models and agents: select by
-content shape, scenario, and slot requirements, not by visual taste or random
-choice.
+content shape, scenario, and slot requirements, not by visual taste, random
+choice, or whole-slide cloning.
 
 `references/layout-map.md` defines broad page types. This registry defines
-specific reusable variants under those page types.
+specific reusable recipes under those page types. For the component inventory
+and combination rules behind these recipes, read
+`references/component-system.md` and `references/composition-grammar.md`.
 
 ## Registry Rules
 
-- Every reusable layout variant needs an ID before it becomes a template asset.
+- Every reusable layout recipe needs an ID before it becomes a template asset.
 - Do not add raw reference slides to `assets/templates/` just because they look
   useful. First register the reusable structure here.
 - Do not choose randomly. If more than one layout can work, use the priority
   order and scenario fit in this file.
+- Do not default to cloning the cleaned V1 sample slide. A cleaned sample is one
+  valid specimen and a fallback, not the normal generation unit.
+- Compose final pages from registered components whenever the content shape
+  differs from the sample.
 - Do not create a one-off layout inside a deliverable deck unless no registered
   layout fits. If the one-off layout proves reusable, register it after the deck
   is reviewed.
 - Keep the fixed `IDT/Inspur Pragmatic` theme. Layout variants may change
   structure and density, not the core color/font system.
 - Each variant must state its slots, text limits, "do not use" cases, and QA
-  risks before being copied into a cleaned V1 template PPTX.
+  risks before being promoted to a cleaned V1 template specimen.
+
+## Recipe Vs Specimen
+
+Each layout ID is a recipe:
+
+- page intent;
+- component families;
+- material slots;
+- text limits;
+- density boundaries;
+- QA risks.
+
+The V1 template may contain a cleaned sample slide for a recipe, such as
+`TBL-03A` or `ARC-02A`. That sample is a specimen. Use it for calibration,
+fallback editing, and regression checks. Do not generate a full deck by copying
+the specimen sequence unless the user's content truly has the same sequence and
+material shape.
 
 ## Slide Planning Contract
 
 For non-trivial decks, draft a planning table before editing slide content:
 
-| Page | Layout ID | Page type | Why this layout | Required slots | Risk |
-|---|---|---|---|---|---|
-| 1 | `COV-01` | Cover | Standard internal report cover | Title, subtitle, date | Low |
-| 2 | `DIR-01` | Section / directory | Long training deck needs progress map | Chapter list | Low |
-| 3 | `SS-02` | Screenshot Step | Two UI states with arrow | 2 screenshots, 2 captions | Medium |
+| Page | Layout ID | Page type | Components | Why this recipe | Material shape | Risk |
+|---|---|---|---|---|---|---|
+| 1 | `COV-01` | Cover | title, subtitle, metadata | Standard internal report cover | title + date | Low |
+| 2 | `DIR-01` | Section / directory | progress rows | Long training deck needs progress map | 4 chapters | Low |
+| 3 | `SS-02` | Screenshot Step | screenshot slots, arrows, captions | Two UI states with arrow | 2 screenshots | Medium |
 
 The planning table is a working artifact. Do not insert it into the final deck
 unless the user explicitly asks for a deck-production appendix.
+
+If the draft plan maps most pages directly to the V1 sample sequence, pause and
+re-plan. The deck should be content-driven, not a template tour.
 
 ## Selection Priority
 

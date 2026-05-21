@@ -1,11 +1,14 @@
 # Cleaned Layout Sample Specs
 
-Use this when converting registered layout IDs into cleaned sample slides for
-the single official V1 template.
+Use this when converting registered layout recipes into cleaned sample slides
+for the single official V1 template.
 
-These specs are not source-deck copies. They define reusable geometry, slot
-rules, placeholder text, and QA expectations for the current
-`IDT/Inspur Pragmatic` template.
+These specs are not source-deck copies and not final-slide cloning
+instructions. They define reusable geometry, slot rules, placeholder text, and
+QA expectations for the current `IDT/Inspur Pragmatic` template. A cleaned
+sample slide is a specimen and fallback for a recipe; normal deck generation
+should still start from content shape, `references/component-system.md`, and
+`references/composition-grammar.md`.
 
 ## Scope
 
@@ -24,7 +27,9 @@ Current priority samples:
 
 Do not add raw reference PPT pages to the skill. A sample slide can enter
 `assets/templates/inspur-pragmatic-template-v1.pptx` only after it is rebuilt
-with neutral placeholder content and passes visual QA.
+with neutral placeholder content and passes visual QA. Adding a sample does not
+mean agents should copy that slide by default; it means the recipe now has a
+visual specimen for calibration and fallback editing.
 
 ## Shared Slide Geometry
 

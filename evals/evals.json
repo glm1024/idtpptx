@@ -129,6 +129,17 @@
         "Does not show PowerPoint default prompts such as 单击此处添加标题, 单击此处添加副标题, or Click to add title.",
         "Runs the QA helper and treats placeholder/title-system blockers or warnings as issues to fix before delivery."
       ]
+    },
+    {
+      "id": "component-composition-not-template-clone",
+      "prompt": "请用 idtpptx 做一份 10 页内部技术复盘 PPTX，内容包括一页结论、两页指标表、一页流程、一页技术架构图、两页问题排查和一页后续计划。不要让它看起来和内置 V1 模板 10 页样例基本一模一样，要保持浪潮风格但根据内容重新组合页面。",
+      "expected_behavior": [
+        "Uses the V1 template for master chrome, logo, theme, and calibration rather than cloning the sample slide sequence page by page.",
+        "Reads component-system.md and composition-grammar.md before choosing page recipes.",
+        "Maps each page by content shape and chooses components such as tables, cards, process nodes, architecture nodes, and summary fields.",
+        "Uses cleaned sample slides only as specimens or fallback when the sample geometry genuinely fits.",
+        "Runs the QA helper and treats template-clone warnings as pages requiring re-planning rather than decorative changes."
+      ]
     }
   ]
 }

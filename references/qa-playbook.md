@@ -23,7 +23,13 @@ Every final deck needs:
 5. PDF/image render and visual inspection.
 6. Explicit final note about any skipped check.
 
-For company-style decks, the expected creation route is template-derived editing. If the company template is usable, duplicate and edit template pages through the base `pptx` editing workflow. Treat PptxGenJS/from-scratch generation as an exception that must be justified and checked more strictly.
+For company-style decks, the expected creation route is template-derived
+composition. If the company template is usable, reuse its master chrome and
+brand elements through the base `pptx` editing workflow, then compose final
+pages from registered components and recipes. Duplicating cleaned sample slides
+is a valid fallback when the sample geometry fits, but a deck should not become
+the V1 sample template with replaced text. Treat PptxGenJS/from-scratch
+generation as an exception that must be justified and checked more strictly.
 
 The helper script can run most mechanical checks:
 
@@ -56,6 +62,8 @@ High-risk slides:
 - Slides copied from external decks where fonts, fills, or accent colors may carry another theme.
 - Pages whose layout uses the space near the bottom-right logo.
 - Slides copied from templates where empty placeholders may still exist as blank boxes.
+- Decks whose slide count, order, or geometry closely matches the V1 sample
+  template.
 - Section divider pages where a top-left title placeholder may remain in addition to the center blue section bar.
 - Slides generated with a blank layout or custom code on top of a branded template; these often duplicate the template chrome and compress content into a small upper-left area.
 - Any slide edited after the first render.
@@ -65,6 +73,8 @@ Look for:
 - Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
 - More than one visible Inspur logo on a slide. If the template already has the bottom-right or cover logo, remove manually inserted logo images.
 - A small inner slide effect: a second header line, page number, footer/logo, or content group appears inside the existing template frame, with large unused space on the right and bottom.
+- A sample-template clone effect: page after page uses the same V1 specimen
+  geometry even when the current content has different material shape.
 - PowerPoint default placeholder prompts such as `单击此处添加标题`, `单击此处添加副标题`, `单击此处添加文本`, or `Click to add title`.
 - A duplicated title system: a top-left title placeholder plus a section bar title, or a cover title plus an old subtitle/title placeholder.
 - Normal content titles that are tiny inside a tall title placeholder, or oversized titles that collide with the divider rule.
@@ -106,6 +116,10 @@ When visual QA finds a problem, classify it before fixing:
 - **Title-system problem**: leftover title/subtitle placeholders remain, the title band is too tall, or the title font was changed without resizing the title zone.
 - **Logo-safe-zone problem**: content uses the lower-right area without protecting the actual logo mark.
 - **Nested-slide problem**: generated content has its own mini header/footer/logo system or occupies only the upper-left of the template content zone. Rebuild using a registered template page type rather than tuning margins.
+- **Template-clone problem**: the deck follows the V1 sample slide sequence or
+  specimen geometry too closely. Rebuild the affected pages from
+  `references/component-system.md` and `references/composition-grammar.md`
+  rather than adding arbitrary visual variation.
 - **Content overload**: the page needs to split, not shrink.
 
 Do not repair a wrong structure or theme drift by randomly shrinking text, adding arbitrary margins, covering old elements with new shapes, or inserting decorative cards.
@@ -114,6 +128,9 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 
 - Read extracted text in slide order. Confirm the narrative still works without relying on visuals.
 - Confirm non-trivial decks were planned against registered page types before detailed editing.
+- Check layout IDs were used as recipes, not as mandatory full-slide clones.
+- Check component choices follow `references/component-system.md` and
+  `references/composition-grammar.md`.
 - Check slide titles are specific and name the page's job.
 - Check title placeholders are gone. Section dividers should use the center blue bar title only, and normal content slides should have one compact top-left title.
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.

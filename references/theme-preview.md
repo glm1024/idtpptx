@@ -21,8 +21,12 @@ A useful preview should include these five slide types:
 ## How To Use It
 
 - For template work, render `assets/templates/inspur-pragmatic-template-v1.pptx` or the working deck and inspect the contact sheet.
+- Use the preview to calibrate theme and component behavior, not to copy the
+  preview/sample slide sequence into every deliverable.
 - For final QA, compare high-risk slides against the preview set: cover, table, screenshot, generated image, process, and external copied pages.
-- If a page no longer feels like the preview set, diagnose whether the cause is theme drift, wrong page type, wrong material slot, spacing, or logo-safe-zone misuse.
+- If a page no longer feels like the preview set, diagnose whether the cause is
+  theme drift, wrong page type, wrong material slot, component misuse, spacing,
+  logo-safe-zone misuse, or template-clone overuse.
 
 ## What Not To Do
 

@@ -357,7 +357,9 @@ The single official V1 template now contains the cleaned samples:
 - Contains no source screenshots or source-deck business content.
 
 Do not keep a second PPT template for normal generation. The V1 template is the
-single source that agents should duplicate/edit from.
+single source for master chrome, brand calibration, sample specimens, and
+fallback editing. Agents should normally compose final pages from registered
+components and recipes instead of duplicating the sample sequence page by page.
 
 ## Next Concrete Step
 
@@ -365,7 +367,7 @@ Use the V1 template in real PPT generation/editing tasks and inspect whether
 `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`, `ARC-02A`,
 `TBL-02A`, `TBL-03A`, and `SUM-02A` reduce cover, directory, roadmap,
 screenshot, troubleshooting, architecture, table-page, and closing-page
-failure modes.
+failure modes without making every deck look like the same template tour.
 
 Do not add more variants until these current samples have been used or reviewed
 successfully. The next promotion should come from a repeated failure in real
