@@ -41,6 +41,7 @@ Fix before delivery:
 - A deck-production setup page remains in the final deck, such as `初版目标与讨论范围`, `本轮先不展开`, or a page whose only purpose is to explain the draft's limitations rather than the business content.
 - Rendered text overlaps other text, table cells, screenshots, card borders, title rules, or the logo. Text overprint is a blocking readability bug.
 - Text intended to belong to a filled background box, card, note bar, or callout runs outside that container instead of wrapping inside it.
+- A framed text component has a text box that extends outside its visible frame, even if the rendered text starts inside the frame.
 - Any text, table border, screenshot, annotation, chart, or shape overlaps the bottom-right logo mark.
 - A slide has more than one visible Inspur logo, such as a master/layout logo plus an extra manually inserted logo.
 - Template chrome is duplicated inside the slide body, making the page look like a small PPT embedded inside a larger PPT.
@@ -65,6 +66,7 @@ Fix before delivery:
 - Repeated elements are visibly misaligned.
 - The mechanical helper warns about possible editable text overlap. Open the affected slide image and fix it unless the overlap is intentional and visually harmless.
 - The mechanical helper warns about text possibly overflowing its background/container. Open the affected slide image and fix it by wrapping, resizing the container, shortening the sentence, or splitting content.
+- The mechanical helper warns about text not fitting within its own text box. Open the affected slide image and fix it by shortening, splitting, resizing the frame, or applying the text-box fit rules in `references/text-box-fit.md`.
 - The mechanical helper warns about mixed table alignment or non-middle table cell anchoring. Open the affected slide image and fix it unless a user-provided source table intentionally requires the exception.
 - The mechanical helper warns about title sizing or title-zone mismatch. Fix by deleting leftover placeholders, compressing the title band, and then adjusting title font size.
 - Normal business slides contain English-heavy labels or mixed Chinese-English phrases where a clear Chinese phrase exists, such as raw `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
@@ -154,6 +156,7 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - No text, table grid, image, callout, or background shape overlaps the logo, page edge, screenshot, table, title rule, card title, or card body.
 - No slide contains a second title/header/footer/logo system inside the template frame.
 - Text inside light-gray conclusion bars, note boxes, cards, and callouts remains inside the visible background with padding.
+- Card, note, conclusion, and callout text boxes are physically inside their visible frames in both horizontal and vertical directions; no text box spans across adjacent cards.
 - Process-card titles and bodies have separate vertical zones. If a card title wraps to two lines, the body does not collide with it.
 - No cover text is wrapped inside a redundant white filled shape or card.
 
@@ -188,7 +191,7 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Render slides to images using the base `pptx` skill workflow.
 - Use the contact sheet for scanning only. Open individual slide images for every high-risk page: cover, dense table, screenshot page, sparse text page, logo-adjacent layout, and any slide edited after the first render.
 - Inspect affected slides visually and structurally.
-- If a slide looks wrong, first classify the cause: wrong page type, wrong material slot, component misuse, spacing problem, logo-safe-zone problem, or real content overload. Do not fix by randomly shrinking text, adding margins, or hiding defects under extra shapes.
+- If a slide looks wrong, first classify the cause: wrong page type, wrong material slot, component misuse, text-box/frame mismatch, spacing problem, logo-safe-zone problem, or real content overload. Do not fix by randomly shrinking text, adding margins, or hiding defects under extra shapes.
 - If a slide feels like it came from another design system, classify it as theme drift first: wrong token, wrong font contract, wrong scenario variant, or source material carrying an external theme.
 - Treat any content that overlaps the bottom-right logo mark as a blocking layout bug.
 - Treat generic multicolor process decoration as a blocking brand bug when it comes from the base `pptx` visual style rather than from user-specified company material.

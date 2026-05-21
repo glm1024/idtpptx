@@ -21,6 +21,7 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Page selection | `references/layout-map.md` |
 | Screenshot/image framing | `references/screenshot-framing.md` |
 | Typography and spacing | `references/typography.md` |
+| Text box containment | `references/text-box-fit.md` |
 | Chinese business wording | `references/writing-style.md` |
 | Final quality gate | `references/qa-checklist.md` |
 | QA playbook | `references/qa-playbook.md` |
@@ -59,9 +60,10 @@ IDT/Inspur deck from zero when the company template is available.
 5. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
 6. Use the base `pptx` editing workflow to duplicate template slides, delete unused slides, reorder the sequence, and replace text/media in existing layouts.
 7. Normalize slide titles with `references/title-system.md`: delete unneeded title/subtitle placeholders, keep one title system per slide, and balance title font size against the compact template title band.
-8. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
-9. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-10. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+8. For any card, note bar, callout, or framed component, follow `references/text-box-fit.md`: calculate the visible frame first, place text in an inner box, enable wrapping, and shorten/split content before it can run outside the frame.
+9. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
+10. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
+11. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
@@ -76,6 +78,7 @@ The safest results come from reducing free-form design decisions:
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
 - Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `初版目标与讨论范围`, `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`. By default, delete the whole meta/planning slide instead of polishing it.
 - Clean title placeholders before polishing. Final decks must not show PowerPoint default prompts such as `单击此处添加标题` / `Click to add title`, and section divider pages should not keep a top-left title placeholder in addition to the center section bar.
+- Treat framed text containment as geometry, not decoration. A card body, note-bar sentence, or callout paragraph must be generated inside that frame's inner text box; do not create a row-wide text box over several cards and rely on visual wrapping.
 - Decide screenshot/image slots before touching assets. Preserve original screenshots when they are evidence; crop or scale them into a standard slot instead of redrawing them by default.
 - Let scripts catch mechanical defects. Placeholder residue, package references, notes parts, logo overlap, muted gray text, and rendering failures are QA bugs, not judgment calls.
 - When a rendered slide looks wrong, diagnose the cause first: theme drift, wrong page type, wrong material slot, component misuse, spacing problem, or logo-safe-zone problem. Do not fix by randomly shrinking text, adding margins, or covering issues with extra shapes.
@@ -125,6 +128,7 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 - For choosing pages, read `references/layout-map.md`.
 - For screenshots, generated images, or UI evidence, read `references/screenshot-framing.md`.
 - For font family, font size, line spacing, and density decisions, read `references/typography.md`.
+- For cards, note bars, callouts, conclusion boxes, or any framed text component, read `references/text-box-fit.md`.
 - For wording and tone, read `references/writing-style.md`.
 - Before final delivery, read `references/qa-checklist.md` and run its required checks.
 - For non-trivial or generated decks, read `references/qa-playbook.md`.
@@ -186,6 +190,7 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Screenshots and tables are primary visual evidence.
 - Screenshots should preserve evidence by default. Use generated or redesigned images only when the user asks for a conceptual illustration or when the original screenshot is unusable for the chosen slot.
 - Tables should default to vertical-middle cell alignment. Pick one horizontal alignment mode for the whole table before filling content: all-center for compact categorical matrices, or all-left for sentence/evidence tables. Do not mix center and left alignment inside the same table as an aesthetic choice; normal 3-5 column tables should usually use `12-13 pt` body text.
+- Framed text must stay inside its visible frame in both horizontal and vertical directions. Use an inner text box, wrapping, and content reduction; if it still does not fit at readable size, split the card row or slide.
 - Main content may use the space above and left of the bottom-right logo, but must not cover the logo itself. Keep a small breathing margin around the logo mark.
 - Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
 - Avoid base-`pptx` colorful infographic styling: multicolor numbered circles, multicolor card grids, alternating colored vertical bars, rainbow process flows, decorative icon grids, and shadows used only to make cards look designed.

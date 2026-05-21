@@ -82,9 +82,19 @@
       "prompt": "请做一页一句话结论 PPTX：顶部是一条浅灰背景结论框，下面是目标、范围、结果三个卡片。结论文案和三个卡片正文都比较长，要求文字在背景框和卡片内自动换行，不要跑到背景框外面。",
       "expected_behavior": [
         "Wraps long conclusion text inside the light-gray conclusion bar with visible padding.",
-        "Keeps each card body text inside its card background instead of spanning across adjacent cards.",
+        "Keeps each card body text box physically inside its card background instead of spanning across adjacent cards.",
         "Shortens copy, increases container height, or splits content when text cannot fit.",
-        "Runs visual QA and treats container text overflow warnings as pages needing review."
+        "Runs visual QA and treats container text overflow or text-box-fit warnings as pages needing review."
+      ]
+    },
+    {
+      "id": "card-frame-text-fit",
+      "prompt": "请做一页“本次评审要回答的三个问题”PPTX，使用三个浅灰卡片：能说明什么、还缺什么、先补哪块。每个卡片正文都是较长中文句子。要求正文在卡片内水平和垂直方向都不能超出外框，不能跨到相邻卡片。",
+      "expected_behavior": [
+        "Builds each visible card first and places title/body text in inner text boxes within that card.",
+        "Wraps long card body sentences inside the card instead of creating row-wide text boxes.",
+        "Shortens the sentence, increases the card height, reduces cards per row, or splits the slide if text cannot fit at readable size.",
+        "Runs the QA helper and treats text-box-fit/container overflow warnings as requiring rendered slide inspection."
       ]
     },
     {

@@ -2,7 +2,7 @@
 
 Use this as the default typography contract for IDT/Inspur PPTX work. It is tuned for 16:9 internal reports, training decks, review materials, and operation manuals.
 
-The authoritative font contract lives in `references/theme-contract.md`. Title placeholder cleanup and title-zone decisions live in `references/title-system.md`. This file gives scenario-specific size, spacing, and alignment rules.
+The authoritative font contract lives in `references/theme-contract.md`. Title placeholder cleanup and title-zone decisions live in `references/title-system.md`. Framed text containment lives in `references/text-box-fit.md`. This file gives scenario-specific size, spacing, and alignment rules.
 
 ## Font Family
 
@@ -85,10 +85,12 @@ Text overlap is a layout failure, not a polish issue.
 
 - Do not let editable text boxes overlap other editable text boxes, screenshots, tables, card borders, or the logo.
 - When text sits on a filled background box, card, callout, or light-gray conclusion bar, the text box must stay inside that container with visible padding. Do not let the text run beyond the background shape.
+- For framed text, calculate the visible frame and an inner text box before adding text. The text box itself must not cross the frame boundary; PowerPoint wrapping/autofit only helps inside the text box's own bounding box.
 - Long one-sentence conclusions should wrap inside the bar. If the sentence cannot fit, increase the container height, reduce the sentence, split it into two lines, or move supporting detail to a separate card.
 - For process cards, reserve a stable heading band and body band. If the heading becomes two lines, the body must move down with enough gap.
 - Mixed English and Chinese labels often wrap unexpectedly. Test long English terms such as `Commit Report`, `Commit Compare`, and module names in the actual rendered slide before delivery.
 - If text only fits by reducing body text below the minimum readable size, split the card row, use fewer cards per slide, shorten the label, or move details into a separate table. Do not accept overprinted text.
+Read `references/text-box-fit.md` before generating cards, note bars, conclusion boxes, or callouts with long text.
 
 ## Table Typography And Alignment
 

@@ -46,6 +46,7 @@ High-risk slides:
 - Title-heavy pages copied from templates, especially if PowerPoint edit mode may show `单击此处添加标题` or an empty title/subtitle placeholder.
 - Dense tables, especially near the bottom-right logo.
 - Pages with long Chinese and English mixed labels; English tokens often widen text unexpectedly.
+- Pages with card grids, note bars, conclusion boxes, or callouts that contain long sentences; these are high-risk for text boxes extending beyond their visible frames.
 - Pages with English-heavy metrics or field names on business-facing cards, such as `generated / accepted / candidateLines`, `exact / partial`, `daily facts`, or `attribution job`.
 - Sparse pages where only a few short body lines sit in a large blank area.
 - Titles that may wrap to two lines while a top divider line or marker was positioned for one line.
@@ -70,6 +71,7 @@ Look for:
 - Text, table borders, cell fills, screenshots, callouts, charts, or background shapes overlapping the bottom-right logo.
 - Text overlapping the logo, page number, table border, screenshot, arrow, or title rule.
 - Text that visually belongs to a filled note/card/conclusion background but extends past the right or bottom edge of that background.
+- Text boxes whose anchor starts inside a card or note bar but whose bounding box spans outside that card or into the next card.
 - Process-card headings overlapping card body text, especially when English labels wrap to two lines.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
@@ -85,6 +87,7 @@ Look for:
 - Footer/source text colliding with the main content.
 - Uneven alignment among repeated cards, columns, table rows, or step boxes.
 - Conclusion bars, note boxes, and cards where the visible background is shorter or narrower than the text.
+- A card body that appears as one unwrapped line across multiple cards instead of wrapping inside the card's inner text zone.
 - Large empty placeholder regions left after deleting source content.
 - Low contrast text in light blue, gray, blue-gray, or pale yellow zones.
 - Images or screenshots with mismatched crop density, inconsistent ratios, or important UI text squeezed too small.
@@ -98,6 +101,7 @@ When visual QA finds a problem, classify it before fixing:
 - **Theme drift**: the slide uses colors, fonts, generated imagery, or copied deck styling that violates `theme-contract.md`.
 - **Wrong material slot**: a screenshot or image was placed in a slot too small, too wide, or too close to the logo.
 - **Component misuse**: a table, card, arrow, or callout was used as decoration rather than evidence.
+- **Text-box/frame mismatch**: the text belongs to a card, note bar, conclusion box, or callout, but the generated text box is not inside that visible frame. Rebuild the inner text box according to `references/text-box-fit.md` before changing font size.
 - **Spacing problem**: the structure is right, but title, body, table, screenshot, or caption spacing needs adjustment.
 - **Title-system problem**: leftover title/subtitle placeholders remain, the title band is too tall, or the title font was changed without resizing the title zone.
 - **Logo-safe-zone problem**: content uses the lower-right area without protecting the actual logo mark.
@@ -124,7 +128,7 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check footnotes and sources are short enough not to collide with content.
 - Check "待补充" text is intentional. If the deck is meant as final delivery, remove or replace it.
 - Check the extracted text does not contain PPT-making process notes. Phrases such as `形成一版可讨论 PPT`, `结构草稿`, `后续补充数据和截图`, `本轮先不展开`, and `不追求最终视觉定稿` are generation scaffolding, not audience-facing content.
-- Check every text-on-background treatment: the text must wrap inside the filled rectangle/card/callout, not extend beyond its visible boundary.
+- Check every text-on-background treatment: the text box must be inside the filled rectangle/card/callout and the text must wrap inside that visible boundary.
 - Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
 - For screenshots and generated images, check `references/screenshot-framing.md`: real screenshots remain faithful unless the user requested redesign, image groups have consistent ratios, and generated assets do not include deck chrome.

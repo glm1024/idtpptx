@@ -154,8 +154,15 @@ TEXT_OVERLAP_MIN_HEIGHT = EMUS_PER_INCH * 0.10
 TEXT_OVERLAP_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.03
 TEXT_OVERLAP_MIN_RATIO = 0.12
 CONTAINER_TEXT_MIN_AREA = EMUS_PER_INCH * EMUS_PER_INCH * 0.30
-CONTAINER_TEXT_OVERLAP_RATIO = 0.35
-CONTAINER_TEXT_TOLERANCE_IN = 0.04
+CONTAINER_TEXT_OVERLAP_RATIO = 0.22
+CONTAINER_TEXT_TOLERANCE_IN = 0.02
+CONTAINER_TEXT_ANCHOR_TOLERANCE_IN = 0.06
+TEXT_BOX_FIT_REF = "references/text-box-fit.md"
+TEXT_BOX_FIT_MIN_CHARS = 32
+TEXT_BOX_FIT_HEIGHT_RATIO = 1.15
+TEXT_BOX_FIT_LINE_HEIGHT = 1.18
+TEXT_BOX_FIT_DEFAULT_FONT_PT = 13.0
+TEXT_BOX_FIT_HORIZONTAL_RATIO = 1.12
 TABLE_ALIGNMENT_REF = "references/typography.md"
 TABLE_MIDDLE_ANCHORS = {"ctr", "mid", "middle"}
 TABLE_HORIZONTAL_ALIGNMENT_MAP = {
@@ -664,6 +671,22 @@ def object_font_sizes(element: ET.Element) -> list[float]:
     return sorted(set(sizes))
 
 
+def object_text_body_props(element: ET.Element) -> dict[str, str]:
+    body_pr = element.find("p:txBody/a:bodyPr", OOXML_NS)
+    if body_pr is None:
+        return {"wrap": "", "autofit": ""}
+    autofit = ""
+    for child in list(body_pr):
+        tag = local_name(child.tag)
+        if tag in {"spAutoFit", "normAutofit", "noAutofit"}:
+            autofit = tag
+            break
+    return {
+        "wrap": body_pr.attrib.get("wrap", ""),
+        "autofit": autofit,
+    }
+
+
 def object_placeholder_info(element: ET.Element) -> tuple[str, str] | None:
     placeholder = element.find(".//p:ph", OOXML_NS)
     if placeholder is None:
@@ -694,6 +717,31 @@ def inches(value: float) -> float:
 def rect_area(rect: tuple[float, float, float, float]) -> float:
     _x, _y, width, height = rect
     return max(0, width) * max(0, height)
+
+
+def rect_center(rect: tuple[float, float, float, float]) -> tuple[float, float]:
+    x, y, width, height = rect
+    return x + width / 2, y + height / 2
+
+
+def point_in_rect(
+    point: tuple[float, float],
+    rect: tuple[float, float, float, float],
+    tolerance: float = 0,
+) -> bool:
+    px, py = point
+    x, y, width, height = rect
+    return x - tolerance <= px <= x + width + tolerance and y - tolerance <= py <= y + height + tolerance
+
+
+def text_anchor_points(rect: tuple[float, float, float, float]) -> list[tuple[float, float]]:
+    x, y, width, height = rect
+    return [
+        (x, y + height / 2),
+        (x + width * 0.08, y + height / 2),
+        (x + width * 0.08, y + height * 0.28),
+        rect_center(rect),
+    ]
 
 
 def rect_label(obj: dict[str, object]) -> str:
@@ -775,6 +823,7 @@ def iter_slide_objects(sp_tree: ET.Element, transform=None):
             "text_colors": object_text_colors(child),
             "fonts": object_font_faces(child),
             "font_sizes": object_font_sizes(child),
+            "text_body": object_text_body_props(child),
             "placeholder_present": placeholder is not None,
             "placeholder_type": placeholder[0] if placeholder else "",
             "placeholder_idx": placeholder[1] if placeholder else "",
@@ -790,7 +839,7 @@ def slide_number_from_path(name: str) -> int:
 def is_bottom_right_logo_like_picture(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
     if obj["kind"] != "pic" or str(obj["text"]):
         return False
-    x, y, width, height = obj["rect"]
+    _x, y, width, height = obj["rect"]
     if width <= 0 or height <= 0:
         return False
     aspect_ratio = width / height
@@ -1623,6 +1672,7 @@ def find_container_text_overflow_warnings(pptx_path: Path) -> list[str]:
     warnings: list[str] = []
     slide_w, slide_h = slide_size(pptx_path)
     tolerance = inches(CONTAINER_TEXT_TOLERANCE_IN)
+    anchor_tolerance = inches(CONTAINER_TEXT_ANCHOR_TOLERANCE_IN)
     try:
         with zipfile.ZipFile(pptx_path) as zf:
             slide_paths = sorted(
@@ -1656,20 +1706,144 @@ def find_container_text_overflow_warnings(pptx_path: Path) -> list[str]:
                     text_area = rect_area(obj["rect"])
                     if text_area <= 0:
                         continue
+                    candidates: list[tuple[float, dict[str, object]]] = []
                     for container in containers:
                         intersection = rect_intersection(obj["rect"], container["rect"])
                         intersection_area = rect_area(intersection)
-                        if intersection_area / text_area < CONTAINER_TEXT_OVERLAP_RATIO:
-                            continue
-                        if rect_contains(container["rect"], obj["rect"], tolerance):
-                            continue
-                        warnings.append(
-                            f"{slide_path}: text may overflow its background/container {rect_label(obj)} "
-                            f"against {rect_label(container)}; wrap or resize inside the box"
+                        anchored = any(
+                            point_in_rect(point, container["rect"], anchor_tolerance)
+                            for point in text_anchor_points(obj["rect"])
                         )
-                        break
+                        if not anchored and intersection_area / text_area < CONTAINER_TEXT_OVERLAP_RATIO:
+                            continue
+                        candidates.append((rect_area(container["rect"]), container))
+                    if not candidates:
+                        continue
+                    _area, container = min(candidates, key=lambda item: item[0])
+                    if rect_contains(container["rect"], obj["rect"], tolerance):
+                        continue
+                    text_body = obj.get("text_body", {})
+                    wrap = text_body.get("wrap", "") if isinstance(text_body, dict) else ""
+                    wrap_detail = " with text wrapping disabled" if wrap == "none" else ""
+                    warnings.append(
+                        f"{slide_path}: text may overflow its background/container{wrap_detail} {rect_label(obj)} "
+                        f"against {rect_label(container)}; keep the text box inside the frame and wrap/shrink/split per {TEXT_BOX_FIT_REF}"
+                    )
     except Exception as exc:
         warnings.append(f"could not inspect container text overflow: {exc}")
+    return warnings
+
+
+def text_width_points(text: str, font_size_pt: float) -> float:
+    width = 0.0
+    for char in text:
+        if char == "\t":
+            width += font_size_pt * 1.1
+        elif char.isspace():
+            width += font_size_pt * 0.35
+        elif "\u4e00" <= char <= "\u9fff":
+            width += font_size_pt * 0.98
+        elif char.isupper():
+            width += font_size_pt * 0.62
+        elif char.isdigit():
+            width += font_size_pt * 0.55
+        elif ord(char) < 128:
+            width += font_size_pt * 0.52
+        else:
+            width += font_size_pt * 0.75
+    return width
+
+
+def estimated_wrapped_line_count(text: str, width_points: float, font_size_pt: float) -> int:
+    if width_points <= 0 or font_size_pt <= 0:
+        return 0
+    lines = 0
+    for paragraph in re.split(r"[\n\v]+", text):
+        paragraph = paragraph.strip()
+        if not paragraph:
+            lines += 1
+            continue
+        current_width = 0.0
+        for char in paragraph:
+            char_width = text_width_points(char, font_size_pt)
+            if current_width > 0 and current_width + char_width > width_points:
+                lines += 1
+                current_width = char_width
+            else:
+                current_width += char_width
+        lines += 1
+    return lines
+
+
+def representative_font_size(obj: dict[str, object]) -> float:
+    sizes = sorted(float(size) for size in obj.get("font_sizes", []) if float(size) > 0)
+    if not sizes:
+        return TEXT_BOX_FIT_DEFAULT_FONT_PT
+    return sizes[len(sizes) // 2]
+
+
+def should_skip_text_box_fit(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
+    text = str(obj.get("text", "")).strip()
+    if len(text) < TEXT_BOX_FIT_MIN_CHARS:
+        return True
+    if PLACEHOLDER_RE.search(text) or PROCESS_LEAK_RE.search(text):
+        return True
+    if is_logo_object(obj, slide_w, slide_h):
+        return True
+    if is_top_title_object(obj, slide_w):
+        return True
+    x, y, width, height = obj["rect"]
+    if width <= 0 or height <= 0:
+        return True
+    if y + height > slide_h - inches(0.22) and height < inches(0.35):
+        return True
+    return False
+
+
+def find_text_box_fit_warnings(pptx_path: Path) -> list[str]:
+    warnings: list[str] = []
+    slide_w, slide_h = slide_size(pptx_path)
+    try:
+        with zipfile.ZipFile(pptx_path) as zf:
+            slide_paths = sorted(
+                (name for name in zf.namelist() if name.startswith("ppt/slides/slide") and name.endswith(".xml")),
+                key=slide_number_from_path,
+            )
+            for slide_path in slide_paths:
+                root = ET.fromstring(zf.read(slide_path))
+                sp_tree = root.find("p:cSld/p:spTree", OOXML_NS)
+                if sp_tree is None:
+                    continue
+                for obj in iter_slide_objects(sp_tree):
+                    text = str(obj.get("text", "")).strip()
+                    if should_skip_text_box_fit(obj, slide_w, slide_h):
+                        continue
+                    _x, _y, width, height = obj["rect"]
+                    font_size = representative_font_size(obj)
+                    width_points = (width / EMUS_PER_INCH) * 72
+                    height_points = (height / EMUS_PER_INCH) * 72
+                    estimated_lines = estimated_wrapped_line_count(text, width_points, font_size)
+                    if estimated_lines <= 0:
+                        continue
+                    required_height = estimated_lines * font_size * TEXT_BOX_FIT_LINE_HEIGHT
+                    text_body = obj.get("text_body", {})
+                    wrap = text_body.get("wrap", "") if isinstance(text_body, dict) else ""
+                    longest_line = max((text_width_points(line.strip(), font_size) for line in re.split(r"[\n\v]+", text)), default=0)
+                    if wrap == "none" and longest_line > width_points * TEXT_BOX_FIT_HORIZONTAL_RATIO:
+                        warnings.append(
+                            f"{slide_path}: text wrapping appears disabled and line width may exceed textbox {rect_label(obj)}; "
+                            f"enable wrapping or pre-split the sentence per {TEXT_BOX_FIT_REF}"
+                        )
+                        continue
+                    if required_height <= height_points * TEXT_BOX_FIT_HEIGHT_RATIO:
+                        continue
+                    warnings.append(
+                        f"{slide_path}: text may not fit within its textbox {rect_label(obj)} "
+                        f"(estimated {estimated_lines} line(s) at {font_size:.1f} pt); "
+                        f"shorten, split, increase the box, or use fit-to-shape per {TEXT_BOX_FIT_REF}"
+                    )
+    except Exception as exc:
+        warnings.append(f"could not inspect text box fit: {exc}")
     return warnings
 
 
@@ -2043,6 +2217,12 @@ def main() -> int:
         warn(message)
     if len(container_overflow_warnings) > 20:
         warn(f"{len(container_overflow_warnings) - 20} additional container text overflow warning(s) omitted")
+
+    text_box_fit_warnings = find_text_box_fit_warnings(pptx_path)
+    for message in text_box_fit_warnings[:20]:
+        warn(message)
+    if len(text_box_fit_warnings) > 20:
+        warn(f"{len(text_box_fit_warnings) - 20} additional text box fit warning(s) omitted")
 
     table_alignment_warnings = find_table_alignment_warnings(pptx_path)
     for message in table_alignment_warnings[:20]:

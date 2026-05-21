@@ -45,6 +45,7 @@ Rules:
 - Do not create marketing landing pages, magazine-style spreads, Swiss-style poster pages, decorative hero images, WebGL/HTML slide structures, or arbitrary card grids inside this company PPTX skill.
 - If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. Do not hide a new page type inside one deck as a one-off.
 - If no registered type fits, default to Text Explanation Page and keep it restrained.
+- For any registered page type that uses visible cards, callouts, note bars, or conclusion boxes, apply `references/text-box-fit.md`: the visible frame owns an inner text zone, and text must not extend beyond the frame.
 
 ## Page Type Details
 
@@ -192,6 +193,7 @@ Rules:
 - Number options with Chinese full-width parentheses when writing Chinese documents.
 - Use `1.3-1.45x` line spacing for option explanations, or `1.5x` when there are only two or three short options.
 - If using a conclusion bar, note box, or callout background, wrap the text inside that background with padding. Do not let the text box extend outside the filled area.
+- Calculate the conclusion/note/callout inner box before inserting text. If the sentence does not fit, shorten it or increase the bar height; do not place a wider text box over the page.
 - End with a short next-step sentence.
 
 ### 7. Problem/Solution Page
@@ -235,7 +237,7 @@ Rules:
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
 - Reserve separate title and body zones inside each process card. If an English title wraps to two lines, move the body down, shorten the title, widen the card, stack fewer cards per row, or split the slide. Never let title text overlap body text.
-- Keep card body text inside the card background. If a body sentence is wider than the card, wrap it, shorten it, or split the card; do not create a text box that spills across adjacent cards.
+- Keep card body text inside the card background. Build each card with a fixed inner body box; if a body sentence is wider or taller than that inner box, wrap it, shorten it, reduce cards per row, switch to a table, or split the slide. Do not create a text box that spills across adjacent cards.
 - Use Chinese-first process labels. English-only labels are acceptable only for real module names or standard abbreviations; otherwise translate them or use `中文（English）` on first mention.
 - Keep the final step, callout, or summary from overlapping the bottom-right logo.
 - Use real process stages. Do not invent numbers, percentages, or pseudo-KPIs just to make the layout feel fuller.

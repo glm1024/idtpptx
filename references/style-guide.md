@@ -53,6 +53,7 @@ For exact color and font tokens, `references/theme-contract.md` is the source of
 - Main body text is usually `13-18 pt`; use larger body text on sparse slides and split the slide before shrinking below readable size.
 - Main body text should not default to single spacing. Use `1.3-1.45x` for normal body text and `1.5-1.7x` on sparse explanation pages with obvious empty space.
 - Tables, dense process cards, captions, and footnotes may use tighter spacing; follow `references/typography.md` for the scenario-specific size and line-spacing rules.
+- Cards, callouts, note bars, and conclusion boxes need inner text zones; follow `references/text-box-fit.md` so text stays inside the visible frame.
 
 ## Layout Principles
 
