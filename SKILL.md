@@ -138,6 +138,25 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 
 The V1 template was distilled from a practical internal training deck. The original training content is not part of the skill. Treat the template as a layout and brand-style source only.
 
+Keep the distributable skill small. `assets/templates/` may contain only compact
+seed PPTX templates, cleaned layout-library PPTX files, and reusable brand
+assets needed at generation time. Do not place raw reference PPT collections,
+source decks, customer/project decks, or large local research corpora inside
+the skill root. Keep those materials outside this repository, for example in a
+local-only sibling directory such as `../ppt-reference/`, and distill their
+lessons into `references/reference-deck-inventory.md` or registered layout
+rules before using them.
+
+Long-term template direction:
+
+- Treat `assets/templates/inspur-pragmatic-template-v1.pptx` as the current
+  seed template, not as a dumping ground for every reference slide.
+- Prefer a Guizang-style mechanism adapted to native PPTX: compact seed
+  template + registered layout IDs + slot rules + QA checks.
+- Add a separate cleaned layout-library PPTX only when a layout has been
+  registered, scrubbed of source content, and documented with use cases,
+  content slots, text limits, and QA boundaries.
+
 Keep reusable elements:
 
 - Inspur logo placement

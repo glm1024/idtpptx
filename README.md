@@ -69,6 +69,24 @@ npx skills update -g -y
 - 可复用的 PPT QA playbook 和机械检查脚本 `scripts/pptx_quality_gate.py`
 - 用于回归检查的轻量 eval 场景，位于 `evals/evals.json`
 
+## 资产边界
+
+`idtpptx` 仓库只分发生成 PPT 所必需的小型资产：
+
+- `assets/templates/`：小型公司种子模板、后续清洗后的版式库模板、必要品牌资产。
+- `references/`：版式、主题、文案、截图和 QA 规则。
+- `scripts/`：机械检查或辅助脚本。
+
+不要把原始参考 PPT 库、客户/项目 deck、素材研究语料或几十 MB 的内部资料放进 skill 根目录。它们可以保存在本地 sibling 目录，例如：
+
+```text
+/Users/mark/workspace/skills/ppt-reference/
+```
+
+参考 PPT 的作用是研究和提炼，不是作为 skill 安装包内容。需要吸收时，先把结论写入 `references/reference-deck-inventory.md`、`references/layout-map.md` 或后续 `layout-registry`，再按需制作清洗后的轻量版式库 PPTX。
+
+当前内置模板 `assets/templates/inspur-pragmatic-template-v1.pptx` 是种子模板，不是素材仓库。后续更接近 `guizang-ppt-skill` 的方向：小模板 + 登记版式 ID + 槽位规则 + QA 检查，而不是把所有参考页堆进一个大 PPT。
+
 ## 注意事项
 
 - `idtpptx` 不替代基础 `pptx` skill。
