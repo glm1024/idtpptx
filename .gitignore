@@ -4,3 +4,7 @@ __pycache__/
 *.tmp
 *.bak
 ~$*.pptx
+
+# Local-only reference deck corpus. Keep heavy/internal source PPTs out of the
+# distributable skill; distill reusable patterns into references/*.md instead.
+ppt/

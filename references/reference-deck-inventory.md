@@ -1,7 +1,8 @@
 # Reference Deck Inventory
 
 This file tracks company-internal PPT decks that can inform future `idtpptx`
-layout assets. These decks are reference material, not template assets.
+layout assets. These decks are local-only reference material, not template
+assets, and should not be committed or distributed with the skill.
 
 Do not copy source business content into the skill. Extract only reusable
 layout patterns, slot structures, density rules, and QA lessons that still fit
@@ -9,9 +10,13 @@ the fixed `IDT/Inspur Pragmatic` theme.
 
 ## Scan Scope
 
-Source folder:
+Local source folder:
 
 `ppt/`
+
+The `ppt/` folder is intentionally ignored by git. If this inventory is used on
+another machine, the source decks may be absent; rely on the distilled patterns
+below unless a local reference corpus has been provided again.
 
 Initial scan date: 2026-05-21
 
