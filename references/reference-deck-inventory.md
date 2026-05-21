@@ -12,11 +12,13 @@ the fixed `IDT/Inspur Pragmatic` theme.
 
 Local source folder:
 
-`ppt/`
+`../ppt-reference/`
 
-The `ppt/` folder is intentionally ignored by git. If this inventory is used on
-another machine, the source decks may be absent; rely on the distilled patterns
-below unless a local reference corpus has been provided again.
+The local reference folder sits outside this skill repository and is not part of
+the distributable skill. If this inventory is used on another machine, the
+source decks may be absent; rely on the distilled patterns below and
+`references/reference-layout-extraction.md` unless a local reference corpus has
+been provided again.
 
 Initial scan date: 2026-05-21
 
@@ -190,16 +192,17 @@ Guardrails:
 
 ## Recommended Next Step
 
-Create a small registered layout backlog instead of editing the `.pptx`
-template immediately:
+Continue from the registered layout backlog instead of copying raw reference
+slides into the `.pptx` template:
 
-1. Add `references/layout-registry.md` or extend `references/layout-map.md`
-   with the candidate IDs above.
+1. Refine the candidate IDs in `references/layout-registry.md`.
 2. Pick 5-8 high-value reference slides and describe their slots in text.
-3. Only after the slot rules are stable, rebuild
-   `assets/templates/inspur-pragmatic-template-v1.pptx` or create a separate
-   `inspur-pragmatic-layout-library-v1.pptx`.
+3. Only after the slot rules are stable, rebuild the single official template:
+   `assets/templates/inspur-pragmatic-template-v1.pptx`.
 
-The first concrete layout to implement should be `SS-02` because the operation
-manual pattern appears repeatedly and directly addresses common screenshot
-deck needs.
+The current concrete layouts implemented in the V1 template are `COV-02`,
+`DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`, `ARC-02`, `TBL-02`, `TBL-03`,
+and `SUM-02`. This covers formal covers, directory/progress pages, roadmaps,
+screenshot operations, troubleshooting, left/right architecture explanations,
+full-width diagrams, dense evidence tables, metric tables, and decision recap
+pages.

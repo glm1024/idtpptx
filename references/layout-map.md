@@ -4,17 +4,24 @@ Use the template slides as reusable page types. Do not preserve source business 
 
 This file is the registered page-type map for `idtpptx`. It is a guardrail against free-form slide invention across different models and agents.
 
+For specific layout variants and IDs, read `references/layout-registry.md` after
+choosing the broad page type here.
+
 ## Template Asset
 
 Primary template:
 
 `assets/templates/inspur-pragmatic-template-v1.pptx`
 
-This template contains cleaned placeholder pages distilled from a pragmatic Inspur-style training deck.
+This template contains cleaned placeholder pages distilled from a pragmatic
+Inspur-style reference corpus, including cover, directory/progress, roadmap,
+screenshot, troubleshooting, architecture, table, and handoff samples.
 
 ## Registered Page Types
 
-Use these registered page types before inventing anything new:
+Use these registered page types before inventing anything new. Then select a
+specific layout ID from `references/layout-registry.md` when more than one
+variant is available.
 
 | Type | Use For |
 |---|---|
@@ -26,14 +33,15 @@ Use these registered page types before inventing anything new:
 | Choice/Recommendation Page | Options, scenario choices, recommended paths |
 | Problem/Solution Page | FAQ, troubleshooting, known issues |
 | Process / Workflow Summary Page | Non-UI process, algorithm, review, or data flow |
+| Summary / Handoff Page | Final conclusion, decision recap, owners, dates, next actions |
 
 Before editing slide content, create a simple planning table:
 
-| Page | Registered page type | Reason | Main material / screenshot slot | Logo risk |
-|---|---|---|---|---|
-| 1 | Cover | Title and version | None | Low |
-| 2 | Text Explanation Page | Scope and audience | None | Low |
-| 3 | Screenshot Step Page | Three UI actions | 3 screenshots, horizontal sequence | Medium |
+| Page | Layout ID | Registered page type | Reason | Main material / screenshot slot | Logo risk |
+|---|---|---|---|---|---|
+| 1 | `COV-01` | Cover | Title and version | None | Low |
+| 2 | `TXT-01` | Text Explanation Page | Scope and audience | None | Low |
+| 3 | `SS-02` | Screenshot Step Page | Three UI actions | 3 screenshots, horizontal sequence | Medium |
 
 Rules:
 
@@ -43,7 +51,7 @@ Rules:
 - Reuse the template's page chrome. Do not add a second top rule, page marker, footer/logo, or artificial slide frame inside the existing template frame.
 - Treat the planning table as a working artifact, not a slide. By default, final decks should not include an initial `目标 / 范围 / 产出` page when that page only explains how the PPT draft was produced.
 - Do not create marketing landing pages, magazine-style spreads, Swiss-style poster pages, decorative hero images, WebGL/HTML slide structures, or arbitrary card grids inside this company PPTX skill.
-- If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. Do not hide a new page type inside one deck as a one-off.
+- If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. If only a variant is missing under an existing page type, register it in `references/layout-registry.md`. Do not hide a new page type inside one deck as a one-off.
 - If no registered type fits, default to Text Explanation Page and keep it restrained.
 - For any registered page type that uses visible cards, callouts, note bars, or conclusion boxes, apply `references/text-box-fit.md`: the visible frame owns an inner text zone, and text must not extend beyond the frame.
 
@@ -58,6 +66,7 @@ Best for:
 - Training title
 - Project report title
 - Internal manual title
+- Formal review / leadership update title, when using `COV-02`
 
 Keep:
 
@@ -75,17 +84,21 @@ Rules:
 - Put date, version, department, and objective copy as plain text on the cover canvas.
 - Keep one main title and one optional real subtitle. Delete any duplicated or unneeded title/subtitle placeholders before adjusting font size.
 - Do not create a white metadata card, white filled text box, white diagonal decoration, or empty white rectangle on top of the cover background.
+- Keep date/version metadata inside the gray band; do not let it touch the gray/white boundary above the logo area.
+- Use `COV-01` for normal training/report covers and `COV-02` for formal review covers that need a stronger centered title.
 - If the cover needs more explanation than a short objective line, move that explanation to the next slide instead of adding a white panel to the cover.
 
 ### 2. Section Divider
 
-Use between major chapters.
+Use between major chapters, or when a long deck needs a directory/progress
+orientation page.
 
 Best for:
 
 - Numbered training modules.
 - Process phases.
 - Report chapters.
+- 3-6 item directory/progress maps, using `DIR-01`.
 
 Keep:
 
@@ -118,6 +131,9 @@ Rules:
 - If the slide has only a few lines and obvious blank space, use larger body text with `1.5-1.7x` line spacing instead of leaving small single-spaced text.
 - For normal explanation pages, use `1.3-1.45x` body line spacing.
 - If content becomes long, split into two slides instead of shrinking text too far.
+- If this is the final page and the audience needs conclusion, owner, date, and
+  next action fields, use `SUM-02` instead of a generic text page or decorative
+  thank-you page.
 
 ### 4. Comparison Table Page
 
@@ -171,6 +187,8 @@ Rules:
 - Use one to three screenshots.
 - Use red arrows between screenshots for sequence.
 - Add concise text above the screenshots.
+- For troubleshooting with one evidence screenshot plus `现象 / 判断 / 处理`,
+  use `SS-03` instead of forcing the content into a generic FAQ page.
 - Keep screenshot captions and step labels compact, usually `10-12 pt` with `1.0-1.2x` line spacing.
 - Remove unused screenshot placeholders entirely.
 - Keep screenshots, arrows, and annotation boxes off the bottom-right logo itself. If the screenshot must be large, crop the meaningful area instead of covering the logo.
@@ -210,6 +228,8 @@ Rules:
 
 - Use a stable structure: 问题 / 原因 / 解决.
 - Use screenshots only when they materially help diagnosis.
+- If the screenshot is the main evidence, switch to `SS-03` so the screenshot
+  gets a real evidence slot and the diagnosis text stays in fixed blocks.
 - Avoid long narrative paragraphs.
 - Use `1.3-1.45x` line spacing for diagnosis text; split the slide if the structure becomes visually cramped.
 
@@ -223,6 +243,8 @@ Best for:
 - Operational review process.
 - Data flow or attribution flow.
 - Multi-stage plan without screenshots.
+- Technical architecture or topology diagrams when selected through `ARC-01`
+  or `ARC-02` in `references/layout-registry.md`.
 
 Not for:
 
@@ -234,6 +256,11 @@ Not for:
 Rules:
 
 - Prefer a restrained blue/black sequence, a compact table, or a light line flow.
+- For technical diagrams, pick `ARC-01` when the explanation and diagram share
+  the slide; pick `ARC-02` when the diagram must be full width to keep labels
+  readable.
+- For phased rollout or month-by-month planning, pick `PRC-03` instead of a
+  generic process card row.
 - Use simple numbered text labels or small blue tags instead of large multicolor circular badges.
 - Do not use rainbow step cards, alternating colored vertical bars, or heavy shadow cards unless each color carries a documented business meaning.
 - Reserve separate title and body zones inside each process card. If an English title wraps to two lines, move the body down, shorten the title, widen the card, stack fewer cards per row, or split the slide. Never let title text overlap body text.
@@ -242,15 +269,43 @@ Rules:
 - Keep the final step, callout, or summary from overlapping the bottom-right logo.
 - Use real process stages. Do not invent numbers, percentages, or pseudo-KPIs just to make the layout feel fuller.
 
+### 9. Summary / Handoff Page
+
+Use for final reader-facing conclusions and review handoff.
+
+Best for:
+
+- Final decision recap after a technical方案评审.
+- Closing page that needs owner/date/action fields.
+- Internal review material where the next step must be explicit.
+
+Not for:
+
+- Decorative `谢谢` / `THANKS` pages.
+- Deck-production notes about what the agent will do next.
+- Long work plans with many rows; those belong in a table page or appendix.
+
+Rules:
+
+- Use `SUM-01` for a restrained high-level summary / next-steps page.
+- Use `SUM-02` when the slide needs decision, owner, date, and next action
+  slots.
+- Lead with the conclusion, then show responsibility and follow-up actions.
+- Keep all handoff text inside fixed frames with inner padding; do not let the
+  table, note strip, or decision blocks overlap the bottom-right logo.
+
 ## Mapping Heuristics
 
 - Decide the full slide sequence before editing individual slide content.
 - Write the page planning table first for non-trivial decks.
+- Select a concrete layout ID from `references/layout-registry.md` after the broad page type is chosen. Do not pick a variant randomly.
 - If the content is a new chapter, use Section Divider.
 - If the content is a UI operation workflow, use Screenshot Step Page.
 - If the content is a process or algorithm workflow without screenshots, use Process / Workflow Summary Page.
 - If the content is a side-by-side decision, use Comparison Table or Choice/Recommendation.
 - If the content is an exception or support answer, use Problem/Solution.
+- If the content is a final decision, owner/date/action handoff, or review
+  closeout, use Summary / Handoff Page.
 - If no strong pattern fits, use Text Explanation Page.
 - Remove surplus placeholders, screenshot boxes, arrows, and table rows entirely; do not just clear their text.
 - Before finalizing a slide, make sure the bottom-right logo remains uncovered; do not reserve a large empty area above or left of it.

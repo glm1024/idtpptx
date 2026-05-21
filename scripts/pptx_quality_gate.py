@@ -629,7 +629,18 @@ def object_fill(element: ET.Element) -> str:
 
 def object_text_colors(element: ET.Element) -> list[str]:
     colors: list[str] = []
-    for path in (".//a:rPr/a:solidFill", ".//a:endParaRPr/a:solidFill", ".//a:defRPr/a:solidFill"):
+    for run in element.findall(".//a:r", OOXML_NS):
+        run_text = "".join(text.text or "" for text in run.findall("a:t", OOXML_NS)).strip()
+        if not run_text:
+            continue
+        for solid in run.findall("a:rPr/a:solidFill", OOXML_NS):
+            color = solid_fill_value(solid)
+            if color:
+                colors.append(color)
+    if colors:
+        return colors
+
+    for path in (".//a:pPr/a:defRPr/a:solidFill", ".//a:endParaRPr/a:solidFill"):
         for solid in element.findall(path, OOXML_NS):
             color = solid_fill_value(solid)
             if color:
@@ -2300,6 +2311,8 @@ def main() -> int:
                     check("slide image render", False, "pdftoppm not found")
                 else:
                     prefix = outdir / "slide"
+                    for old_image in outdir.glob("slide-*.jpg"):
+                        old_image.unlink()
                     code, stdout, stderr = run([pdftoppm, "-jpeg", "-r", "150", str(pdf_path), str(prefix)])
                     images = sorted(outdir.glob("slide-*.jpg"))
                     report["artifacts"]["slide_images"] = [str(p) for p in images]

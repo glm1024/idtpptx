@@ -13,20 +13,24 @@ This skill creates and edits company-style PowerPoint decks using a simple, prag
 | Task | What to use |
 |------|-------------|
 | PPTX mechanics | Load the installed `pptx` skill |
-| First-choice template | `assets/templates/inspur-pragmatic-template-v1.pptx` |
+| Official V1 template | `assets/templates/inspur-pragmatic-template-v1.pptx` |
 | Theme contract | `references/theme-contract.md` |
 | Theme preview | `references/theme-preview.md` |
 | Visual rules | `references/style-guide.md` |
 | Title system | `references/title-system.md` |
 | Page selection | `references/layout-map.md` |
+| Layout variants | `references/layout-registry.md` |
+| Cleaned sample slide specs | `references/cleaned-layout-sample-specs.md` |
 | Screenshot/image framing | `references/screenshot-framing.md` |
 | Typography and spacing | `references/typography.md` |
 | Text box containment | `references/text-box-fit.md` |
 | Chinese business wording | `references/writing-style.md` |
 | Reference deck inventory | `references/reference-deck-inventory.md` |
+| Reference layout extraction | `references/reference-layout-extraction.md` |
 | Final quality gate | `references/qa-checklist.md` |
 | QA playbook | `references/qa-playbook.md` |
 | Mechanical QA helper | `scripts/pptx_quality_gate.py` |
+| Template builder | `scripts/build_template.py` |
 | Regression evals | `evals/evals.json` |
 
 ## Hard Dependency
@@ -54,17 +58,18 @@ When this skill is installed on another machine, do not assume any local absolut
 Template-derived editing is the default delivery path. Do not create an
 IDT/Inspur deck from zero when the company template is available.
 
-1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the first-choice template.
+1. Use `assets/templates/inspur-pragmatic-template-v1.pptx` as the only official V1 template.
 2. Read `references/theme-contract.md` and keep the fixed IDT/Inspur theme tokens as the visual source of truth.
-3. Analyze the target content and map each section to one of the registered page types in `references/layout-map.md`.
-4. Before editing individual slide content, draft a slide plan with page number, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
-5. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
-6. Use the base `pptx` editing workflow to duplicate template slides, delete unused slides, reorder the sequence, and replace text/media in existing layouts.
-7. Normalize slide titles with `references/title-system.md`: delete unneeded title/subtitle placeholders, keep one title system per slide, and balance title font size against the compact template title band.
-8. For any card, note bar, callout, or framed component, follow `references/text-box-fit.md`: calculate the visible frame first, place text in an inner box, enable wrapping, and shorten/split content before it can run outside the frame.
-9. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
-10. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
-11. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
+3. Analyze the target content and map each section first to a registered page type in `references/layout-map.md`, then to a specific layout ID in `references/layout-registry.md` when multiple variants could fit.
+4. For `COV-02`, `DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`, `ARC-02`, `TBL-02`, `TBL-03`, or `SUM-02`, duplicate the corresponding cleaned sample slide from the V1 template and follow `references/cleaned-layout-sample-specs.md` for geometry and slot limits.
+5. Before editing individual slide content, draft a slide plan with page number, layout ID, registered page type, reason, main material or screenshot slot, and logo-overlap risk.
+6. If screenshots or generated images are involved, read `references/screenshot-framing.md` and decide the slot, ratio, and fidelity policy before inserting or generating assets.
+7. Use the base `pptx` editing workflow to duplicate template slides, delete unused slides, reorder the sequence, and replace text/media in existing layouts.
+8. Normalize slide titles with `references/title-system.md`: delete unneeded title/subtitle placeholders, keep one title system per slide, and balance title font size against the compact template title band.
+9. For any card, note bar, callout, or framed component, follow `references/text-box-fit.md`: calculate the visible frame first, place text in an inner box, enable wrapping, and shorten/split content before it can run outside the frame.
+10. Before final delivery, remove planning/meta slides that were useful only for making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this pass will not do" pages. The user normally wants the final PPT, not the agent's production scaffold.
+11. Keep the deck visually quiet, operational, and content-first. Company style overrides generic presentation-design advice from the base `pptx` skill.
+12. Run the final quality gate in `references/qa-checklist.md`. A deck is not complete until content, visual rendering, package validation, and PowerPoint compatibility checks pass. For complex decks, generated decks, or PowerPoint handoff, also read `references/qa-playbook.md`.
 
 For template-based work, finish structural edits first: choose page types, duplicate/delete/reorder slides, then edit text and media. Do not start content replacement before the target slide sequence is settled.
 
@@ -75,7 +80,7 @@ If a task asks for a new company-style deck but does not explicitly forbid using
 The safest results come from reducing free-form design decisions:
 
 - Treat `references/theme-contract.md` as the golden source for colors, fonts, and scenario variants. Do not ask the user to choose from generic themes and do not create a new theme from the topic alone.
-- Treat the template and `references/layout-map.md` as the golden source for page structure. Use registered company page types first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
+- Treat the template, `references/layout-map.md`, and `references/layout-registry.md` as the golden source for page structure. Use registered company page types and layout IDs first; do not invent a marketing, magazine, Swiss, or decorative page just because the content feels visual.
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
 - Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `初版目标与讨论范围`, `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`. By default, delete the whole meta/planning slide instead of polishing it.
 - Clean title placeholders before polishing. Final decks must not show PowerPoint default prompts such as `单击此处添加标题` / `Click to add title`, and section divider pages should not keep a top-left title placeholder in addition to the center section bar.
@@ -127,10 +132,13 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 - For visual calibration or theme-drift diagnosis, read `references/theme-preview.md`.
 - For title placeholder cleanup, title zone sizing, and title font-size decisions, read `references/title-system.md`.
 - For choosing pages, read `references/layout-map.md`.
+- For choosing among layout variants such as `COV-01`, `TBL-02`, or `SS-02`, read `references/layout-registry.md`.
+- For building or updating cleaned sample slides in the V1 template, read `references/cleaned-layout-sample-specs.md`.
 - For screenshots, generated images, or UI evidence, read `references/screenshot-framing.md`.
 - For font family, font size, line spacing, and density decisions, read `references/typography.md`.
 - For cards, note bars, callouts, conclusion boxes, or any framed text component, read `references/text-box-fit.md`.
 - For wording and tone, read `references/writing-style.md`.
+- When evolving templates or adding layout IDs from local reference decks, read `references/reference-deck-inventory.md` and `references/reference-layout-extraction.md`; absorb rules and slot contracts, not source deck content.
 - Before final delivery, read `references/qa-checklist.md` and run its required checks.
 - For non-trivial or generated decks, read `references/qa-playbook.md`.
 
@@ -138,24 +146,30 @@ If PptxGenJS or another generator is used from scratch, run an explicit PowerPoi
 
 The V1 template was distilled from a practical internal training deck. The original training content is not part of the skill. Treat the template as a layout and brand-style source only.
 
-Keep the distributable skill small. `assets/templates/` may contain only compact
-seed PPTX templates, cleaned layout-library PPTX files, and reusable brand
-assets needed at generation time. Do not place raw reference PPT collections,
-source decks, customer/project decks, or large local research corpora inside
-the skill root. Keep those materials outside this repository, for example in a
-local-only sibling directory such as `../ppt-reference/`, and distill their
-lessons into `references/reference-deck-inventory.md` or registered layout
-rules before using them.
+Keep the distributable skill small. `assets/templates/` should contain only the
+single official V1 company template and reusable brand assets needed at
+generation time. Do not place raw reference PPT collections, source decks,
+customer/project decks, or large local research corpora inside the skill root.
+Keep those materials outside this repository, for example in a local-only
+sibling directory such as `../ppt-reference/`, and distill their lessons into
+`references/reference-deck-inventory.md` or registered layout rules before
+using them.
 
-Long-term template direction:
+Template direction:
 
-- Treat `assets/templates/inspur-pragmatic-template-v1.pptx` as the current
-  seed template, not as a dumping ground for every reference slide.
-- Prefer a Guizang-style mechanism adapted to native PPTX: compact seed
+- Treat `assets/templates/inspur-pragmatic-template-v1.pptx` as the only
+  official V1 template used by agents.
+- The V1 template contains cleaned sample slides for registered variants,
+  currently `COV-02A`, `DIR-01A`, `PRC-03A`, `SS-02A`, `SS-03A`, `ARC-01A`,
+  `ARC-02A`, `TBL-02A`, `TBL-03A`, and `SUM-02A`.
+- Prefer a Guizang-style mechanism adapted to native PPTX: one compact company
   template + registered layout IDs + slot rules + QA checks.
-- Add a separate cleaned layout-library PPTX only when a layout has been
-  registered, scrubbed of source content, and documented with use cases,
-  content slots, text limits, and QA boundaries.
+- Do not create a second PPT template for normal use.
+  Keep one V1 template and rebuild it through `scripts/build_template.py`.
+- Before adding `COV-02`, `DIR-01`, `PRC-03`, `SS-02`, `SS-03`, `ARC-01`,
+  `ARC-02`, `TBL-02`, `TBL-03`, `SUM-02`, or any other cleaned sample to the
+  V1 template, follow `references/cleaned-layout-sample-specs.md` for geometry,
+  placeholder content, and promotion checks.
 
 Keep reusable elements:
 

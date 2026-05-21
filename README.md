@@ -58,6 +58,7 @@ npx skills update -g -y
 - 简单务实的白底蓝色企业风格规则
 - 固定的 IDT/Inspur 主题 contract：颜色 token、字体 contract、场景变体和禁止用途
 - 封面、章节页、正文说明页、对比表页、截图步骤页、建议页、问题处理页等常用版式映射
+- `COV-01`、`SS-02`、`TBL-02` 等受控版式 ID 登记表，避免模型随机选版式或临时发明页面
 - 登记版式优先、截图槽位优先的稳定生成规则，减少不同模型自由发挥造成的偏差
 - 模板派生优先的生成路线：默认复制和编辑公司模板页，不把 PptxGenJS 从零生成当作公司 PPT 的常规路径
 - 截图和生成配图的保真、裁切、比例和素材边界规则
@@ -73,19 +74,19 @@ npx skills update -g -y
 
 `idtpptx` 仓库只分发生成 PPT 所必需的小型资产：
 
-- `assets/templates/`：小型公司种子模板、后续清洗后的版式库模板、必要品牌资产。
+- `assets/templates/`：唯一的公司 V1 主模板和必要品牌资产。
 - `references/`：版式、主题、文案、截图和 QA 规则。
 - `scripts/`：机械检查或辅助脚本。
 
 不要把原始参考 PPT 库、客户/项目 deck、素材研究语料或几十 MB 的内部资料放进 skill 根目录。它们可以保存在本地 sibling 目录，例如：
 
 ```text
-/Users/mark/workspace/skills/ppt-reference/
+../ppt-reference/
 ```
 
-参考 PPT 的作用是研究和提炼，不是作为 skill 安装包内容。需要吸收时，先把结论写入 `references/reference-deck-inventory.md`、`references/layout-map.md` 或后续 `layout-registry`，再按需制作清洗后的轻量版式库 PPTX。
+参考 PPT 的作用是研究和提炼，不是作为 skill 安装包内容。需要吸收时，先把结论写入 `references/reference-deck-inventory.md`、`references/reference-layout-extraction.md`、`references/layout-map.md` 或 `references/layout-registry.md`，再用 `references/cleaned-layout-sample-specs.md` 约束清洗样例页，最后通过 `scripts/build_template.py` 重建唯一的 V1 主模板。
 
-当前内置模板 `assets/templates/inspur-pragmatic-template-v1.pptx` 是种子模板，不是素材仓库。后续更接近 `guizang-ppt-skill` 的方向：小模板 + 登记版式 ID + 槽位规则 + QA 检查，而不是把所有参考页堆进一个大 PPT。
+当前内置模板 `assets/templates/inspur-pragmatic-template-v1.pptx` 是唯一给 AI 使用的 V1 主模板。它包含已登记、清洗、验证过的 `COV-02A` 正式评审封面、`DIR-01A` 目录进度页、`PRC-03A` 阶段推进页、`SS-02A` 多截图步骤页、`SS-03A` 故障排查截图页、`ARC-01A` 左说明右技术图页、`ARC-02A` 全宽技术架构图页、`TBL-02A` 密集证据表页、`TBL-03A` 指标/评估表页和 `SUM-02A` 决策复盘页。不要再让 AI 在多个 PPT 模板之间选择。
 
 ## 注意事项
 
