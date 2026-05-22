@@ -144,10 +144,11 @@ Recommended geometry:
 
 | Element | x | y | w | h | Notes |
 |---|---:|---:|---:|---:|---|
-| Main title | `2.30` | `2.88` | `8.70` | `0.70` | Centered in gray band |
+| White body reset | `0.00` | `1.74` | `13.33` | `4.18` | Clears old gray cover body and top separator shadow while preserving the blue header and logo area |
+| Main title | `2.30` | `2.88` | `8.70` | `0.70` | Centered in white body |
 | Subtitle/objective | `2.55` | `3.62` | `8.20` | `0.36` | One short line |
-| Department/team | `0.95` | `4.95` | `4.40` | `0.34` | Lower-left, inside gray band |
-| Date/version | `0.95` | `5.32` | `4.40` | `0.34` | Lower-left, inside gray band |
+| Department/team | `0.95` | `4.95` | `4.40` | `0.34` | Lower-left on white body |
+| Date/version | `0.95` | `5.32` | `4.40` | `0.34` | Lower-left on white body |
 
 Sample text:
 
@@ -165,10 +166,11 @@ Text limits:
 QA:
 
 - The title must not inherit the original PowerPoint placeholder size or color.
-- The title should sit comfortably in the gray band and must not overlap any
+- The title should sit comfortably on the white body and must not overlap any
   stale template prompt.
-- Metadata must stay above the gray/white boundary; do not let date text touch
-  or cross into the white logo area.
+- The old broad gray cover body must not remain visible. Keep only the blue top
+  header and the white body below it.
+- Metadata must stay clear of the bottom-right logo area.
 - Do not add white cards, diagonal strips, generated illustrations, or a second
   logo.
 - If the user wants a longer purpose statement, move it to slide 2 instead of

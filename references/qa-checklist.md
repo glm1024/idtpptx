@@ -122,6 +122,9 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
   level of row-by-row detail.
 - For non-trivial decks, a slide planning table exists before detailed edits: page number, registered page type, reason, main material/screenshot slot, and logo risk.
 - Cover slides do not contain redundant white cards, white filled metadata boxes, white diagonal strips, or empty white overlay shapes.
+- Cover slides use a blue top header with a clean white body below it. The old
+  broad gray cover body is not visible unless the user explicitly provides and
+  approves that cover style.
 - Cover metadata and objective copy sit directly on the canvas; if they need a panel to be readable, simplify the cover or move the detail to slide 2.
 - Normal content slides keep the top rule, top-right blue marker, and bottom-right logo unless intentionally using cover/closing style.
 - Normal content slides have one visible logo only. When the master/layout already provides the logo, generated slide content must not insert another copy.
@@ -185,6 +188,8 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Card, note, conclusion, and callout text boxes are physically inside their visible frames in both horizontal and vertical directions; no text box spans across adjacent cards.
 - Process-card titles and bodies have separate vertical zones. If a card title wraps to two lines, the body does not collide with it.
 - No cover text is wrapped inside a redundant white filled shape or card.
+- No cover keeps the old gray body background when the expected style is blue
+  header plus white body.
 
 ## Screenshots And Generated Images
 

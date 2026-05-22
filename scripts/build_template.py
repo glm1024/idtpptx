@@ -222,16 +222,30 @@ def remove_existing_slides(prs: Presentation) -> None:
 def add_cov_02a(prs: Presentation) -> None:
     slide = prs.slides.add_slide(prs.slide_layouts[0])
 
-    title_shape = next(iter(slide.placeholders), None)
-    if title_shape is None:
-        title_shape = slide.shapes.add_textbox(inch(2.30), inch(2.88), inch(8.70), inch(0.70))
-    title_shape.left = inch(2.30)
-    title_shape.top = inch(2.88)
-    title_shape.width = inch(8.70)
-    title_shape.height = inch(0.70)
-    set_text(
-        title_shape,
+    for placeholder in list(slide.placeholders):
+        placeholder._element.getparent().remove(placeholder._element)  # noqa: SLF001 - remove inherited cover prompts.
+
+    # Cover v1 keeps the inherited blue top header, but clears the old gray
+    # middle band so the whole body reads as a white canvas.
+    white_body = add_rect(
+        slide,
+        0.0,
+        1.74,
+        13.333,
+        4.18,
+        fill=COLOR_WHITE,
+        line=COLOR_WHITE,
+        line_width=0,
+    )
+    white_body.name = "Cover White Body Background"
+
+    add_textbox(
+        slide,
         "技术方案评审材料",
+        2.30,
+        2.88,
+        8.70,
+        0.70,
         font_size=30,
         color=COLOR_DARK_NAVY,
         bold=True,

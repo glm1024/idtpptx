@@ -1096,10 +1096,27 @@ def is_white_fill(fill: str) -> bool:
     return fill.upper() in WHITE_FILL_VALUES
 
 
+def is_allowed_cover_white_body_background(obj: dict[str, object], slide_w: int, slide_h: int) -> bool:
+    if str(obj.get("text", "")).strip():
+        return False
+    name = str(obj.get("name", "")).lower()
+    x, y, width, height = obj["rect"]
+    return (
+        "cover white body background" in name
+        and x <= inches(0.05)
+        and 0.95 * slide_w <= width <= 1.02 * slide_w
+        and inches(1.70) <= y <= inches(2.20)
+        and inches(3.40) <= height <= inches(4.40)
+        and y + height <= inches(6.15)
+        and slide_h >= inches(7.0)
+    )
+
+
 def find_cover_white_panel_issues(pptx_path: Path) -> list[str]:
     issues: list[str] = []
     slide_paths = slide_paths_in_order(pptx_path)
     first_slide = slide_paths[0] if slide_paths else "ppt/slides/slide1.xml"
+    slide_w, slide_h = slide_size(pptx_path)
 
     try:
         with zipfile.ZipFile(pptx_path) as zf:
@@ -1117,6 +1134,8 @@ def find_cover_white_panel_issues(pptx_path: Path) -> list[str]:
                 for obj in iter_slide_objects(sp_tree):
                     fill = str(obj.get("fill", ""))
                     if not is_white_fill(fill):
+                        continue
+                    if path == first_slide and is_allowed_cover_white_body_background(obj, slide_w, slide_h):
                         continue
                     x, y, width, height = obj["rect"]
                     if width < 0.6 * EMUS_PER_INCH or height < 0.25 * EMUS_PER_INCH:

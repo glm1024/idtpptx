@@ -73,6 +73,8 @@ High-risk slides:
 Look for:
 
 - Cover metadata placed inside a white filled rectangle, white card, white diagonal strip, or empty white overlay shape.
+- Cover body still showing the old broad gray background when the expected
+  company cover is blue header plus white body.
 - More than one visible Inspur logo on a slide. If the template already has the bottom-right or cover logo, remove manually inserted logo images.
 - A small inner slide effect: a second header line, page number, footer/logo, or content group appears inside the existing template frame, with large unused space on the right and bottom.
 - A sample-template clone effect: page after page uses the same V1 specimen
@@ -166,6 +168,8 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check every text-on-background treatment: the text box must be inside the filled rectangle/card/callout and the text must wrap inside that visible boundary.
 - Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
+- Check cover background: keep the blue top header and white body; remove the
+  old broad gray body unless the user explicitly accepted that cover reference.
 - For screenshots and generated images, check `references/screenshot-framing.md`: real screenshots remain faithful unless the user requested redesign, image groups have consistent ratios, and generated assets do not include deck chrome.
 - Do not require a standalone evidence page by default. Evidence should stay
   inside the page where it supports the point, unless the user explicitly asks

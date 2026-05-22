@@ -153,7 +153,7 @@ Best for:
 
 Slots:
 
-- Main title in the center gray band.
+- Main title centered in the white cover body below the blue header.
 - Optional subtitle/objective under the title.
 - Department/team, date, version, or confidentiality label in the lower-left.
 - Logo provided by the template, bottom-right.
@@ -173,7 +173,9 @@ Do not use for:
 
 QA:
 
-- Keep all metadata inside the gray band and away from the gray/white boundary.
+- Do not keep or recreate the old broad gray cover body. `COV-02` should read
+  as a blue top header with a clean white body below it.
+- Keep all metadata on the white body and away from the logo area.
 - Do not add a white metadata card, diagonal white strip, or extra logo.
 - Title font should match the title zone: usually `28-34 pt`, not an oversized
   default PowerPoint placeholder.

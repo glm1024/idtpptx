@@ -31,7 +31,9 @@ Normal content slides:
 
 Cover slides:
 
-- Keep the broad gray/white cover title band if it is part of the template, but delete stale title/subtitle placeholders.
+- Keep the blue cover header and white body. Do not preserve the old broad gray
+  cover title band unless the user provides a new approved cover reference that
+  explicitly uses it.
 - Use plain metadata text on the canvas. Do not add a white metadata card just to balance the cover.
 
 Section divider slides:

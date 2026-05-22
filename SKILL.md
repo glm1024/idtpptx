@@ -287,7 +287,11 @@ The style is practical corporate training/reporting, not a marketing deck:
 - Main content may use the space above and left of the bottom-right logo, but must not cover the logo itself. Keep a small breathing margin around the logo mark.
 - Reuse the finite component system for variety. A deck should feel like the
   same company style, not the same sample slide sequence with replaced text.
-- Cover slides should not add redundant white cards, filled metadata boxes, diagonal white strips, or empty white overlay shapes. Put short metadata/objective text directly on the cover canvas, or move longer context to slide 2.
+- Cover slides should use a blue top header with a clean white body below it.
+  Do not keep the old broad gray cover body, and do not add redundant white
+  cards, filled metadata boxes, diagonal white strips, or empty overlay shapes.
+  Put short metadata/objective text directly on the cover canvas, or move
+  longer context to slide 2.
 - Avoid base-`pptx` colorful infographic styling: multicolor numbered circles, multicolor card grids, alternating colored vertical bars, rainbow process flows, decorative icon grids, and shadows used only to make cards look designed.
 - Use non-blue colors only when they encode a stable business meaning, such as red annotation/risk or consistent status colors.
 - Avoid decorative gradients, large hero illustrations, icon-heavy marketing layouts, and overly stylized “AI generated” slides.

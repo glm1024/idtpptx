@@ -95,8 +95,8 @@ Best for:
 
 Keep:
 
-- Broad gray title band.
 - Blue top band.
+- White cover body below the blue header.
 - Bottom-right logo.
 
 Replace:
@@ -108,8 +108,10 @@ Rules:
 
 - Put date, version, department, and objective copy as plain text on the cover canvas.
 - Keep one main title and one optional real subtitle. Delete any duplicated or unneeded title/subtitle placeholders before adjusting font size.
-- Do not create a white metadata card, white filled text box, white diagonal decoration, or empty white rectangle on top of the cover background.
-- Keep date/version metadata inside the gray band; do not let it touch the gray/white boundary above the logo area.
+- Do not keep the old broad gray cover body. The cover should read as a blue
+  header over a clean white body.
+- Do not create a white metadata card, white filled text box, white diagonal decoration, or empty white rectangle on top of the cover body.
+- Keep date/version metadata on the white body and away from the logo area.
 - Use `COV-01` for normal training/report covers and `COV-02` for formal review covers that need a stronger centered title.
 - If the cover needs more explanation than a short objective line, move that explanation to the next slide instead of adding a white panel to the cover.
 

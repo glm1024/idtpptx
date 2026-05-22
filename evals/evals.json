@@ -126,6 +126,7 @@
         "Deletes or replaces all unused title/subtitle placeholders instead of clearing text and leaving placeholder shapes.",
         "Keeps section divider pages to one center blue-bar title system without an extra top-left title placeholder.",
         "Uses a compact normal content title band with about 24-30 pt title text and body content starting in the registered content zone.",
+        "Uses a cover with a blue top header and clean white body, not the old broad gray cover body.",
         "Does not show PowerPoint default prompts such as 单击此处添加标题, 单击此处添加副标题, or Click to add title.",
         "Runs the QA helper and treats placeholder/title-system blockers or warnings as issues to fix before delivery."
       ]

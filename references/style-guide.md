@@ -75,9 +75,10 @@ For exact color and font tokens, `references/theme-contract.md` is the source of
 
 ## Cover Slides
 
-- Keep cover slides clean: blue top band, gray title band, title/subtitle, plain metadata text, and logo are enough.
-- Do not add white cards, white text panels, white filled boxes, or decorative white strips on the cover. Metadata and objectives should sit directly on the white or gray canvas without a filled rectangle behind them.
-- If a copied template cover contains a white cutout, diagonal strip, or empty white overlay shape, delete it unless it is the actual slide background.
+- Keep cover slides clean: blue top band, white body, title/subtitle, plain metadata text, and logo are enough.
+- Do not keep the old broad gray cover body. The area below the blue header should read as a clean white canvas.
+- Do not add white cards, white text panels, white filled boxes, or decorative white strips on the cover. Metadata and objectives should sit directly on the white canvas without a filled rectangle behind them.
+- If a copied template cover contains a gray middle band, white cutout, diagonal strip, or empty overlay shape, delete it unless it is the actual slide background required by the user.
 
 ## Common Page Chrome
 

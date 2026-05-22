@@ -95,12 +95,14 @@ Reusable patterns:
 | Proposed ID | Pattern | When To Use | Asset Decision |
 |---|---|---|---|
 | `COV-01` | Simple corporate cover with title and logo | Default training/report cover | Registered fallback; no cleaned V1 sample yet |
-| `COV-02` | Formal report cover with broad top/center title band and metadata | Leadership review, technical方案评审 | Promoted to registry; V1 template sample exists |
+| `COV-02` | Formal report cover with blue header, white body, centered title, and plain metadata | Leadership review, technical方案评审 | Promoted to registry; V1 template sample exists |
 | `COV-03` | Visual hero cover with generated/product image | Marketing or special showcase only | Do not make default |
 
 Rules to absorb:
 
 - Cover should carry title, optional subtitle, date/version/department, and logo.
+- Current `COV-02` should not keep the old broad gray body; use a blue top
+  header with white body below it.
 - Long purpose/scope text belongs on slide 2, not on the cover.
 - Generated hero covers are not the default IDT/Inspur internal style.
 

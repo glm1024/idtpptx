@@ -22,7 +22,7 @@ This is not a multi-theme design system. Do not offer Ocean, Forest, Golden, Gal
 | Body Black | `000000` | Normal body, table text, captions, notes, and sources | None; this is the safest readable text color |
 | Near Black | `111111` / `1F2933` / `202020` | Body text when pure black feels too hard | Decorative low-contrast text treatment |
 | Rule Gray | `A4A3A4` | Thin rules, grid lines, separators, disabled structure | Normal editable text |
-| Light Fill Gray | `F2F2F2` / `F2F4F7` / `EDEDED` | Table headers, subtle bands, disabled placeholders | Large empty panels, cover metadata boxes, or fake cards |
+| Light Fill Gray | `F2F2F2` / `F2F4F7` / `EDEDED` | Table headers, subtle bands, disabled placeholders | Large empty panels, cover metadata boxes, broad cover body backgrounds, or fake cards |
 | Light Cyan | `BBE0E3` | Rare secondary highlight in template-compatible contexts | A second theme color for every card or step |
 | Risk Red | `D93025` / `C00000` / `FF4B4B` / `FF0000` | Warnings, risks, key callouts, screenshot arrows and boxes | Ordinary category labels or decorative emphasis |
 | Success Green | `2E7D32` / `70AD47` | Completed, healthy, accepted states | Decorative process steps |
