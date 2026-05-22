@@ -61,6 +61,13 @@ Fix before delivery:
 - The deck appears to clone the V1 sample template sequence or geometry instead
   of using content-driven component composition. Re-plan with
   `references/component-system.md` and `references/composition-grammar.md`.
+- Three or more consecutive table/matrix-heavy pages appear without a clear
+  reader-facing reason. Re-plan the sequence using conclusion, process,
+  architecture, problem/decision, or summary compositions where the material
+  supports them.
+- A full-slide primary table uses a weak pale header instead of the company
+  primary table hierarchy: solid brand-blue header fill with white bold header
+  text, restrained grid, and readable dark body text.
 - Local theme drift appears on individual pages: unauthorized accent colors, non-YaHei editable fonts, copied external theme styling, or a generated image with its own external visual frame.
 - A generated image includes its own PPT title, footer, page number, logo, watermark, or decorative frame.
 - Screenshot groups use mismatched crop density, size, or ratio.
@@ -79,6 +86,8 @@ Fix before delivery:
 - Captions, notes, or sources are longer than needed.
 - Red annotation boxes are visually heavier than the UI detail they identify.
 - A page has avoidable empty placeholder-shaped regions after cleanup.
+- Similar table/matrix pages repeat in sequence when one could become a
+  conclusion, workflow, architecture, or summary page.
 
 ### P3 Optional
 
@@ -108,6 +117,9 @@ For the placeholder `grep`, no output is the expected pass result. If it returns
 - The deck uses components from `references/component-system.md` and page
   composition rules from `references/composition-grammar.md` when content shape
   differs from a cleaned sample slide.
+- The full slide sequence was checked for deck rhythm. Long runs of similar
+  table/matrix pages were intentionally kept only when the user needed that
+  level of row-by-row detail.
 - For non-trivial decks, a slide planning table exists before detailed edits: page number, registered page type, reason, main material/screenshot slot, and logo risk.
 - Cover slides do not contain redundant white cards, white filled metadata boxes, white diagonal strips, or empty white overlay shapes.
 - Cover metadata and objective copy sit directly on the canvas; if they need a panel to be readable, simplify the cover or move the detail to slide 2.
@@ -151,6 +163,10 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 ## Practical Readability
 
 - Dense tables remain legible after rendering.
+- Primary tables use the company table hierarchy: solid brand-blue header,
+  white bold header text, black/near-black body text, light striping, and
+  restrained grid lines. Pale headers are reserved for auxiliary matrices or
+  secondary reference tables.
 - Normal 3-5 column tables with a few rows use `12-13 pt` body text; they do not waste space with small spreadsheet-like text inside oversized rows.
 - Table cells are vertically middle-aligned by default; only paragraph/list/code-heavy cells use top alignment.
 - Each table uses one consistent horizontal alignment mode across header and body: all-center for compact categorical matrices, or all-left for explanation/evidence/risk/action tables.
@@ -178,6 +194,10 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - Screenshot groups use one ratio, one crop density, and one caption style.
 - Generated images are embedded assets only; they do not include PPT chrome, titles, footers, page numbers, logos, watermarks, or decorative frames.
 - Long or narrow screenshots were cropped to the meaningful area or split into same-size panels instead of being squeezed into one unreadable image.
+- Evidence is embedded only where it serves the page intent, such as a table,
+  screenshot slot, diagram, note, or appendix detail requested by the user.
+  Do not create a standalone evidence page solely because the topic mentions
+  evidence or samples.
 
 ## PowerPoint Compatibility
 
@@ -205,6 +225,10 @@ python -m markitdown output.pptx | grep -iE "初版目标与讨论范围|初版.
 - If the whole deck looks like the V1 template with new text, classify it as
   template-clone risk first. Re-plan by page intent, material shape, and
   components instead of adding decorative variation.
+- If the middle of the deck looks like a table collection, classify it as a
+  deck-rhythm problem first. Decide which pages should stay as primary tables
+  and which should become conclusion, process, architecture, problem/decision,
+  or summary pages.
 - If a slide feels like it came from another design system, classify it as theme drift first: wrong token, wrong font contract, wrong scenario variant, or source material carrying an external theme.
 - Treat any content that overlaps the bottom-right logo mark as a blocking layout bug.
 - Treat generic multicolor process decoration as a blocking brand bug when it comes from the base `pptx` visual style rather than from user-specified company material.

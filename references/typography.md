@@ -94,6 +94,18 @@ Read `references/text-box-fit.md` before generating cards, note bars, conclusion
 
 ## Table Typography And Alignment
 
+Default table hierarchy:
+
+- Primary tables use a solid brand-blue header fill (`0062AC` or `00518E`),
+  white bold header text, black/near-black body text, light row striping, and
+  restrained light grid lines.
+- Pale gray or pale blue headers are acceptable only for auxiliary matrices,
+  secondary reference tables, or table-like side panels. Do not use a pale
+  header for a full-slide primary comparison, review, risk, action, or metric
+  table.
+- Use one main table hierarchy per slide. If two tables both need primary
+  emphasis, split the content or convert one table into summary fields/cards.
+
 Default table alignment:
 
 - Vertically align table text to the middle by default. This is required for matrix, comparison, scope, responsibility, and capability tables where most cells are one or two lines.

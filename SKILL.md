@@ -78,29 +78,35 @@ not make every deck a page-by-page clone of the V1 sample template.
 6. Before editing individual slide content, draft a slide plan with page number,
    intent, layout ID, selected components, material shape, variant reason, and
    QA risk. Keep this plan outside the final deck.
-7. If screenshots or generated images are involved, read
+7. Review the whole slide sequence before detailed editing. If three or more
+   table/matrix-heavy slides appear in a row, re-plan at least one page into a
+   conclusion, process, architecture, problem/decision, or summary composition
+   when the content supports it. Do not add a standalone evidence page unless
+   the user explicitly asks for one or the source material genuinely requires
+   one.
+8. If screenshots or generated images are involved, read
    `references/screenshot-framing.md` and decide the slot, ratio, and fidelity
    policy before inserting or generating assets.
-8. Use the base `pptx` editing workflow to start from the V1 template, reuse
+9. Use the base `pptx` editing workflow to start from the V1 template, reuse
    master/layout chrome, duplicate/delete/reorder slides when useful, and build
    final pages by composing registered components in the real content zone.
-9. Duplicate a cleaned sample slide only when its geometry genuinely matches the
+10. Duplicate a cleaned sample slide only when its geometry genuinely matches the
    current content, or when a low-risk fallback is better than a one-off layout.
    If the deck begins to match the V1 sample sequence, re-plan from components.
-10. Normalize slide titles with `references/title-system.md`: delete unneeded
+11. Normalize slide titles with `references/title-system.md`: delete unneeded
     title/subtitle placeholders, keep one title system per slide, and balance
     title font size against the compact template title band.
-11. For any card, note bar, callout, or framed component, follow
+12. For any card, note bar, callout, or framed component, follow
     `references/text-box-fit.md`: calculate the visible frame first, place text
     in an inner box, enable wrapping, and shorten/split content before it can
     run outside the frame.
-12. Before final delivery, remove planning/meta slides that were useful only for
+13. Before final delivery, remove planning/meta slides that were useful only for
     making the deck, such as `初版目标与讨论范围`, draft constraints, or "what this
     pass will not do" pages. The user normally wants the final PPT, not the
     agent's production scaffold.
-13. Keep the deck visually quiet, operational, and content-first. Company style
+14. Keep the deck visually quiet, operational, and content-first. Company style
     overrides generic presentation-design advice from the base `pptx` skill.
-14. Run the final quality gate in `references/qa-checklist.md`. A deck is not
+15. Run the final quality gate in `references/qa-checklist.md`. A deck is not
     complete until content, visual rendering, package validation, and PowerPoint
     compatibility checks pass. For complex decks, generated decks, or
     PowerPoint handoff, also read `references/qa-playbook.md`.
@@ -124,6 +130,7 @@ The safest results come from reducing free-form design decisions:
 - Treat layout IDs as recipes. A cleaned V1 sample slide shows one valid specimen, not the only valid final page.
 - Do not choose layouts randomly for visual variety. Variety must come from content shape: number of screenshots, table density, process steps, diagram width, conclusion priority, and evidence type.
 - Avoid template-clone decks. If the generated deck follows the V1 sample slide count, order, and geometry too closely, re-plan from components instead of adding decoration.
+- Avoid table-run decks. Three or more consecutive table/matrix-heavy pages make the deck read like a spreadsheet handoff; re-plan the sequence with conclusion, process, architecture, problem/decision, or summary pages where the content naturally supports them.
 - Decide structure before content replacement. Reordering and duplicating slides after detailed text edits is a common source of orphaned placeholders and broken relationships.
 - Keep generation plans outside the deck. A slide plan may say how the agent will build the PPT, but final slides must not contain process scaffolding such as `初版目标与讨论范围`, `可讨论的结构草稿`, `后续补充数据和截图`, `本轮先不展开`, or `不追求最终视觉定稿`. By default, delete the whole meta/planning slide instead of polishing it.
 - Clean title placeholders before polishing. Final decks must not show PowerPoint default prompts such as `单击此处添加标题` / `Click to add title`, and section divider pages should not keep a top-left title placeholder in addition to the center section bar.

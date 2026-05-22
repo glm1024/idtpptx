@@ -13,7 +13,8 @@ inside the IDT/Inspur style.
 3. Pick a registered layout ID as a recipe, not as a slide to clone.
 4. Choose components and slots from `references/component-system.md`.
 5. Compose within the template content zone and reuse template chrome.
-6. Run QA for overflow, logo safety, title system, theme drift, and template
+6. Review the full slide sequence for rhythm before filling detailed text.
+7. Run QA for overflow, logo safety, title system, theme drift, and template
    clone risk.
 
 Do not start by duplicating every V1 sample slide that sounds close to the topic.
@@ -45,6 +46,35 @@ current content, or when a low-risk fallback is needed.
 - Evidence-heavy material: give screenshots/tables/diagrams the largest slot.
 - Conclusion-heavy material: use a conclusion bar or summary recipe, then keep
   supporting material compact.
+
+## Deck Rhythm Rules
+
+The whole deck should not become a sequence of similar tables or matrices.
+Internal IDT/Inspur decks can be evidence-led, but the reader still needs
+changes in reading mode: conclusion, process, architecture, decision, and final
+handoff.
+
+Treat these as rhythm warnings:
+
+- Three or more consecutive table/matrix-heavy pages.
+- Four or more pages in the middle of the deck that all use the same table,
+  card, or matrix geometry.
+- A metrics/risk/review section where every page asks the reader to scan rows
+  instead of following a conclusion or workflow.
+
+When a rhythm warning appears:
+
+- Keep the table that carries the strongest decision or comparison.
+- Convert one page into `TXT-*`, `PRC-*`, `ARC-*`, `PRB-*`, `CHO-*`, or
+  `SUM-*` when the material is really a conclusion, process, architecture,
+  problem, choice, or handoff.
+- Move low-priority detail into an appendix-style table only when the user asks
+  for appendix detail.
+- Do not add decoration, random icons, or arbitrary color variation to disguise
+  repeated tables.
+- Do not create a standalone evidence page by default. Use evidence inside the
+  page type that needs it: table, screenshot slot, architecture diagram, or
+  concise note/callout.
 
 ## Variation Rules
 
@@ -103,6 +133,10 @@ the user explicitly asks for a production appendix.
 
 - Three UI screenshots with arrows -> `SS-02`, not `PRC-01`.
 - Four criteria with short pass/fail meanings -> `TBL-03`, not card grid.
+- Five review pages where four are tables -> keep the strongest table, convert
+  one to a conclusion/decision page, one to a process or architecture page if
+  the material describes flow/structure, and move pure detail to appendix only
+  when requested.
 - One wide data-chain diagram with many labels -> `ARC-02`, not `ARC-01`.
 - A medium architecture diagram plus three explanation points -> `ARC-03`.
 - A conclusion that explains the architecture before showing it -> `ARC-03`

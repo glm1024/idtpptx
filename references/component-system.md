@@ -67,6 +67,17 @@ Use these component families before inventing a new full-slide template.
 ### Table Components
 
 - Use a slide-native table structure, not a pasted spreadsheet look.
+- Decide whether the table is the slide's primary table or an auxiliary matrix
+  before styling it.
+- Primary tables use the company table hierarchy: solid brand-blue header fill,
+  white bold header text, light row striping, readable dark body text, and
+  restrained light grid lines.
+- Auxiliary matrices may use a light header fill only when another component is
+  clearly the slide's main focus. Do not use a pale header for a full-slide
+  primary comparison, review, risk, action, or metric table.
+- Keep one main table hierarchy per slide. If two tables compete for attention,
+  promote one, demote the other to a compact auxiliary matrix, or split the
+  content.
 - Header and body use one horizontal alignment mode for the table: all-left for
   explanations/evidence, all-center for compact categorical values.
 - Cells are vertically middle-aligned by default.

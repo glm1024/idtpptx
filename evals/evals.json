@@ -151,6 +151,17 @@
         "Uses cleaned sample slides only as specimens or fallback when the sample geometry genuinely fits.",
         "Runs the QA helper and treats template-clone warnings as pages requiring re-planning rather than decorative changes."
       ]
+    },
+    {
+      "id": "deck-rhythm-and-primary-table-hierarchy",
+      "prompt": "请用 idtpptx 做一份 10 页内部评审 PPTX，主题是 AI 代码采纳统计。材料里有多页指标表、风险表、评审口径表和行动项表，但最终不要连续好几页都像表格合集；主表格要符合公司 PPT 风格，辅助矩阵可以弱化。",
+      "expected_behavior": [
+        "Checks the whole slide sequence before editing and treats three or more consecutive table/matrix-heavy pages as a deck-rhythm warning.",
+        "Keeps the table pages that genuinely carry comparison or review detail, but converts suitable pages into conclusion, process, architecture, problem/decision, or summary compositions.",
+        "Does not create a standalone evidence page by default unless the user explicitly asks for one or the source material requires it.",
+        "Uses solid brand-blue headers with white bold text for full-slide primary tables, plus readable dark body text and restrained grid lines.",
+        "Uses pale headers only for auxiliary matrices or secondary reference panels, not as the default style for primary review tables."
+      ]
     }
   ]
 }

@@ -55,6 +55,10 @@ Rules:
 
 - Decide the full page sequence, page intent, layout ID, and component plan
   before replacing detailed text or media.
+- Check page rhythm at the sequence level. If three or more table/matrix-heavy
+  slides appear in a row, re-plan one or more pages as conclusion, process,
+  architecture, problem/decision, or summary pages when the content supports
+  those intents.
 - Use layout IDs as recipes, not as instructions to clone full sample slides.
 - Generate variety through registered components and content-driven composition:
   table density, screenshot count, process length, diagram width, and conclusion
@@ -65,6 +69,9 @@ Rules:
 - Clean title placeholders before detailed content work. Replace the real page title, delete unused title/subtitle placeholders, and keep one title system per slide.
 - Reuse the template's page chrome. Do not add a second top rule, page marker, footer/logo, or artificial slide frame inside the existing template frame.
 - Treat the planning table as a working artifact, not a slide. By default, final decks should not include an initial `目标 / 范围 / 产出` page when that page only explains how the PPT draft was produced.
+- Do not add a standalone evidence page by default. Company review decks usually
+  embed evidence in the relevant table, screenshot, diagram, note, or appendix
+  slot only when the source material or user request requires it.
 - Do not create marketing landing pages, magazine-style spreads, Swiss-style poster pages, decorative hero images, WebGL/HTML slide structures, or arbitrary card grids inside this company PPTX skill.
 - If a reusable company page type is missing, first describe it here as a registered page type with use cases, boundaries, and QA rules. If only a variant is missing under an existing page type, register it in `references/layout-registry.md`. Do not hide a new page type inside one deck as a one-off.
 - If no registered type fits, default to Text Explanation Page and keep it restrained.
@@ -173,6 +180,14 @@ Not for:
 Rules:
 
 - Keep table borders light.
+- If the table is the slide's primary content, use the company primary table
+  style: solid brand-blue header fill, white bold header text, black/near-black
+  body text, light row striping, and restrained grid lines.
+- Use light-gray or pale-blue header fills only for auxiliary matrices or
+  secondary tables that are not the main visual hierarchy of the slide.
+- A slide should have one primary table hierarchy. If two tables both need
+  primary styling, split the slide or convert one table into cards, summary
+  fields, or an appendix.
 - Prefer fewer columns and readable row height.
 - Use black or near-black table text by default; do not use gray text for body cells.
 - Vertically align table text to the middle by default. Use top alignment only for paragraph-like cells, bullet lists, code, or cells with `3+` wrapped lines.
@@ -182,6 +197,10 @@ Rules:
 - Use `12-13 pt` body text for normal 3-5 column tables with 3-7 rows. Use `10.5-11.5 pt` only for genuinely dense tables.
 - Use `1.05-1.18x` table line spacing and balanced cell padding; do not stretch rows while keeping the text small.
 - If table is too dense, split by category.
+- If the deck already has multiple adjacent table pages, reassess whether this
+  page is really a table. Convert to Process / Workflow, Architecture,
+  Problem/Solution, Choice/Recommendation, or Summary / Handoff when the content
+  is mainly flow, structure, question, decision, or action.
 - Never let the table frame, last column, row fill, or cell text overlap the bottom-right logo. The space above and left of the logo remains usable.
 
 ### 5. Screenshot Step Page
@@ -330,4 +349,7 @@ Rules:
 - Remove surplus placeholders, screenshot boxes, arrows, and table rows entirely; do not just clear their text.
 - Before finalizing a slide, make sure the bottom-right logo remains uncovered; do not reserve a large empty area above or left of it.
 - If rendered content looks like a small slide nested inside the template, pick a registered page type with a larger content slot, widen the table/process/screenshot group, or split the material. Do not fix it by adding another logo, page number, frame, or decorative empty panel.
+- If the middle of the deck becomes a run of similar tables or matrices, treat
+  it as a planning problem before treating it as a styling problem. Re-plan by
+  content role rather than adding decorative variation.
 - If a slide looks awkward after rendering, first reassess the page-type choice and material slot. Avoid fixing a wrong structure by adding random margins, shrinking text below readable size, or adding decorative boxes.

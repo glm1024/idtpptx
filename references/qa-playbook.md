@@ -64,6 +64,8 @@ High-risk slides:
 - Slides copied from templates where empty placeholders may still exist as blank boxes.
 - Decks whose slide count, order, or geometry closely matches the V1 sample
   template.
+- Decks with three or more consecutive table/matrix-heavy pages, especially in
+  the middle of a review material deck.
 - Section divider pages where a top-left title placeholder may remain in addition to the center blue section bar.
 - Slides generated with a blank layout or custom code on top of a branded template; these often duplicate the template chrome and compress content into a small upper-left area.
 - Any slide edited after the first render.
@@ -75,6 +77,9 @@ Look for:
 - A small inner slide effect: a second header line, page number, footer/logo, or content group appears inside the existing template frame, with large unused space on the right and bottom.
 - A sample-template clone effect: page after page uses the same V1 specimen
   geometry even when the current content has different material shape.
+- A table-run effect: several adjacent slides all ask the reader to scan rows
+  or matrices, even though one page is actually a conclusion, workflow,
+  architecture explanation, problem/decision, or handoff.
 - PowerPoint default placeholder prompts such as `单击此处添加标题`, `单击此处添加副标题`, `单击此处添加文本`, or `Click to add title`.
 - A duplicated title system: a top-left title placeholder plus a section bar title, or a cover title plus an old subtitle/title placeholder.
 - Normal content titles that are tiny inside a tall title placeholder, or oversized titles that collide with the divider rule.
@@ -85,6 +90,9 @@ Look for:
 - Process-card headings overlapping card body text, especially when English labels wrap to two lines.
 - Text clipped at the edge of a text box, table cell, or slide.
 - Tables so dense that row text is not readable at normal presentation size.
+- Full-slide primary tables with pale headers that look like weak spreadsheet
+  exports. Primary company tables should use a solid brand-blue header with
+  white bold header text; pale headers are for auxiliary matrices only.
 - Tables that use small body text while rows are tall and mostly empty.
 - Table text vertically stuck to the top or bottom when cells are otherwise short.
 - A single table mixing centered headers, centered short cells, and left-aligned descriptive cells without an intentional source-table reason.
@@ -120,6 +128,10 @@ When visual QA finds a problem, classify it before fixing:
   specimen geometry too closely. Rebuild the affected pages from
   `references/component-system.md` and `references/composition-grammar.md`
   rather than adding arbitrary visual variation.
+- **Deck-rhythm problem**: the slide sequence contains a run of similar
+  table/matrix pages. Keep the strongest primary table, then convert suitable
+  pages to conclusion, process, architecture, problem/decision, or summary
+  compositions. Do not solve rhythm by adding decoration.
 - **Content overload**: the page needs to split, not shrink.
 
 Do not repair a wrong structure or theme drift by randomly shrinking text, adding arbitrary margins, covering old elements with new shapes, or inserting decorative cards.
@@ -131,6 +143,9 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check layout IDs were used as recipes, not as mandatory full-slide clones.
 - Check component choices follow `references/component-system.md` and
   `references/composition-grammar.md`.
+- Check the slide sequence for rhythm. Three or more consecutive table/matrix
+  pages should be intentional; otherwise re-plan at least one page by content
+  role.
 - Check slide titles are specific and name the page's job.
 - Check title placeholders are gone. Section dividers should use the center blue bar title only, and normal content slides should have one compact top-left title.
 - Check the deck uses `微软雅黑` / `Microsoft YaHei` by default for editable text.
@@ -139,6 +154,9 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check wording is Chinese-first. Keep English for `AI`, `Git`, `IDE`, `API`, lowercase technical nouns such as `git` and `linux`, real module names, and necessary code fields; translate ordinary metrics, statuses, matching modes, and process labels.
 - Check sparse slides use larger body text and `1.5-1.7x` line spacing, while normal body slides use about `1.3-1.45x`.
 - Check normal comparison/matrix tables use vertical-middle cell alignment, `12-13 pt` body text when not dense, and one consistent horizontal alignment mode for the whole table.
+- Check primary tables use blue-header/white-text company hierarchy. Pale
+  headers should appear only on auxiliary matrices or secondary reference
+  panels.
 - Check every placeholder, old URL, old contact, old product name, old screenshot, and old email example was intentionally kept or removed.
 - Check title size versus title space: for normal content slides, adjust both the title-zone height and the `24-30 pt` title size instead of only scaling text.
 - Check the final sequence does not include deck-production setup pages. If a page only says what this draft will or will not cover, delete it rather than polishing it.
@@ -149,6 +167,9 @@ Do not repair a wrong structure or theme drift by randomly shrinking text, addin
 - Check any full-width table or screenshot does not overlap the bottom-right logo mark. Space above and left of the logo can be used when the logo remains clear.
 - Check cover metadata remains plain text and does not introduce a white panel.
 - For screenshots and generated images, check `references/screenshot-framing.md`: real screenshots remain faithful unless the user requested redesign, image groups have consistent ratios, and generated assets do not include deck chrome.
+- Do not require a standalone evidence page by default. Evidence should stay
+  inside the page where it supports the point, unless the user explicitly asks
+  for a separate appendix or evidence page.
 
 ## Package And PowerPoint Compatibility
 
